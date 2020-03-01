@@ -18,6 +18,7 @@
     "build",
     "__test__",
     "bin",
+    "src/ts-commonutil",
     "jest.config.js"
   ]
 }

@@ -357,10 +357,6 @@
     "@types/yargs" "^15.0.0"
     chalk "^3.0.0"
 
-"@jokester/ts-commonutil@link:submodules/ts-commonutil":
-  version "0.0.0"
-  uid ""
-
 "@nestjs/cli@^6.14":
   version "6.14.2"
   resolved "https://registry.yarnpkg.com/@nestjs/cli/-/cli-6.14.2.tgz#673b2ba3a5cf8f96bfeb27bab078e95e471beaf4"
