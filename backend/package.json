@@ -22,11 +22,18 @@
   "dependencies": {
     "@nestjs/common": "^6.11",
     "@nestjs/core": "^6.11",
+    "@nestjs/jwt": "^6.1.2",
+    "@nestjs/passport": "^6.2.0",
     "@nestjs/platform-express": "^6.11",
+    "@types/passport-jwt": "^3.0.3",
+    "@types/passport-local": "^1.0.33",
     "class-transformer": "^0.2.3",
     "debug": "^4.1.1",
+    "fp-ts": "1",
     "passport-facebook": "^3.0.0",
     "passport-google-oauth20": "^2.0.0",
+    "passport-jwt": "^4.0.0",
+    "passport-local": "^1.0.0",
     "reflect-metadata": "^0.1.13",
     "rimraf": "^3.0.0",
     "rxjs": "^6.5.4"
