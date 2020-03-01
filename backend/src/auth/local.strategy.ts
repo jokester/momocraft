@@ -1,8 +1,9 @@
-import { PassportStrategy } from '@nestjs/passport';
+import { AuthGuard, PassportStrategy } from '@nestjs/passport';
 import { Strategy } from 'passport-local';
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { getDebugLogger } from '../util/get-debug-logger';
+import { UserEntity } from '../entity/user.entity';
 
 @Injectable()
 export class LocalStrategy extends PassportStrategy(Strategy) {
@@ -11,7 +12,7 @@ export class LocalStrategy extends PassportStrategy(Strategy) {
     getDebugLogger(__filename)('gotAuthService: %o', authService);
   }
 
-  async validate(username: string, password: string): Promise<any> {
+  async validate(username: string, password: string): Promise<UserEntity> {
     const user = await this.authService.authUserWithPassword(username, password);
 
     if (user.isSome()) {
@@ -20,3 +21,5 @@ export class LocalStrategy extends PassportStrategy(Strategy) {
     throw new UnauthorizedException();
   }
 }
+
+export const LocalStrategyGuard = AuthGuard('local');
