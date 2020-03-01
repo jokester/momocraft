@@ -5,7 +5,7 @@ export class UserEntity {
   readonly email: string;
 
   @Exclude()
-  private readonly passwordHash: string;
+  readonly passwordHash: string;
 
   constructor(from: UserEntity) {
     this.userId = from.userId;
