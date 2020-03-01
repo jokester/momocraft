@@ -23,6 +23,7 @@
     "@nestjs/common": "^6.11",
     "@nestjs/core": "^6.11",
     "@nestjs/platform-express": "^6.11",
+    "class-transformer": "^0.2.3",
     "debug": "^4.1.1",
     "reflect-metadata": "^0.1.13",
     "rimraf": "^3.0.0",
