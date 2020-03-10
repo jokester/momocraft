@@ -7,6 +7,9 @@ import { getDebugLogger } from '../util/get-debug-logger';
 
 const logger = getDebugLogger(__filename);
 
+/**
+ * @deprecated too hard to get this right with passport
+ */
 @Injectable()
 export class GoogleOauthStrategy extends PassportStrategy(Strategy, 'google') {
   constructor() {

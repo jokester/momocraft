@@ -1,15 +1,15 @@
-import { Controller, Get, Post, Request, UseGuards } from '@nestjs/common';
+import { BadRequestException, Body, Controller, Get, Post, Req, Request, UseGuards } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { UserEntity } from '../entity/user.entity';
 import { LocalStrategyGuard } from './local.strategy';
-import { GoogleOAuthGuard } from './google-oauth.strategy';
 import { getDebugLogger } from '../util/get-debug-logger';
+import { GoogleOAuthService } from './google-oauth.service';
 
 const logger = getDebugLogger(__filename);
 
 @Controller('auth')
 export class AuthController {
-  constructor(private readonly authService: AuthService) {}
+  constructor(private readonly authService: AuthService, private readonly googleOAuthService: GoogleOAuthService) {}
 
   @UseGuards(LocalStrategyGuard)
   @Post('email/signin')
@@ -18,10 +18,23 @@ export class AuthController {
     return req.user || null;
   }
 
-  @UseGuards(GoogleOAuthGuard)
   @Get('google/oauth' /* ?code=callback_code... */)
   async startGoogleOAuth(@Request() req: Request & { user?: UserEntity }) {
     logger('got google/oauth user: %o', req.user);
     return null;
+  }
+
+  @Post('oauth/google')
+  async doGoogleOAuth(@Request() req: Request, @Body() payload2: { code: string; callbackUri: string }) {
+    // const payload: { code: string; callbackUri: string } = await req.json();
+
+    const payload = payload2;
+    if (payload && payload.code) {
+      const x = await this.googleOAuthService.auth(payload.code);
+
+      logger('got auth', x);
+      return x;
+    }
+    throw new BadRequestException();
   }
 }

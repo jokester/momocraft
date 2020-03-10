@@ -1,15 +1,15 @@
 import { Module } from '@nestjs/common';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
-import { PassportModule } from '@nestjs/passport';
 import { LocalStrategy } from './local.strategy';
 import { UserModule } from '../user/user.module';
-import { GoogleOauthStrategy } from './google-oauth.strategy';
+import { GoogleOAuthService } from './google-oauth.service';
+import { ConfigModule } from '@nestjs/config';
 
 @Module({
-  imports: [PassportModule, UserModule],
+  imports: [ConfigModule, UserModule],
   controllers: [AuthController],
-  providers: [AuthService, LocalStrategy, GoogleOauthStrategy],
+  providers: [AuthService, LocalStrategy, GoogleOAuthService],
   exports: [],
 })
 export class AuthModule {}
