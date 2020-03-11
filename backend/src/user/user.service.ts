@@ -2,11 +2,14 @@ import { Injectable } from '@nestjs/common';
 import { Option, Some, None, none } from 'fp-ts/lib/Option';
 import { UserEntity } from '../entity/user.entity';
 import { getDebugLogger } from '../util/get-debug-logger';
+import { PgDatabaseService } from './pg-database.service';
+
+const logger = getDebugLogger(__filename);
 
 @Injectable()
 export class UserService {
-  constructor() {
-    getDebugLogger(__filename)('created');
+  constructor(private readonly pgDatabaseService: PgDatabaseService) {
+    logger('created');
   }
   async findUserWithEmail(email: string): Promise<Option<UserEntity>> {
     if (email === 'a@b.com') {
@@ -20,5 +23,10 @@ export class UserService {
     }
 
     return none;
+  }
+
+  async now() {
+    const { rows } = await this.pgDatabaseService.query<{ now: Date }>('SELECT NOW()');
+    logger('query()', rows);
   }
 }

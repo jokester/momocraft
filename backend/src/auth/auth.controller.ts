@@ -4,12 +4,17 @@ import { UserEntity } from '../entity/user.entity';
 import { LocalStrategyGuard } from './local.strategy';
 import { getDebugLogger } from '../util/get-debug-logger';
 import { GoogleOAuthService } from './google-oauth.service';
+import { UserService } from '../user/user.service';
 
 const logger = getDebugLogger(__filename);
 
 @Controller('auth')
 export class AuthController {
-  constructor(private readonly authService: AuthService, private readonly googleOAuthService: GoogleOAuthService) {}
+  constructor(
+    private readonly authService: AuthService,
+    private readonly googleOAuthService: GoogleOAuthService,
+    private readonly userService: UserService,
+  ) {}
 
   @UseGuards(LocalStrategyGuard)
   @Post('email/signin')
@@ -21,6 +26,12 @@ export class AuthController {
   @Get('google/oauth' /* ?code=callback_code... */)
   async startGoogleOAuth(@Request() req: Request & { user?: UserEntity }) {
     logger('got google/oauth user: %o', req.user);
+    return null;
+  }
+
+  @Get('ping')
+  async pingDb() {
+    await this.userService.now();
     return null;
   }
 
