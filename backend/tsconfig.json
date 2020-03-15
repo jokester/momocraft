@@ -18,6 +18,10 @@
     "build",
     "__test__",
     "bin",
+    "test",
+    "dist",
+    "src/ts-commonutil",
+    "submodules",
     "jest.config.js"
   ]
 }

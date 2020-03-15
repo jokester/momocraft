@@ -14,11 +14,11 @@ An API-only microservice for user authentiate.
 
 ### Google OAuth
 
-`/auth/google/oauth`
+`/auth/oauth/google`
 
 ### FB OAuth
 
-`/auth/facebook/oauth`
+`/auth/oauth/facebook`
 
 ## Private APIs
 
