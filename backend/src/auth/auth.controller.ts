@@ -33,6 +33,8 @@ export class AuthController {
 
       const user = this.userService.findOrCreateWithGoogleOAuth(x.right);
 
+      logger('user authed', user);
+
       return x.right.userInfo;
     }
     throw new BadRequestException();
