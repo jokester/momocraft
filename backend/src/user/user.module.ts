@@ -4,7 +4,8 @@ import { EntropyService } from '../deps/entropy.service';
 import { DatabaseModule } from '../db/database.module';
 
 @Module({
-  providers: [UserService, EntropyService, DatabaseModule],
+  imports: [DatabaseModule],
+  providers: [EntropyService, UserService],
   exports: [UserService],
 })
 export class UserModule {}
