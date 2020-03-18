@@ -22,30 +22,41 @@ describe(UserService, () => {
     },
     userInfo: {
       email: 'hey@me.com',
+      // eslint-disable-next-line @typescript-eslint/camelcase
+      verified_email: true,
     },
   } as const;
 
-  const foldUser = fold<string, UserAccount, Partial<string | UserAccount>>(
-    l => l,
+  const foldUser = fold<string, UserAccount, Partial<UserAccount & { _error: string }>>(
+    l => ({ _error: l }),
     r => r,
   );
 
-  it('create user with google oauth', async () => {
-    const testee = new UserService(await testDeps.testConnection, testDeps.entropy);
+  describe('create user with google outh', () => {
+    it('does create with proper auth info', async () => {
+      const testee = new UserService(await testDeps.testConnection, testDeps.entropy);
 
-    const created = await testee.findOrCreateWithGoogleOAuth(mockGoogleOAuthResult);
+      const created1 = foldUser(await testee.findOrCreateWithGoogleOAuth(mockGoogleOAuthResult));
 
-    const folded1 = fold<string, UserAccount, null | UserAccount>(
-      l => null,
-      r => r,
-    )(created);
+      expect(created1?.userId).toBeTruthy();
+      expect(created1?.shortId).toBeTruthy();
 
-    expect(folded1?.userId).toBeTruthy();
-    expect(folded1?.shortId).toBeTruthy();
+      const created2 = foldUser(await testee.findOrCreateWithGoogleOAuth(mockGoogleOAuthResult));
 
-    const created2 = await testee.findOrCreateWithGoogleOAuth(mockGoogleOAuthResult);
+      expect(created2).toEqual(created1);
+    });
 
-    const folded2 = foldUser(created2);
-    expect(folded2).toEqual(folded1);
+    it('refuse to create user when email not verified', async () => {
+      const testee = new UserService(await testDeps.testConnection, testDeps.entropy);
+      const mocked2 = {
+        ...mockGoogleOAuthResult,
+        // eslint-disable-next-line @typescript-eslint/camelcase
+        userInfo: { ...mockGoogleOAuthResult.userInfo, verified_email: null },
+      } as const;
+
+      const created1 = foldUser(await testee.findOrCreateWithGoogleOAuth(mocked2));
+
+      expect(created1?._error).toEqual('email must be verified');
+    });
   });
 });

@@ -15,6 +15,9 @@ export class UserService {
   constructor(@Inject(TypeORMConnection) private conn: Connection, private entropy: EntropyService) {}
 
   async findOrCreateWithGoogleOAuth(oauthResponse: GoogleOAuthResponse): Promise<Either<string, UserAccount>> {
+    if (oauthResponse?.userInfo?.verified_email !== true) {
+      return left('email must be verified');
+    }
     const oAuthAccountRepo = this.conn.getRepository(OAuthAccount);
 
     const existedOAuth = await oAuthAccountRepo.findOne({ externalId: oauthResponse.credentials.tokens.id_token! });
