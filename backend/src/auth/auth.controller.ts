@@ -11,12 +11,6 @@ const logger = getDebugLogger(__filename);
 export class AuthController {
   constructor(private readonly googleOAuthService: GoogleOAuthService, private readonly userService: UserService) {}
 
-  @Get('ping')
-  async pingDb() {
-    await this.userService.now();
-    return null;
-  }
-
   @Post('oauth/google')
   async doGoogleOAuth(
     @Request() req: Request,

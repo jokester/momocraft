@@ -60,6 +60,4 @@ export class UserService {
 
     return res;
   }
-
-  async now() {}
 }
