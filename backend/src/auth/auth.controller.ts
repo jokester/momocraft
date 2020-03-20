@@ -11,12 +11,6 @@ const logger = getDebugLogger(__filename);
 export class AuthController {
   constructor(private readonly googleOAuthService: GoogleOAuthService, private readonly userService: UserService) {}
 
-  @Get('ping')
-  async pingDb() {
-    await this.userService.now();
-    return null;
-  }
-
   @Post('oauth/google')
   async doGoogleOAuth(
     @Request() req: Request,
@@ -31,7 +25,9 @@ export class AuthController {
         throw new BadRequestException('eeee', 'ffff');
       }
 
-      const user = this.userService.findOrCreateWithGoogleOAuth(x.right);
+      const user = await this.userService.findOrCreateWithGoogleOAuth(x.right);
+
+      logger('user authed', user);
 
       return x.right.userInfo;
     }
