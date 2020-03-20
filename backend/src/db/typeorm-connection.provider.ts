@@ -1,5 +1,4 @@
 import { Connection, createConnection } from 'typeorm';
-import { Photo } from './entities/photo';
 import { ConfigService } from '@nestjs/config';
 import { FactoryProvider } from '@nestjs/common';
 import { UserAccount } from './entities/user-account';
@@ -15,6 +14,6 @@ export const typeORMConnectionProvider: FactoryProvider<Promise<Connection>> = {
       /** override to prevent typeorm from reading .env (which fails to resolve entities correctly) */
       type: configService.get('TYPEORM_CONNECTION'),
       url: configService.get('TYPEORM_URL'),
-      entities: [Photo, UserAccount, OAuthAccount],
+      entities: [UserAccount, OAuthAccount],
     }),
 };
