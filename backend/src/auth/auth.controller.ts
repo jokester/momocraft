@@ -1,22 +1,26 @@
-import { BadRequestException, Body, Controller, Get, Post, Req, Request, UseGuards } from '@nestjs/common';
+import { BadRequestException, Body, Controller, Post, Request } from '@nestjs/common';
 import { getDebugLogger } from '../util/get-debug-logger';
 import { GoogleOAuthService } from './google-oauth.service';
 import { UserService } from '../user/user.service';
-import { oauth2_v1 as GoogleOAuth2V1 } from 'googleapis';
 import { isLeft, isRight } from 'fp-ts/lib/Either';
+import { JwtService } from '@nestjs/jwt';
 
 const logger = getDebugLogger(__filename);
 
 @Controller('auth')
 export class AuthController {
-  constructor(private readonly googleOAuthService: GoogleOAuthService, private readonly userService: UserService) {}
+  constructor(
+    private readonly googleOAuthService: GoogleOAuthService,
+    private readonly userService: UserService,
+    private readonly jwtService: JwtService,
+  ) {}
 
   @Post('oauth/google')
   async doGoogleOAuth(
     @Request() req: Request,
     @Body() payload: { code: string; redirectUrl: string },
     // eslint-disable-next-line @typescript-eslint/camelcase
-  ): Promise<GoogleOAuth2V1.Schema$Userinfoplus> {
+  ): Promise<{ jwtToken: string }> {
     if (payload && payload.code && payload.redirectUrl) {
       const x = await this.googleOAuthService.auth(payload.code, payload.redirectUrl);
 
@@ -29,7 +33,10 @@ export class AuthController {
 
       logger('user authed', user);
 
-      return x.right.userInfo;
+      if (isRight(user)) {
+        const res = await this.jwtService.signAsync({ userId: user.right.userId }, { expiresIn: '7d' });
+        return { jwtToken: res };
+      }
     }
     throw new BadRequestException();
   }
