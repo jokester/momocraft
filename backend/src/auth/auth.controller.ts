@@ -34,7 +34,7 @@ export class AuthController {
       logger('user authed', user);
 
       if (isRight(user)) {
-        const res = await this.jwtService.signAsync({ userId: user.right.userId }, { expiresIn: '7d' });
+        const res = await this.jwtService.signAsync({ userId: user.right.userId });
         return { jwtToken: res };
       }
     }
