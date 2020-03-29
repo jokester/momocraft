@@ -1,9 +1,20 @@
-import { BadRequestException, Body, Controller, Get, Post, Req, Request, UseGuards } from '@nestjs/common';
+import {
+  BadRequestException,
+  Body,
+  Controller,
+  Get,
+  Header,
+  Headers,
+  HttpCode,
+  Post,
+  Request,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { getDebugLogger } from '../util/get-debug-logger';
 import { GoogleOAuthService } from './google-oauth.service';
-import { UserService } from '../user/user.service';
-import { oauth2_v1 as GoogleOAuth2V1 } from 'googleapis';
+import { ResolvedUser, UserService } from '../user/user.service';
 import { isLeft, isRight } from 'fp-ts/lib/Either';
+import { getRightOrThrow } from '../util/fpts-getter';
 
 const logger = getDebugLogger(__filename);
 
@@ -12,11 +23,13 @@ export class AuthController {
   constructor(private readonly googleOAuthService: GoogleOAuthService, private readonly userService: UserService) {}
 
   @Post('oauth/google')
+  @HttpCode(200)
+  @Header('Cache-Control', 'private;max-age=0;')
   async doGoogleOAuth(
     @Request() req: Request,
     @Body() payload: { code: string; redirectUrl: string },
     // eslint-disable-next-line @typescript-eslint/camelcase
-  ): Promise<GoogleOAuth2V1.Schema$Userinfoplus> {
+  ): Promise<{ jwtToken: string }> {
     if (payload && payload.code && payload.redirectUrl) {
       const x = await this.googleOAuthService.auth(payload.code, payload.redirectUrl);
 
@@ -29,8 +42,26 @@ export class AuthController {
 
       logger('user authed', user);
 
-      return x.right.userInfo;
+      if (isRight(user)) {
+        return { jwtToken: await this.userService.createJwtTokenForUser(user.right) };
+      }
     }
     throw new BadRequestException();
+  }
+
+  @Get('jwt/validate')
+  @Header('Cache-Control', 'private;max-age=0;')
+  async jwtValidate(@Headers('authorization') authHeader?: string): Promise<ResolvedUser> {
+    logger('AuthController#jwtValidate auth', authHeader);
+    const x = /^Bearer ([^ ]*)$/.exec(authHeader || '');
+
+    if (!x) {
+      throw new BadRequestException('malformed Authorization header');
+    }
+    const [_whatever, token] = x;
+
+    const user = getRightOrThrow(await this.userService.findUserWithJwtToken(token), l => new UnauthorizedException(l));
+
+    return this.userService.resolveUser(user);
   }
 }

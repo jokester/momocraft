@@ -7,12 +7,77 @@ import { Connection, DeepPartial } from 'typeorm';
 import { OAuthAccount, OAuthProvider } from '../db/entities/oauth-account';
 import { UserAccount } from '../db/entities/user-account';
 import { EntropyService } from '../deps/entropy.service';
+import { JwtService } from '@nestjs/jwt';
+import { Option, fromNullable } from 'fp-ts/lib/Option';
 
 const logger = getDebugLogger(__filename);
 
+interface JwtTokenPayload {
+  shortId: string;
+}
+
+export interface ResolvedUser {
+  shortId: string;
+  avatarUrl?: string;
+}
+
 @Injectable()
 export class UserService {
-  constructor(@Inject(TypeORMConnection) private conn: Connection, private entropy: EntropyService) {}
+  constructor(
+    @Inject(TypeORMConnection) private conn: Connection,
+    private jwtService: JwtService,
+    private entropy: EntropyService,
+  ) {}
+
+  async find(userId: number): Promise<Option<UserAccount>> {
+    const existedUser = await this.conn.getRepository(UserAccount).findOne({ userId });
+
+    return fromNullable(existedUser);
+  }
+
+  async findByShortId(shortId: string): Promise<Option<UserAccount>> {
+    const existedUser = await this.conn.getRepository(UserAccount).findOne({ shortId });
+
+    return fromNullable(existedUser);
+  }
+
+  async findUserWithJwtToken(
+    jwtToken: string,
+    currentTimestamp = this.entropy.now(),
+  ): Promise<Either<string, UserAccount>> {
+    let payload: JwtTokenPayload;
+    try {
+      payload = await this.jwtService.verifyAsync<JwtTokenPayload>(jwtToken, {
+        clockTimestamp: currentTimestamp / 1e3,
+      });
+    } catch (e) {
+      return left('invalid token');
+    }
+
+    const user = await this.conn.getRepository(UserAccount).findOne({ shortId: payload.shortId });
+    if (!user) {
+      throw new Error('user not found');
+    }
+    return right(user);
+  }
+
+  async resolveUser(userAccount: UserAccount): Promise<ResolvedUser> {
+    const resolved: ResolvedUser = {
+      shortId: userAccount.shortId,
+    };
+    const oauthAccounts = await this.conn.getRepository(OAuthAccount).find({ userId: userAccount.userId });
+    for (const o of oauthAccounts) {
+      if (o.isGoogle() && !resolved.avatarUrl) {
+        resolved.avatarUrl = o.userInfo.picture || undefined;
+      }
+    }
+
+    return resolved;
+  }
+
+  createJwtTokenForUser(user: UserAccount): Promise<string> {
+    return this.jwtService.signAsync({ shortId: user.shortId } as JwtTokenPayload);
+  }
 
   async findOrCreateWithGoogleOAuth(oauthResponse: GoogleOAuthResponse): Promise<Either<string, UserAccount>> {
     if (oauthResponse?.userInfo?.verified_email !== true) {
@@ -27,6 +92,7 @@ export class UserService {
       const [user] = await this.conn.getRepository(UserAccount).find({ userId: existedOAuth.userId });
 
       if (!user) {
+        // surprise
         throw new Error('user not exist');
       }
 

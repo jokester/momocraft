@@ -30,7 +30,7 @@ export class GoogleOAuthService {
 
     try {
       client.setCredentials(token.tokens);
-      const oauthUserInfo = await oauth2({ version: 'v2', auth: client });
+      const oauthUserInfo = oauth2({ version: 'v2', auth: client });
       const got = await oauthUserInfo.userinfo.get();
 
       logger('GoogleOAuthService#auth', got);
@@ -40,6 +40,8 @@ export class GoogleOAuthService {
         userInfo: got.data,
       });
     } catch (e) {
+      logger('GoogleOAuthService#auth thrown', e);
+
       return left('GoogleOAuthService#auth error getting user info');
     }
   }
