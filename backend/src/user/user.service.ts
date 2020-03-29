@@ -8,11 +8,17 @@ import { OAuthAccount, OAuthProvider } from '../db/entities/oauth-account';
 import { UserAccount } from '../db/entities/user-account';
 import { EntropyService } from '../deps/entropy.service';
 import { JwtService } from '@nestjs/jwt';
+import { Option, fromNullable } from 'fp-ts/lib/Option';
 
 const logger = getDebugLogger(__filename);
 
 interface JwtTokenPayload {
   shortId: string;
+}
+
+export interface ResolvedUser {
+  shortId: string;
+  avatarUrl?: string;
 }
 
 @Injectable()
@@ -23,13 +29,16 @@ export class UserService {
     private entropy: EntropyService,
   ) {}
 
-  async find(userId: number): Promise<Either<string, UserAccount>> {
+  async find(userId: number): Promise<Option<UserAccount>> {
     const existedUser = await this.conn.getRepository(UserAccount).findOne({ userId });
 
-    if (!existedUser) {
-      return left('user not found');
-    }
-    return right(existedUser);
+    return fromNullable(existedUser);
+  }
+
+  async findByShortId(shortId: string): Promise<Option<UserAccount>> {
+    const existedUser = await this.conn.getRepository(UserAccount).findOne({ shortId });
+
+    return fromNullable(existedUser);
   }
 
   async findUserWithJwtToken(
@@ -38,7 +47,7 @@ export class UserService {
   ): Promise<Either<string, UserAccount>> {
     let payload: JwtTokenPayload;
     try {
-      payload = await this.jwtService.verify<JwtTokenPayload>(jwtToken, {
+      payload = await this.jwtService.verifyAsync<JwtTokenPayload>(jwtToken, {
         clockTimestamp: currentTimestamp / 1e3,
       });
     } catch (e) {
@@ -50,6 +59,20 @@ export class UserService {
       throw new Error('user not found');
     }
     return right(user);
+  }
+
+  async resolveUser(userAccount: UserAccount): Promise<ResolvedUser> {
+    const resolved: ResolvedUser = {
+      shortId: userAccount.shortId,
+    };
+    const oauthAccounts = await this.conn.getRepository(OAuthAccount).find({ userId: userAccount.userId });
+    for (const o of oauthAccounts) {
+      if (o.isGoogle() && !resolved.avatarUrl) {
+        resolved.avatarUrl = o.userInfo.picture || undefined;
+      }
+    }
+
+    return resolved;
   }
 
   createJwtTokenForUser(user: UserAccount): Promise<string> {

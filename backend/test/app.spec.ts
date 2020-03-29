@@ -4,17 +4,20 @@ import { AppModule } from '../src/app.module';
 import { INestApplication } from '@nestjs/common';
 import { GoogleOAuthResponse, GoogleOAuthService } from '../src/auth/google-oauth.service';
 import { MockData, TestDeps } from './test-deps';
-import { right } from 'fp-ts/lib/Either';
+import { right, isLeft } from 'fp-ts/lib/Either';
 import { AuthModule } from '../src/auth/auth.module';
 import { TypeORMConnection } from '../src/db/typeorm-connection.provider';
 import { JwtService } from '@nestjs/jwt';
 import { getDebugLogger } from '../src/util/get-debug-logger';
+import { ResolvedUser, UserService } from '../src/user/user.service';
+import { getRightOrThrow } from '../src/util/fpts-getter';
 
 const logger = getDebugLogger(__filename);
 
 describe('AppController (e2e)', () => {
   let app: INestApplication;
   let jwtService: JwtService;
+  let userService: UserService;
 
   beforeAll(async () => {
     const moduleFixture = await Test.createTestingModule({
@@ -26,6 +29,7 @@ describe('AppController (e2e)', () => {
 
     app = moduleFixture.createNestApplication();
     jwtService = await moduleFixture.resolve(JwtService);
+    userService = await moduleFixture.resolve(UserService);
 
     await app.init();
     await TestDeps.clearTestDatabase();
@@ -76,7 +80,7 @@ describe('AppController (e2e)', () => {
       const res = await request(app.getHttpServer())
         .post('/auth/oauth/google')
         .send({ code: '123', redirectUrl: '456' })
-        .expect(201);
+        .expect(200);
 
       const jwtToken = JSON.parse(res.text).jwtToken;
       expect(jwtToken).toBeTruthy();
@@ -85,6 +89,19 @@ describe('AppController (e2e)', () => {
       logger('decoded', decoded);
 
       await jwtService.verifyAsync(jwtToken);
+
+      await request(app.getHttpServer())
+        .get('/auth/jwt/validate')
+        .expect(400);
+
+      const {
+        body: { shortId, ...stableFields },
+      } = await request(app.getHttpServer())
+        .get('/auth/jwt/validate')
+        .set('Authorization', `Bearer ${jwtToken}`)
+        .expect(200);
+
+      expect(stableFields).toMatchSnapshot('jwt/validate');
     });
   });
 });
