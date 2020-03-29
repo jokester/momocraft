@@ -12,7 +12,7 @@ import { JwtService } from '@nestjs/jwt';
 const logger = getDebugLogger(__filename);
 
 interface JwtTokenPayload {
-  userId: number;
+  shortId: string;
 }
 
 @Injectable()
@@ -34,18 +34,18 @@ export class UserService {
 
   async findUserWithJwtToken(
     jwtToken: string,
-    overrideCurrentTimestamp?: number,
+    currentTimestamp = this.entropy.now(),
   ): Promise<Either<string, UserAccount>> {
     let payload: JwtTokenPayload;
     try {
       payload = await this.jwtService.verify<JwtTokenPayload>(jwtToken, {
-        clockTimestamp: overrideCurrentTimestamp ?? Date.now() / 1e3,
+        clockTimestamp: currentTimestamp / 1e3,
       });
     } catch (e) {
       return left('invalid token');
     }
 
-    const user = await this.conn.getRepository(UserAccount).findOne({ userId: payload.userId });
+    const user = await this.conn.getRepository(UserAccount).findOne({ shortId: payload.shortId });
     if (!user) {
       throw new Error('user not found');
     }
@@ -53,7 +53,7 @@ export class UserService {
   }
 
   createJwtTokenForUser(user: UserAccount): Promise<string> {
-    return this.jwtService.signAsync({ userId: user.userId } as JwtTokenPayload);
+    return this.jwtService.signAsync({ shortId: user.shortId } as JwtTokenPayload);
   }
 
   async findOrCreateWithGoogleOAuth(oauthResponse: GoogleOAuthResponse): Promise<Either<string, UserAccount>> {
