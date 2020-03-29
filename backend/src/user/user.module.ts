@@ -4,6 +4,7 @@ import { EntropyService } from '../deps/entropy.service';
 import { DatabaseModule } from '../db/database.module';
 import { JwtModule } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
+import { UserController } from './user.controller';
 
 @Module({
   imports: [
@@ -21,6 +22,7 @@ import { ConfigService } from '@nestjs/config';
       },
     }),
   ],
+  controllers: [UserController],
   providers: [EntropyService, UserService],
   exports: [UserService],
 })

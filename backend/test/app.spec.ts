@@ -9,8 +9,7 @@ import { AuthModule } from '../src/auth/auth.module';
 import { TypeORMConnection } from '../src/db/typeorm-connection.provider';
 import { JwtService } from '@nestjs/jwt';
 import { getDebugLogger } from '../src/util/get-debug-logger';
-import { ResolvedUser, UserService } from '../src/user/user.service';
-import { getRightOrThrow } from '../src/util/fpts-getter';
+import { UserService } from '../src/user/user.service';
 
 const logger = getDebugLogger(__filename);
 
@@ -102,6 +101,14 @@ describe('AppController (e2e)', () => {
         .expect(200);
 
       expect(stableFields).toMatchSnapshot('jwt/validate');
+
+      const {
+        body: { shortId: shortId2, ...stableFields2 },
+      } = await request(app.getHttpServer())
+        .get(`/user/${shortId}`)
+        .expect(200);
+
+      expect(stableFields2).toEqual(stableFields);
     });
   });
 });
