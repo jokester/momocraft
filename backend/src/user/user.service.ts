@@ -27,6 +27,7 @@ export class UserService {
       const [user] = await this.conn.getRepository(UserAccount).find({ userId: existedOAuth.userId });
 
       if (!user) {
+        // surprise
         throw new Error('user not exist');
       }
 
