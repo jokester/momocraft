@@ -3,15 +3,17 @@ import { MockData, TestDeps } from '../../test/test-deps';
 import { UserAccount } from '../db/entities/user-account';
 import { OAuthAccount } from '../db/entities/oauth-account';
 import { fold } from 'fp-ts/lib/Either';
+import { JwtService } from '@nestjs/jwt';
 
 describe(UserService, () => {
   let testee: UserService;
+  const jwtService = new JwtService({ secret: 'vaaaaaaarysecret' });
 
   beforeEach(async () => {
     const conn = (await TestDeps.testConnection).createEntityManager();
     await conn.clear(UserAccount);
     await conn.clear(OAuthAccount);
-    testee = new UserService(await TestDeps.testConnection, TestDeps.entropy);
+    testee = new UserService(await TestDeps.testConnection, jwtService, TestDeps.entropy);
   });
 
   const foldUser = fold<string, UserAccount, Partial<UserAccount & { _error: string }>>(
@@ -32,8 +34,6 @@ describe(UserService, () => {
     });
 
     it('refuse to create user when email not verified', async () => {
-      const testee = new UserService(await TestDeps.testConnection, TestDeps.entropy);
-
       const created1 = foldUser(await testee.findOrCreateWithGoogleOAuth(MockData.googleOAuthResponseEmailUnverified));
 
       expect(created1?._error).toEqual('email must be verified');

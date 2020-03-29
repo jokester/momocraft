@@ -7,12 +7,54 @@ import { Connection, DeepPartial } from 'typeorm';
 import { OAuthAccount, OAuthProvider } from '../db/entities/oauth-account';
 import { UserAccount } from '../db/entities/user-account';
 import { EntropyService } from '../deps/entropy.service';
+import { JwtService } from '@nestjs/jwt';
 
 const logger = getDebugLogger(__filename);
 
+interface JwtTokenPayload {
+  userId: number;
+}
+
 @Injectable()
 export class UserService {
-  constructor(@Inject(TypeORMConnection) private conn: Connection, private entropy: EntropyService) {}
+  constructor(
+    @Inject(TypeORMConnection) private conn: Connection,
+    private jwtService: JwtService,
+    private entropy: EntropyService,
+  ) {}
+
+  async find(userId: number): Promise<Either<string, UserAccount>> {
+    const existedUser = await this.conn.getRepository(UserAccount).findOne({ userId });
+
+    if (!existedUser) {
+      return left('user not found');
+    }
+    return right(existedUser);
+  }
+
+  async findUserWithJwtToken(
+    jwtToken: string,
+    overrideCurrentTimestamp?: number,
+  ): Promise<Either<string, UserAccount>> {
+    let payload: JwtTokenPayload;
+    try {
+      payload = await this.jwtService.verify<JwtTokenPayload>(jwtToken, {
+        clockTimestamp: overrideCurrentTimestamp ?? Date.now() / 1e3,
+      });
+    } catch (e) {
+      return left('invalid token');
+    }
+
+    const user = await this.conn.getRepository(UserAccount).findOne({ userId: payload.userId });
+    if (!user) {
+      throw new Error('user not found');
+    }
+    return right(user);
+  }
+
+  createJwtTokenForUser(user: UserAccount): Promise<string> {
+    return this.jwtService.signAsync({ userId: user.userId } as JwtTokenPayload);
+  }
 
   async findOrCreateWithGoogleOAuth(oauthResponse: GoogleOAuthResponse): Promise<Either<string, UserAccount>> {
     if (oauthResponse?.userInfo?.verified_email !== true) {

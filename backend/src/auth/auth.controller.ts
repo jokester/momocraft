@@ -3,17 +3,12 @@ import { getDebugLogger } from '../util/get-debug-logger';
 import { GoogleOAuthService } from './google-oauth.service';
 import { UserService } from '../user/user.service';
 import { isLeft, isRight } from 'fp-ts/lib/Either';
-import { JwtService } from '@nestjs/jwt';
 
 const logger = getDebugLogger(__filename);
 
 @Controller('auth')
 export class AuthController {
-  constructor(
-    private readonly googleOAuthService: GoogleOAuthService,
-    private readonly userService: UserService,
-    private readonly jwtService: JwtService,
-  ) {}
+  constructor(private readonly googleOAuthService: GoogleOAuthService, private readonly userService: UserService) {}
 
   @Post('oauth/google')
   async doGoogleOAuth(
@@ -34,8 +29,7 @@ export class AuthController {
       logger('user authed', user);
 
       if (isRight(user)) {
-        const res = await this.jwtService.signAsync({ userId: user.right.userId });
-        return { jwtToken: res };
+        return { jwtToken: await this.userService.createJwtTokenForUser(user.right) };
       }
     }
     throw new BadRequestException();
