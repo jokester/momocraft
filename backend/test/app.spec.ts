@@ -10,6 +10,8 @@ import { TypeORMConnection } from '../src/db/typeorm-connection.provider';
 import { JwtService } from '@nestjs/jwt';
 import { getDebugLogger } from '../src/util/get-debug-logger';
 import { UserService } from '../src/user/user.service';
+import { UserController } from '../src/user/user.controller';
+import { UserModule } from '../src/user/user.module';
 
 const logger = getDebugLogger(__filename);
 
@@ -71,7 +73,7 @@ describe('AppController (e2e)', () => {
   });
 
   describe(AuthModule, () => {
-    it('POST /auth/oauth/google', async () => {
+    it('POST /auth/oauth/google returns jwtToken on succeed', async () => {
       jest
         .spyOn(GoogleOAuthService.prototype, 'auth')
         .mockResolvedValue(right<string, GoogleOAuthResponse>(MockData.googleOAuthResponseValid));
@@ -109,6 +111,32 @@ describe('AppController (e2e)', () => {
         .expect(200);
 
       expect(stableFields2).toEqual(stableFields);
+    });
+
+    it('POST /auth/oauth/google return 400 on malformed request', async () => {
+      await request(app.getHttpServer())
+        .post('/auth/oauth/google')
+        .send({ code: '123', redirectUrl: '' })
+        .expect(400);
+    });
+
+    it('POST /auth/oauth/google return 400 on auth error', async () => {
+      jest
+        .spyOn(GoogleOAuthService.prototype, 'auth')
+        .mockResolvedValue(right<string, GoogleOAuthResponse>(MockData.googleOAuthResponseEmailUnverified));
+
+      await request(app.getHttpServer())
+        .post('/auth/oauth/google')
+        .send({ code: '123', redirectUrl: 'someUrl' })
+        .expect(400);
+    });
+  });
+
+  describe(UserModule, () => {
+    it('GET /user/:shortId returns 404', async () => {
+      await request(app.getHttpServer())
+        .get('/user/__s')
+        .expect(404);
     });
   });
 });

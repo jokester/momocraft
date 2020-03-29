@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`AppController (e2e) AuthModule POST /auth/oauth/google: jwt/validate 1`] = `
+exports[`AppController (e2e) AuthModule POST /auth/oauth/google returns jwtToken on succeed: jwt/validate 1`] = `
 Object {
   "avatarUrl": "https://example.com/a.png",
 }
