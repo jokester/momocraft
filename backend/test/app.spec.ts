@@ -8,7 +8,9 @@ import { right } from 'fp-ts/lib/Either';
 import { AuthModule } from '../src/auth/auth.module';
 import { TypeORMConnection } from '../src/db/typeorm-connection.provider';
 import { JwtService } from '@nestjs/jwt';
-import { wait } from '../src/ts-commonutil/concurrency/timing';
+import { getDebugLogger } from '../src/util/get-debug-logger';
+
+const logger = getDebugLogger(__filename);
 
 describe('AppController (e2e)', () => {
   let app: INestApplication;
@@ -34,19 +36,34 @@ describe('AppController (e2e)', () => {
   });
 
   describe(JwtService, () => {
+    const origPayload = { something: 'really something' } as const;
     it('signs payload to jwt token', async () => {
-      const origPayload = { something: 'really something' } as const;
-
       const token = await jwtService.signAsync(origPayload);
       const verified = await jwtService.verify<typeof origPayload>(token);
 
       expect(verified.something).toEqual(origPayload.something);
     });
 
-    it('throws on invalid jwt token', async () => {
-      const token = 'ajfal;sdf';
+    it('throws on different key', async () => {
+      const anotherJwtService = new JwtService({ secret: 'aaaasecret' });
+      const token = await anotherJwtService.signAsync(origPayload);
+      await expect(jwtService.verifyAsync(token)).rejects.toThrowError('invalid signature');
+    });
 
-      expect(() => jwtService.verify(token)).toThrow(/jwt malformed/);
+    it('throws on malformed jwt token', async () => {
+      const token = 'ajfal;sdf';
+      expect(() => jwtService.verify(token)).toThrowError('jwt malformed');
+    });
+
+    it('throws on expired token', async () => {
+      const token = await jwtService.signAsync(origPayload);
+      await expect(
+        jwtService.verifyAsync(token, { clockTimestamp: Date.now() / 1e3 + 7 * 24 * 3600 - 10 }),
+      ).resolves.toBeTruthy();
+
+      await expect(
+        jwtService.verifyAsync(token, { clockTimestamp: Date.now() / 1e3 + 7 * 24 * 3600 }),
+      ).rejects.toThrowError(/jwt expired/);
     });
   });
 
@@ -64,9 +81,10 @@ describe('AppController (e2e)', () => {
       const jwtToken = JSON.parse(res.text).jwtToken;
       expect(jwtToken).toBeTruthy();
 
-      await jwtService.verifyAsync(jwtToken);
+      const decoded = await jwtService.decode(jwtToken);
+      logger('decoded', decoded);
 
-      expect(() => jwtService.verify(jwtToken, { clockTimestamp: Date.now() + 7 * 24 * 3600e3 })).toBeTruthy();
+      await jwtService.verifyAsync(jwtToken);
     });
   });
 });
