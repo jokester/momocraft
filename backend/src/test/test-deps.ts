@@ -1,9 +1,9 @@
 import { createConnection } from 'typeorm';
-import { UserAccount } from '../src/db/entities/user-account';
-import { OAuthAccount } from '../src/db/entities/oauth-account';
-import { EntropyService } from '../src/deps/entropy.service';
-import { DeepReadonly } from '../src/ts-commonutil/type';
-import { GoogleOAuthResponse } from '../src/auth/google-oauth.service';
+import { UserAccount } from '../db/entities/user-account';
+import { OAuthAccount } from '../db/entities/oauth-account';
+import { EntropyService } from '../deps/entropy.service';
+import { DeepReadonly } from '../ts-commonutil/type';
+import { GoogleOAuthResponse } from '../auth/google-oauth.service';
 
 export namespace TestDeps {
   export const testConnection = createConnection({

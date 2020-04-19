@@ -1,17 +1,17 @@
 import request from 'supertest';
 import { Test } from '@nestjs/testing';
-import { AppModule } from '../src/app.module';
+import { AppModule } from '../app.module';
 import { INestApplication } from '@nestjs/common';
-import { GoogleOAuthResponse, GoogleOAuthService } from '../src/auth/google-oauth.service';
+import { GoogleOAuthResponse, GoogleOAuthService } from '../auth/google-oauth.service';
 import { MockData, TestDeps } from './test-deps';
 import { right, isLeft } from 'fp-ts/lib/Either';
-import { AuthModule } from '../src/auth/auth.module';
-import { TypeORMConnection } from '../src/db/typeorm-connection.provider';
+import { AuthModule } from '../auth/auth.module';
+import { TypeORMConnection } from '../db/typeorm-connection.provider';
 import { JwtService } from '@nestjs/jwt';
-import { getDebugLogger } from '../src/util/get-debug-logger';
-import { UserService } from '../src/user/user.service';
-import { UserController } from '../src/user/user.controller';
-import { UserModule } from '../src/user/user.module';
+import { getDebugLogger } from '../util/get-debug-logger';
+import { UserService } from '../user/user.service';
+import { UserController } from '../user/user.controller';
+import { UserModule } from '../user/user.module';
 
 const logger = getDebugLogger(__filename);
 
@@ -36,8 +36,9 @@ describe('AppController (e2e)', () => {
     await TestDeps.clearTestDatabase();
   });
 
-  afterAll(async () => {
+  afterAll(async done => {
     await app.close();
+    done();
   });
 
   describe(JwtService, () => {

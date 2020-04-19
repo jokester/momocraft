@@ -1,5 +1,5 @@
 import { UserService } from './user.service';
-import { MockData, TestDeps } from '../../test/test-deps';
+import { MockData, TestDeps } from '../test/test-deps';
 import { UserAccount } from '../db/entities/user-account';
 import { OAuthAccount } from '../db/entities/oauth-account';
 import { fold } from 'fp-ts/lib/Either';
