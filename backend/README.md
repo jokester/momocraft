@@ -2,41 +2,9 @@
 
 An API-only microservice for user authentiate.
 
-## Public APIs
+## Modules / APIs
 
-### Email + Password auth
-
-
-### Google OAuth
-
-`/auth/oauth/google`
-
-### FB OAuth
-
-`/auth/oauth/facebook`
-
-## Private APIs
-
-### Session validation
-
-### User Metadata
-
-## Models
-
-```
-- User
-    - email / password / email reset
-    - has_many OAuthAuthorization
-    - has_many UserSession
-    <!-- - has_one UserMeta -->
-- UserSession
-- OAuthAuthiencation
-- UserMeta
-```
-
-## Modules / HTTP APIs
-
-UserModule:
+### UserModule
 
 ```
 AuthController:
@@ -58,5 +26,19 @@ UserController:
 
 - GET /user/id/:userId
 - GET /user/self      (requires auth)
-- PUT /user/self/meta (requires auth)
+- PUT /user/self      (requires auth)
+```
+
+
+## Models
+
+```
+- User
+    - email / password / email reset
+    - has_many OAuthAuthorization
+    - has_many UserSession
+    <!-- - has_one UserMeta -->
+- UserSession
+- OAuthAuthiencation
+- UserMeta
 ```
