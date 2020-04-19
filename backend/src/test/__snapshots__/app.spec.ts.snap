@@ -3,6 +3,15 @@
 exports[`AppController (e2e) AuthController POST /auth/oauth/google returns jwtToken on succeed: GET /user/self 1`] = `
 Object {
   "avatarUrl": "https://example.com/a.png",
+  "nickName": "(not set)",
+  "shortId": "nanoid-1",
+}
+`;
+
+exports[`AppController (e2e) UserController PUT /user/self updated resolved user: updated user 1`] = `
+Object {
+  "avatarUrl": "https://corp.com/a.gif",
+  "nickName": "samuel mf jackson",
   "shortId": "nanoid-1",
 }
 `;

@@ -1,3 +1,3 @@
-export function absent(wanted: string): never {
-  throw new Error(`expected ${wanted}`);
+export function absent(expected: string): never {
+  throw new Error(`expected ${expected}`);
 }

@@ -1,5 +1,6 @@
 import {
   BadRequestException,
+  Body,
   Controller,
   Get,
   Header,
@@ -23,7 +24,7 @@ export class UserController {
 
   @Get('id/:shortId')
   async getUser(@Param() params: { shortId: string }): Promise<ResolvedUser> {
-    logger('getUser params', params);
+    logger('UserController#getUser', params);
 
     const user = getSomeOrThrow(await this.userService.findByShortId(params.shortId), () => new NotFoundException());
 
@@ -33,13 +34,17 @@ export class UserController {
   @Get('self')
   @Header('Cache-Control', 'private;max-age=0;')
   async getSelf(@AuthedUser() authedUser: UserAccount): Promise<ResolvedUser> {
-    logger('AuthController#jwtValidate auth', authedUser);
+    logger('UserController#getSelf', authedUser);
 
     return this.userService.resolveUser(authedUser);
   }
 
   @Put('self')
-  async putUserMeta(@Param() params: {}) {
-    throw 'TODO';
+  async putSelfMeta(@AuthedUser() authedUser: UserAccount, @Body() params: {}): Promise<ResolvedUser> {
+    logger('UserController#putSelfMeta', authedUser, params);
+
+    const updated = await this.userService.updateUserMeta(authedUser, params);
+
+    return this.userService.resolveUser(updated);
   }
 }

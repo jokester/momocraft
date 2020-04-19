@@ -4,15 +4,16 @@ import { AppModule } from '../app.module';
 import { INestApplication } from '@nestjs/common';
 import { GoogleOAuthResponse, GoogleOAuthService } from '../user/google-oauth.service';
 import { MockData, TestDeps } from './test-deps';
-import { right, isLeft } from 'fp-ts/lib/Either';
+import { right } from 'fp-ts/lib/Either';
 import { TypeORMConnection } from '../db/typeorm-connection.provider';
 import { JwtService } from '@nestjs/jwt';
 import { getDebugLogger } from '../util/get-debug-logger';
 import { UserService } from '../user/user.service';
-import { UserModule } from '../user/user.module';
 import { AuthController } from '../user/auth.controller';
 import { UserController } from '../user/user.controller';
 import { EntropyService } from '../deps/entropy.service';
+import { getSomeOrThrow } from '../util/fpts-getter';
+import { absent } from '../util/absent';
 
 const logger = getDebugLogger(__filename);
 
@@ -20,6 +21,7 @@ describe('AppController (e2e)', () => {
   let app: INestApplication;
   let jwtService: JwtService;
   let userService: UserService;
+  let createdUserShortId: string;
 
   beforeAll(async () => {
     const moduleFixture = await Test.createTestingModule({
@@ -75,8 +77,10 @@ describe('AppController (e2e)', () => {
 
       expect(body).toMatchSnapshot('GET /user/self');
 
+      createdUserShortId = body.shortId || absent('body.shortId');
+
       const { body: body2 } = await request(app.getHttpServer())
-        .get(`/user/id/${body.shortId}`)
+        .get(`/user/id/${createdUserShortId}`)
         .expect(200);
 
       expect(body2).toEqual(body);
@@ -119,6 +123,42 @@ describe('AppController (e2e)', () => {
       await request(app.getHttpServer())
         .get('/user/self')
         .expect(401);
+    });
+
+    it('GET /user/self with proper auth returns resolved user', async () => {
+      const userAccount1 = getSomeOrThrow(await userService.findByShortId(createdUserShortId), () =>
+        absent('user by shortId'),
+      );
+
+      const jwtToken = await userService.createJwtTokenForUser(userAccount1);
+
+      await request(app.getHttpServer())
+        .get('/user/self')
+        .set('Authorization', `Bearer ${jwtToken}`)
+        .expect(200);
+    });
+
+    it('PUT /user/self updated resolved user', async () => {
+      const userAccount1 = getSomeOrThrow(await userService.findByShortId(createdUserShortId), () =>
+        absent('user by shortId'),
+      );
+
+      const jwtToken = await userService.createJwtTokenForUser(userAccount1);
+
+      const { body } = await request(app.getHttpServer())
+        .put('/user/self')
+        .set('Authorization', `Bearer ${jwtToken}`)
+        .send({ nickName: 'samuel mf jackson', avatarUrl: 'https://corp.com/a.gif' })
+        .expect(200);
+
+      expect(body).toMatchSnapshot('updated user');
+
+      const { body: body2 } = await request(app.getHttpServer())
+        .get('/user/self')
+        .set('Authorization', `Bearer ${jwtToken}`)
+        .expect(200);
+
+      expect(body2).toEqual(body);
     });
   });
 });

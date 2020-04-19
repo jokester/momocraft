@@ -1,5 +1,4 @@
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
-import { ReadonlyRecord } from 'fp-ts/lib/ReadonlyRecord';
 
 @Entity()
 export class UserAccount {
@@ -10,14 +9,30 @@ export class UserAccount {
   readonly shortId!: string;
 
   @Column({ type: 'jsonb', default: {} })
-  readonly userMeta!: InclusiveUserMeta;
+  readonly userMeta: Readonly<UserMeta> = {};
 
-  constructor(init?: Pick<UserAccount, Exclude<keyof UserAccount, 'userId'>>) {
+  constructor(init?: Pick<UserAccount, Exclude<keyof UserAccount, 'userId' | 'setMeta'>>) {
     if (init) {
       this.shortId = init.shortId;
       this.userMeta = init.userMeta;
     }
   }
+
+  setMeta(other: UserMeta): this {
+    const writable = this.userMeta as UserMeta;
+    if (typeof other.nickName === 'string') {
+      writable.nickName = other.nickName;
+    }
+
+    if (typeof other.avatarUrl === 'string') {
+      writable.avatarUrl = other.avatarUrl;
+    }
+
+    return this;
+  }
 }
 
-type InclusiveUserMeta = ReadonlyRecord<string, boolean | number | string | null>;
+interface UserMeta {
+  nickName?: string;
+  avatarUrl?: string;
+}

@@ -1,6 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { getDebugLogger } from '../util/get-debug-logger';
-import { Either, left, right } from 'fp-ts/lib/Either';
+import { Either, fromOption, left, right } from 'fp-ts/lib/Either';
 import { GoogleOAuthResponse } from './google-oauth.service';
 import { TypeORMConnection } from '../db/typeorm-connection.provider';
 import { Connection, DeepPartial } from 'typeorm';
@@ -8,7 +8,8 @@ import { OAuthAccount, OAuthProvider } from '../db/entities/oauth-account';
 import { UserAccount } from '../db/entities/user-account';
 import { EntropyService } from '../deps/entropy.service';
 import { JwtService } from '@nestjs/jwt';
-import { Option, fromNullable } from 'fp-ts/lib/Option';
+import { Option, fromNullable, map, isSome } from 'fp-ts/lib/Option';
+import { getSomeOrThrow } from '../util/fpts-getter';
 
 const logger = getDebugLogger(__filename);
 
@@ -18,6 +19,7 @@ interface JwtTokenPayload {
 
 export interface ResolvedUser {
   shortId: string;
+  nickName: string;
   avatarUrl?: string;
 }
 
@@ -62,10 +64,13 @@ export class UserService {
   }
 
   async resolveUser(userAccount: UserAccount): Promise<ResolvedUser> {
+    const oauthAccounts = await this.conn.getRepository(OAuthAccount).find({ userId: userAccount.userId });
     const resolved: ResolvedUser = {
       shortId: userAccount.shortId,
+      nickName: userAccount.userMeta.nickName ?? `(not set)`,
+      avatarUrl: userAccount.userMeta.avatarUrl,
     };
-    const oauthAccounts = await this.conn.getRepository(OAuthAccount).find({ userId: userAccount.userId });
+
     for (const o of oauthAccounts) {
       if (o.isGoogle() && !resolved.avatarUrl) {
         resolved.avatarUrl = o.userInfo.picture || undefined;
@@ -77,6 +82,15 @@ export class UserService {
 
   createJwtTokenForUser(user: UserAccount): Promise<string> {
     return this.jwtService.signAsync({ shortId: user.shortId } as JwtTokenPayload);
+  }
+
+  async updateUserMeta(authedUser: UserAccount, meta: {}): Promise<UserAccount> {
+    const user = getSomeOrThrow(await this.findByShortId(authedUser.shortId), () => new Error('user not available'));
+
+    user.setMeta(meta);
+
+    await this.conn.getRepository(UserAccount).save(user);
+    return user;
   }
 
   async findOrCreateWithGoogleOAuth(oauthResponse: GoogleOAuthResponse): Promise<Either<string, UserAccount>> {
