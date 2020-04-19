@@ -15,7 +15,7 @@ export namespace TestDeps {
     entities: [UserAccount, OAuthAccount],
   });
 
-  export async function clearTestDatabase() {
+  export async function clearTestDatabase(): Promise<void> {
     const conn = await testConnection;
     await conn.createEntityManager().clear(UserAccount);
     await conn.createEntityManager().clear(OAuthAccount);
