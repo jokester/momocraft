@@ -108,10 +108,17 @@ describe('AppController (e2e)', () => {
         .expect(404);
     });
 
-    it('GET /user/self without auth return 400', async () => {
+    it('GET /user/self with improper auth header returns 400', async () => {
       await request(app.getHttpServer())
         .get('/user/self')
+        .set('Authorization', `Bear`)
         .expect(400);
+    });
+
+    it('GET /user/self without auth return 401', async () => {
+      await request(app.getHttpServer())
+        .get('/user/self')
+        .expect(401);
     });
   });
 });

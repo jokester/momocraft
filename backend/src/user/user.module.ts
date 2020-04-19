@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module, NestModule, RequestMethod } from '@nestjs/common';
 import { UserService } from './user.service';
 import { EntropyService } from '../deps/entropy.service';
 import { DatabaseModule } from '../db/database.module';
@@ -8,6 +8,7 @@ import { UserController } from './user.controller';
 import { absent } from '../util/absent';
 import { AuthController } from './auth.controller';
 import { GoogleOAuthService } from './google-oauth.service';
+import { UserJwtAuthMiddleware } from './user-jwt-auth.middleware';
 
 @Module({
   imports: [
@@ -29,4 +30,8 @@ import { GoogleOAuthService } from './google-oauth.service';
   providers: [EntropyService, UserService, GoogleOAuthService],
   exports: [UserService],
 })
-export class UserModule {}
+export class UserModule implements NestModule {
+  configure(consumer: MiddlewareConsumer): void {
+    consumer.apply(UserJwtAuthMiddleware).forRoutes({ path: '/user/self', method: RequestMethod.ALL });
+  }
+}

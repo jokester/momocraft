@@ -13,6 +13,7 @@ import { ResolvedUser, UserService } from './user.service';
 import { getRightOrThrow, getSomeOrThrow } from '../util/fpts-getter';
 import { getDebugLogger } from '../util/get-debug-logger';
 import { UserAccount } from '../db/entities/user-account';
+import { AuthedUser } from './user-jwt-auth.middleware';
 
 const logger = getDebugLogger(__filename);
 
@@ -31,21 +32,13 @@ export class UserController {
 
   @Get('self')
   @Header('Cache-Control', 'private;max-age=0;')
-  async getSelf(@Headers('authorization') authHeader?: string): Promise<ResolvedUser> {
-    logger('AuthController#jwtValidate auth', authHeader);
-    const x = /^Bearer ([^ ]*)$/.exec(authHeader || '');
+  async getSelf(@AuthedUser() authedUser: UserAccount): Promise<ResolvedUser> {
+    logger('AuthController#jwtValidate auth', authedUser);
 
-    if (!x) {
-      throw new BadRequestException('malformed Authorization header');
-    }
-    const [_whatever, token] = x;
-
-    const user = getRightOrThrow(await this.userService.findUserWithJwtToken(token), l => new UnauthorizedException(l));
-
-    return this.userService.resolveUser(user);
+    return this.userService.resolveUser(authedUser);
   }
 
-  @Put('self/meta')
+  @Put('self')
   async putUserMeta(@Param() params: {}) {
     throw 'TODO';
   }
