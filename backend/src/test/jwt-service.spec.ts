@@ -34,7 +34,7 @@ describe(JwtService, () => {
   });
 
   it('throws on expired token', async () => {
-    const token = await jwtService.signAsync(origPayload, { expiresIn: '7 days' });
+    const token = await jwtService.signAsync(origPayload);
     await expect(
       jwtService.verifyAsync(token, { clockTimestamp: Date.now() / 1e3 + 7 * 24 * 3600 - 10 }),
     ).resolves.toBeTruthy();

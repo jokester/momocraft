@@ -23,7 +23,7 @@ export namespace TestDeps {
 
   export const mockedEntropy = new EntropyService();
 
-  export const mockedJwtService = new JwtService({ secret: 'veryverysecret' });
+  export const mockedJwtService = new JwtService({ secret: 'veryverysecret', signOptions: { expiresIn: '7 days' } });
 }
 
 export namespace MockData {
