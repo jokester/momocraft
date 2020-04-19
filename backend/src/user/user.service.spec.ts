@@ -16,7 +16,7 @@ describe(UserService, () => {
     testee = new UserService(await TestDeps.testConnection, jwtService, TestDeps.mockedEntropy);
   });
 
-  const foldUser = fold<string, UserAccount, Partial<UserAccount & { _error: string }>>(
+  const foldUser = fold<string, UserAccount, Partial<UserAccount & { _error?: string }>>(
     l => ({ _error: l }),
     r => r,
   );
