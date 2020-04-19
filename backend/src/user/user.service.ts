@@ -10,6 +10,7 @@ import { EntropyService } from '../deps/entropy.service';
 import { JwtService } from '@nestjs/jwt';
 import { Option, fromNullable, map, isSome } from 'fp-ts/lib/Option';
 import { getSomeOrThrow } from '../util/fpts-getter';
+import { absent } from '../util/absent';
 
 const logger = getDebugLogger(__filename);
 
@@ -103,12 +104,9 @@ export class UserService {
 
     // return existed user
     if (existedOAuth) {
-      const [user] = await this.conn.getRepository(UserAccount).find({ userId: existedOAuth.userId });
-
-      if (!user) {
-        // surprise
-        throw new Error('user not exist');
-      }
+      const [user = absent('user by existedOAuth')] = await this.conn
+        .getRepository(UserAccount)
+        .find({ userId: existedOAuth.userId });
 
       // update oauth account
       Object.assign(existedOAuth, {
