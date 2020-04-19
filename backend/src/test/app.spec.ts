@@ -45,9 +45,18 @@ describe('AppController (e2e)', () => {
     const origPayload = { something: 'really something' } as const;
     it('signs payload to jwt token', async () => {
       const token = await jwtService.signAsync(origPayload);
-      const verified = await jwtService.verify<typeof origPayload>(token);
+
+      const verified = await jwtService.verifyAsync<typeof origPayload>(token);
 
       expect(verified.something).toEqual(origPayload.something);
+    });
+
+    it('refuses to verify JWT with no sign algorithm', async () => {
+      const token = await jwtService.signAsync(origPayload, { algorithm: 'none' });
+
+      const verified = jwtService.verifyAsync<typeof origPayload>(token);
+
+      await expect(verified).rejects.toThrowError(/jwt signature is required/i);
     });
 
     it('throws on different key', async () => {
