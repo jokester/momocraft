@@ -8,9 +8,31 @@ export class UserAccount {
   @Column({ unique: true })
   readonly shortId!: string;
 
-  constructor(init?: Pick<UserAccount, Exclude<keyof UserAccount, 'userId'>>) {
+  @Column({ type: 'jsonb', default: {} })
+  readonly userMeta: Readonly<UserMeta> = {};
+
+  constructor(init?: Pick<UserAccount, Exclude<keyof UserAccount, 'userId' | 'setMeta'>>) {
     if (init) {
       this.shortId = init.shortId;
+      this.userMeta = init.userMeta;
     }
   }
+
+  setMeta(other: UserMeta): this {
+    const writable = this.userMeta as UserMeta;
+    if (typeof other.nickName === 'string') {
+      writable.nickName = other.nickName;
+    }
+
+    if (typeof other.avatarUrl === 'string') {
+      writable.avatarUrl = other.avatarUrl;
+    }
+
+    return this;
+  }
+}
+
+interface UserMeta {
+  nickName?: string;
+  avatarUrl?: string;
 }

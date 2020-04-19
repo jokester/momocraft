@@ -1,5 +1,5 @@
 import { Column, Entity, Index, PrimaryGeneratedColumn } from 'typeorm';
-import { GoogleOAuthResponse } from '../../auth/google-oauth.service';
+import { GoogleOAuthResponse } from '../../user/google-oauth.service';
 
 export enum OAuthProvider {
   googleOAuth2 = 'google-oauth2',

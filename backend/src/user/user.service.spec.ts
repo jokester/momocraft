@@ -1,5 +1,5 @@
 import { UserService } from './user.service';
-import { MockData, TestDeps } from '../../test/test-deps';
+import { MockData, TestDeps } from '../test/test-deps';
 import { UserAccount } from '../db/entities/user-account';
 import { OAuthAccount } from '../db/entities/oauth-account';
 import { fold } from 'fp-ts/lib/Either';
@@ -13,10 +13,10 @@ describe(UserService, () => {
     const conn = (await TestDeps.testConnection).createEntityManager();
     await conn.clear(UserAccount);
     await conn.clear(OAuthAccount);
-    testee = new UserService(await TestDeps.testConnection, jwtService, TestDeps.entropy);
+    testee = new UserService(await TestDeps.testConnection, jwtService, TestDeps.mockedEntropy);
   });
 
-  const foldUser = fold<string, UserAccount, Partial<UserAccount & { _error: string }>>(
+  const foldUser = fold<string, UserAccount, Partial<UserAccount & { _error?: string }>>(
     l => ({ _error: l }),
     r => r,
   );

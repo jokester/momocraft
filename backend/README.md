@@ -2,29 +2,33 @@
 
 An API-only microservice for user authentiate.
 
-## Public APIs
+## Modules / APIs
 
-### Email + Password auth
+### UserModule
 
-`/auth/email/signup`
+```
+AuthController:
 
-`/auth/email/confirm`
+- POST /auth/oauth/google
+- POST /auth/oauth/facebook TODO
+- POST /auth/oauth/twitter  TODO
 
-`/auth/email/signin`
+```
 
-### Google OAuth
+<!--
+POST /auth/email/signup
+POST /auth/email/confirm
+POST /auth/email/signin
+-->
 
-`/auth/oauth/google`
+```
+UserController:
 
-### FB OAuth
+- GET /user/id/:userId
+- GET /user/self      (requires auth)
+- PUT /user/self      (requires auth)
+```
 
-`/auth/oauth/facebook`
-
-## Private APIs
-
-### Session validation
-
-### User Metadata
 
 ## Models
 
@@ -33,8 +37,8 @@ An API-only microservice for user authentiate.
     - email / password / email reset
     - has_many OAuthAuthorization
     - has_many UserSession
+    <!-- - has_one UserMeta -->
 - UserSession
 - OAuthAuthiencation
 - UserMeta
-- Service
 ```

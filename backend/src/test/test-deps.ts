@@ -1,9 +1,10 @@
 import { createConnection } from 'typeorm';
-import { UserAccount } from '../src/db/entities/user-account';
-import { OAuthAccount } from '../src/db/entities/oauth-account';
-import { EntropyService } from '../src/deps/entropy.service';
-import { DeepReadonly } from '../src/ts-commonutil/type';
-import { GoogleOAuthResponse } from '../src/auth/google-oauth.service';
+import { UserAccount } from '../db/entities/user-account';
+import { OAuthAccount } from '../db/entities/oauth-account';
+import { EntropyService } from '../deps/entropy.service';
+import { DeepReadonly } from '../ts-commonutil/type';
+import { GoogleOAuthResponse } from '../user/google-oauth.service';
+import { JwtService } from '@nestjs/jwt';
 
 export namespace TestDeps {
   export const testConnection = createConnection({
@@ -14,13 +15,15 @@ export namespace TestDeps {
     entities: [UserAccount, OAuthAccount],
   });
 
-  export async function clearTestDatabase() {
+  export async function clearTestDatabase(): Promise<void> {
     const conn = await testConnection;
     await conn.createEntityManager().clear(UserAccount);
     await conn.createEntityManager().clear(OAuthAccount);
   }
 
-  export const entropy = new EntropyService();
+  export const mockedEntropy = new EntropyService();
+
+  export const mockedJwtService = new JwtService({ secret: 'veryverysecret', signOptions: { expiresIn: '7 days' } });
 }
 
 export namespace MockData {
