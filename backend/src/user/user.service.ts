@@ -112,6 +112,7 @@ export class UserService {
       const userAccount = await entityManager.save(
         new UserAccount({
           shortId: this.entropy.createNanoId(),
+          userMeta: {},
         }),
       );
       const oauthAccount = await entityManager.save(
