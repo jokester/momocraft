@@ -1,4 +1,4 @@
-import { Column, Entity, Index, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, CreateDateColumn, Entity, Index, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
 import { GoogleOAuthResponse } from '../../user/google-oauth.service';
 
 export enum OAuthProvider {
@@ -25,6 +25,12 @@ export class OAuthAccount {
 
   @Column('json')
   readonly userInfo: unknown;
+
+  @CreateDateColumn()
+  readonly createdAt!: Date;
+
+  @UpdateDateColumn()
+  readonly updatedAt!: Date;
 
   constructor(init?: Pick<OAuthAccount, 'provider' | 'userId' | 'externalId' | 'credentials' | 'userInfo'>) {
     if (init) {

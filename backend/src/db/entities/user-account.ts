@@ -1,4 +1,4 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
 
 @Entity()
 export class UserAccount {
@@ -10,6 +10,12 @@ export class UserAccount {
 
   @Column({ type: 'jsonb', default: {} })
   readonly userMeta: Readonly<UserMeta> = {};
+
+  @CreateDateColumn()
+  readonly createdAt!: Date;
+
+  @UpdateDateColumn()
+  readonly updatedAt!: Date;
 
   constructor(init?: Pick<UserAccount, Exclude<keyof UserAccount, 'userId' | 'setMeta'>>) {
     if (init) {
