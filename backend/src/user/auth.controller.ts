@@ -12,7 +12,7 @@ import {
 } from '@nestjs/common';
 import { getDebugLogger } from '../util/get-debug-logger';
 import { GoogleOAuthService } from './google-oauth.service';
-import { ResolvedUser, UserService } from '../user/user.service';
+import { ResolvedUser, UserService } from './user.service';
 import { isLeft, isRight } from 'fp-ts/lib/Either';
 import { getRightOrThrow } from '../util/fpts-getter';
 
@@ -49,19 +49,4 @@ export class AuthController {
     throw new BadRequestException();
   }
 
-  @Get('jwt/validate')
-  @Header('Cache-Control', 'private;max-age=0;')
-  async jwtValidate(@Headers('authorization') authHeader?: string): Promise<ResolvedUser> {
-    logger('AuthController#jwtValidate auth', authHeader);
-    const x = /^Bearer ([^ ]*)$/.exec(authHeader || '');
-
-    if (!x) {
-      throw new BadRequestException('malformed Authorization header');
-    }
-    const [_whatever, token] = x;
-
-    const user = getRightOrThrow(await this.userService.findUserWithJwtToken(token), l => new UnauthorizedException(l));
-
-    return this.userService.resolveUser(user);
-  }
 }

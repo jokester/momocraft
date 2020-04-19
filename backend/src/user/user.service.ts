@@ -1,7 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { getDebugLogger } from '../util/get-debug-logger';
 import { Either, left, right } from 'fp-ts/lib/Either';
-import { GoogleOAuthResponse } from '../auth/google-oauth.service';
+import { GoogleOAuthResponse } from './google-oauth.service';
 import { TypeORMConnection } from '../db/typeorm-connection.provider';
 import { Connection, DeepPartial } from 'typeorm';
 import { OAuthAccount, OAuthProvider } from '../db/entities/oauth-account';

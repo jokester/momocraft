@@ -3,7 +3,8 @@ import { UserAccount } from '../db/entities/user-account';
 import { OAuthAccount } from '../db/entities/oauth-account';
 import { EntropyService } from '../deps/entropy.service';
 import { DeepReadonly } from '../ts-commonutil/type';
-import { GoogleOAuthResponse } from '../auth/google-oauth.service';
+import { GoogleOAuthResponse } from '../user/google-oauth.service';
+import { JwtService } from '@nestjs/jwt';
 
 export namespace TestDeps {
   export const testConnection = createConnection({
@@ -20,7 +21,9 @@ export namespace TestDeps {
     await conn.createEntityManager().clear(OAuthAccount);
   }
 
-  export const entropy = new EntropyService();
+  export const mockedEntropy = new EntropyService();
+
+  export const mockedJwtService = new JwtService({ secret: 'veryverysecret' });
 }
 
 export namespace MockData {

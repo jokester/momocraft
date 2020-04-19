@@ -5,6 +5,7 @@ import { getDebugLogger } from '../util/get-debug-logger';
 import { oauth2 } from 'googleapis/build/src/apis/oauth2';
 import { Either, left, right } from 'fp-ts/lib/Either';
 import { GetTokenResponse } from 'google-auth-library/build/src/auth/oauth2client';
+import { absent } from '../util/absent';
 
 const logger = getDebugLogger(__filename);
 
@@ -48,9 +49,10 @@ export class GoogleOAuthService {
 
   private createAuthClient(redirectUrl: string) {
     return new google.auth.OAuth2({
-      clientId: this.confService.get('OAUTH_GOOGLE_CLIENT_ID'),
-      clientSecret: this.confService.get('OAUTH_GOOGLE_CLIENT_SECRET'),
-      redirectUri: redirectUrl || this.confService.get('OAUTH_GOOGLE_REDIRECT_URI'),
+      clientId: this.confService.get('OAUTH_GOOGLE_CLIENT_ID') || absent('$OAUTH_GOOGLE_CLIENT_ID'),
+      clientSecret: this.confService.get('OAUTH_GOOGLE_CLIENT_SECRET') || absent('$OAUTH_GOOGLE_CLIENT_SECRET'),
+      redirectUri:
+        redirectUrl || this.confService.get('OAUTH_GOOGLE_REDIRECT_URI') || absent('$OAUTH_GOOGLE_REDIRECT_URI'),
     });
   }
 }

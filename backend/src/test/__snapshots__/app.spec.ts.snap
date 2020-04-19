@@ -1,7 +1,8 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`AppController (e2e) AuthModule POST /auth/oauth/google returns jwtToken on succeed: jwt/validate 1`] = `
+exports[`AppController (e2e) AuthController POST /auth/oauth/google returns jwtToken on succeed: GET /user/self 1`] = `
 Object {
   "avatarUrl": "https://example.com/a.png",
+  "shortId": "nanoid-1",
 }
 `;
