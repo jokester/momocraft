@@ -9,7 +9,6 @@ import { TypedRoutes } from '../../typed-routes';
 
 export const InventoryDb: React.FC = () => {
   const itemsDbP = useMemo(dynamicItemsV1, []);
-
   const itemsDb = usePromised(itemsDbP);
 
   if (itemsDb.fulfilled) {

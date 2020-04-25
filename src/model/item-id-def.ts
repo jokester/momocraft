@@ -1,5 +1,14 @@
-export function itemIdDef(sheetIndex: number, row: number) {
-  return `mo-${sheetIndex}-${row}`;
+export function itemIdDef(sheetIndex: number, itemIndexInSheet: number) {
+  return `mo-${sheetIndex}-${itemIndexInSheet}`;
+}
+
+export function itemIdExtract(itemIdEncoded: string): null | { sheetIndex: number; itemIndexInSheet: number } {
+  let x;
+  if ((x = /^mo-(\d+)-(\d+)$/i.exec(itemIdEncoded))) {
+    const [_, sheetIndex, itemIndexInSheet] = x;
+    return { sheetIndex: parseInt(sheetIndex), itemIndexInSheet: parseInt(itemIndexInSheet) };
+  }
+  return null;
 }
 
 export const enum ItemColumnType {
