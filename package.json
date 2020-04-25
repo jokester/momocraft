@@ -21,6 +21,7 @@
     "react": "^16.13.0",
     "react-dom": "^16.13.0",
     "reset-css": "^5.0.1",
+    "@jokester/ts-commonutil": "github:jokester/ts-commonutil#8dd410",
     "tslib": "^1.11.1"
   },
   "devDependencies": {

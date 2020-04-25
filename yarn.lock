@@ -1157,6 +1157,10 @@
     "@types/yargs" "^15.0.0"
     chalk "^3.0.0"
 
+"@jokester/ts-commonutil@github:jokester/ts-commonutil#8dd410":
+  version "0.1.0"
+  resolved "https://codeload.github.com/jokester/ts-commonutil/tar.gz/8dd41077ceb50e130a74faa6e51164cc2e588693"
+
 "@mrmlnc/readdir-enhanced@^2.2.1":
   version "2.2.1"
   resolved "https://registry.yarnpkg.com/@mrmlnc/readdir-enhanced/-/readdir-enhanced-2.2.1.tgz#524af240d1a360527b730475ecfa1344aa540dde"
