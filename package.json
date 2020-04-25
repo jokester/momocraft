@@ -18,15 +18,18 @@
     "lint:fix": "eslint '**/*.@(ts|js|tsx|jsx)' --fix"
   },
   "dependencies": {
+    "@jokester/ts-commonutil": "github:jokester/ts-commonutil#8dd410",
+    "classnames": "^2.2.6",
+    "fp-ts": "^2.5.3",
     "react": "^16.13.0",
     "react-dom": "^16.13.0",
     "reset-css": "^5.0.1",
-    "@jokester/ts-commonutil": "github:jokester/ts-commonutil#8dd410",
     "tslib": "^1.11.1"
   },
   "devDependencies": {
     "@babel/plugin-proposal-class-properties": "^7.8.3",
     "@babel/plugin-proposal-decorators": "^7.8.3",
+    "@types/classnames": "^2.2.10",
     "@types/jest": "^25",
     "@types/node": "^12",
     "@types/react": "^16.9.23",

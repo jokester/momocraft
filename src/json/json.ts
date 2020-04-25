@@ -1,6 +1,6 @@
 import * as itemsV1Untyped from './items-v1.json';
 
-export const itemsV1: ItemsV1Json.Root = itemsV1Untyped as any;
+export const itemsV1: { default: ItemsV1Json.Root } = itemsV1Untyped as any;
 
 export namespace ItemsV1Json {
   export interface Root {

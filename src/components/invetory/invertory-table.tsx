@@ -9,6 +9,9 @@ export const InventoryDb: React.FC = () => {
   const itemsDb = usePromised(itemsDbP);
 
   if (itemsDb.fulfilled) {
+    if (1) {
+      console.log(itemsDb);
+    }
     return (
       <div>
         {itemsDb.value.sheets.map((sheet, i) => (

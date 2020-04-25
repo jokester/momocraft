@@ -9,3 +9,5 @@ export const Layout: React.FC = props => (
     <Footer />
   </div>
 );
+
+export const MainContent: React.FC = props => <div className="h-full">{props.children}</div>;
