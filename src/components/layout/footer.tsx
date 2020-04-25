@@ -4,7 +4,7 @@ import { TypedRoutes } from '../../typed-routes';
 
 export const Footer: React.FC = props => {
   return (
-    <div className="h-8 px-4 shadow-md flex items-center justify-between bg-darkest flex-none">
+    <div className="h-8 px-4 shadow-md flex flex-wrap items-center justify-between flex-none bg-gray-300">
       <span>Copyright 2019-</span>
 
       <Link href={TypedRoutes.about}>

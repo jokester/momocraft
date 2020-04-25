@@ -48,7 +48,7 @@ module.exports = withPlugins(
     [optimizedImages, { optimizeImages: false }],
     [withBundleAnalyzer],
     // [withSourceMap],  // this does not work
-    [withTM, { transpileModules: ['lodash-es', '@jokester/ts-commonutil',] }],
+    withTM(['lodash-es', '@jokester',]),
   ],
   withSourceMap(nextConf),
 );

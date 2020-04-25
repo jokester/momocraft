@@ -6,7 +6,6 @@ export default class CustomDocument extends Document {
     return (
       <html lang="zh-CN">
         <Head>
-          <title>momocraft</title>
           <link
             key="font-awesome"
             rel="stylesheet"
@@ -14,8 +13,12 @@ export default class CustomDocument extends Document {
             integrity="sha256-+N4/V/SbAFiW1MPBCXnfnP9QSN3+Keu+NlB+0ev/YKQ="
             crossOrigin="anonymous"
           />
-          <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/1.3.5/tailwind.css"
-                integrity="sha256-SRNuJFvxpvNe8ECgkgQlcrxElNwUe1vZ+DKqwcxw6Dc=" crossOrigin="anonymous"/>
+          <link
+            rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/1.3.5/tailwind.css"
+            integrity="sha256-SRNuJFvxpvNe8ECgkgQlcrxElNwUe1vZ+DKqwcxw6Dc="
+            crossOrigin="anonymous"
+          />
         </Head>
         <body className="bg-dark">
           <Main />

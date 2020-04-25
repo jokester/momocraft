@@ -2,7 +2,7 @@ import * as itemsV1Untyped from './items-v1.json';
 
 export const itemsV1: ItemsV1Json.Root = itemsV1Untyped as any;
 
-namespace ItemsV1Json {
+export namespace ItemsV1Json {
   export interface Root {
     sheets: Sheet[];
   }
@@ -38,6 +38,4 @@ namespace ItemsV1Json {
     出现时间?: string;
     细分类型?: string;
   }
-
 }
-
