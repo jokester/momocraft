@@ -5,7 +5,10 @@ import { ParsedUrlQuery } from 'querystring';
  */
 export const TypedRoutes = {
   index: '/',
-  items: '/items',
+  items: {
+    index: '/items',
+    show: (itemId: string) => `/items/${itemId}`,
+  },
   friends: '/friends',
   about: '/about',
   account: '/account',

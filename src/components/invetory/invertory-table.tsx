@@ -2,8 +2,10 @@ import React, { useMemo } from 'react';
 import { dynamicItemsV1 } from '../../json/dynamic-items-v1';
 import { usePromised } from '@jokester/ts-commonutil/react/hook/use-promised';
 import { ItemsV1Json } from '../../json/json';
-import { ItemColumnType } from '../../model/item-id-def';
+import { ItemColumnType, itemIdDef } from '../../model/item-id-def';
 import { FontAwesomeIcon } from '../icon/fontawesome-icon';
+import Link from 'next/link';
+import { TypedRoutes } from '../../typed-routes';
 
 export const InventoryDb: React.FC = () => {
   const itemsDbP = useMemo(dynamicItemsV1, []);
@@ -14,7 +16,7 @@ export const InventoryDb: React.FC = () => {
     return (
       <div>
         {itemsDb.value.sheets.map((sheet, i) => (
-          <InventoryTableSheet sheet={sheet} key={i} />
+          <InventoryTableSheet sheet={sheet} sheetIndex={i} key={i} />
         ))}
       </div>
     );
@@ -22,52 +24,58 @@ export const InventoryDb: React.FC = () => {
   return <div>LOADING</div>;
 };
 
-const InventoryTableSheet: React.FC<{ sheet: ItemsV1Json.Sheet }> = ({ sheet }) => {
+const tdClass = 'p-2';
+
+const InventoryTableSheet: React.FC<{ sheet: ItemsV1Json.Sheet; sheetIndex: number }> = ({ sheet, sheetIndex }) => {
   const columns = sheet.headers;
   if (!columns) return null;
+  // DEBUG: exclude huge sheets
+  if (sheetIndex < 15) return null;
 
-  const thead = (
-    <thead key={-1}>
-      <tr>
-        <td>名字</td>
-        <td>图片</td>
-        <td>变体</td>
-        <td>meta</td>
-      </tr>
-    </thead>
+  const theadRow = (
+    <tr className="text-xl border-blue-300 border-b border-solid">
+      <td className={tdClass}>名字</td>
+      <td className={tdClass}>图片</td>
+      <td className={tdClass}>变体</td>
+      <td className={tdClass}>meta</td>
+    </tr>
   );
 
-  const tbodyRows = useMemo(
-    () =>
-      sheet.items.map((item, itemNo) => (
-        <tr key={itemNo}>
-          <td>
-            {/* name */ [
-              item[ItemColumnType.nameZhS],
-              <br />,
-              item[ItemColumnType.nameZhT],
-              <br />,
-              item[ItemColumnType.nameJa],
-              <br />,
-              item[ItemColumnType.nameEn],
-            ]}
-          </td>
-          <td>
-            {/* pic */}
-            <FontAwesomeIcon large iconName="fa-images" />
-          </td>
-          <td>TODO</td>
-          <td>TODO</td>
+  const tbodyRows = useMemo(() => {
+    return sheet.items.map((item, itemNoInSheet) => {
+      const link = TypedRoutes.items.show(itemIdDef(sheetIndex, itemNoInSheet));
+      return (
+        <tr key={itemNoInSheet} className="border-blue-200 border-b border-solid">
+          <Link href={link}>
+            <td className={`w-1/3 cursor-pointer ${tdClass}`}>
+              {/* name */}
+              {item[ItemColumnType.nameZhS]}
+              <br />
+              {item[ItemColumnType.nameZhT]}
+              <br />
+              {item[ItemColumnType.nameJa]}
+              <br />
+              {item[ItemColumnType.nameEn]}
+            </td>
+          </Link>
+          <Link href={link}>
+            <td className={`cursor-pointer ${tdClass}`}>
+              {/* pic */}
+              <FontAwesomeIcon large iconName="fa-images" />
+            </td>
+          </Link>
+          <td className={tdClass}>TODO</td>
+          <td className={tdClass}>TODO</td>
         </tr>
-      )),
-    [sheet.items],
-  );
+      );
+    });
+  }, [sheet.items, sheetIndex]);
 
   return (
-    <div>
-      <h2>{sheet.sheetName}</h2>
-      <table className="w-full">
-        {thead}
+    <div className="p-2 mb-4">
+      <h2 className={`text-3xl ${tdClass}`}>{sheet.sheetName}</h2>
+      <table className="w-full rounded bg-blue-100 p-4">
+        <thead>{theadRow}</thead>
         <tbody>{tbodyRows}</tbody>
       </table>
     </div>
