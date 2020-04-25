@@ -5,7 +5,11 @@ import { ParsedUrlQuery } from 'querystring';
  */
 export const TypedRoutes = {
   index: '/',
+  items: '/items',
+  friends: '/friends',
   about: '/about',
+  account: '/account',
+
   posts: {
     index: '/posts',
     show: ({ postId }: { postId: number | string }) => `/posts/${postId}?timestamp=${Date.now()}`,

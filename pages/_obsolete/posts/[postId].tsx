@@ -1,8 +1,8 @@
 import React from 'react';
-import { ExampleLinks } from '../../src/dummy/example-links';
-import { PreJson } from '../../src/dummy/pre-json';
-import { PageType } from '../../src/next-types';
-import { TypedRouteParam, TypedRoutes } from '../../src/typed-routes';
+import { ExampleLinks } from '../../../src/dummy/example-links';
+import { PreJson } from '../../../src/dummy/pre-json';
+import { PageType } from '../../../src/next-types';
+import { TypedRouteParam, TypedRoutes } from '../../../src/typed-routes';
 
 type UrlParam = /* in path */ TypedRouteParam<typeof TypedRoutes.posts.show> & /* in query */ { timestamp: string };
 
