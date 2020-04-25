@@ -9,9 +9,6 @@ export const InventoryDb: React.FC = () => {
   const itemsDb = usePromised(itemsDbP);
 
   if (itemsDb.fulfilled) {
-    if (1) {
-      console.log(itemsDb);
-    }
     return (
       <div>
         {itemsDb.value.sheets.map((sheet, i) => (
@@ -24,9 +21,30 @@ export const InventoryDb: React.FC = () => {
 };
 
 const InventoryTableSheet: React.FC<{ sheet: ItemsV1Json.Sheet }> = ({ sheet }) => {
+  const columns = sheet.headers;
+  if (!columns) return null;
+
+  const th = <thead>{}</thead>;
   return (
     <div>
       <h2>{sheet.sheetName}</h2>
     </div>
   );
 };
+
+function columnsToShow(columnName?: string) {
+  switch(columnName) {
+    case '';
+
+      简体中文: string;
+      繁体中文: string;
+      日文: string;
+      英文: string;
+      类型?: string;
+      序号?: string;
+      颜色?: string;
+
+  }
+
+
+}

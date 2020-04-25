@@ -19,7 +19,9 @@
   },
   "dependencies": {
     "@jokester/ts-commonutil": "github:jokester/ts-commonutil#8dd410",
+    "@types/debug": "^4.1.5",
     "classnames": "^2.2.6",
+    "debug": "^4.1.1",
     "fp-ts": "^2.5.3",
     "react": "^16.13.0",
     "react-dom": "^16.13.0",
