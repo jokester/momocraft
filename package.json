@@ -18,6 +18,11 @@
     "lint:fix": "eslint '**/*.@(ts|js|tsx|jsx)' --fix"
   },
   "dependencies": {
+    "@jokester/ts-commonutil": "github:jokester/ts-commonutil#8dd410",
+    "@types/debug": "^4.1.5",
+    "classnames": "^2.2.6",
+    "debug": "^4.1.1",
+    "fp-ts": "^2.5.3",
     "react": "^16.13.0",
     "react-dom": "^16.13.0",
     "reset-css": "^5.0.1",
@@ -26,6 +31,7 @@
   "devDependencies": {
     "@babel/plugin-proposal-class-properties": "^7.8.3",
     "@babel/plugin-proposal-decorators": "^7.8.3",
+    "@types/classnames": "^2.2.10",
     "@types/jest": "^25",
     "@types/node": "^12",
     "@types/react": "^16.9.23",
@@ -36,6 +42,7 @@
     "@zeit/next-source-maps": "^0.0.3",
     "@zeit/next-typescript": "^1.1.1",
     "autoprefixer": "^9.7.4",
+    "babel-plugin-const-enum": "^1.0.1",
     "eslint": "6.8.0",
     "eslint-config-prettier": "^6.10.0",
     "eslint-plugin-prettier": "^3.1.2",
