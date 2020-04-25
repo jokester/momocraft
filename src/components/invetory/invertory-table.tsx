@@ -27,10 +27,10 @@ export const InventoryDb: React.FC = () => {
 const tdClass = 'p-2';
 
 const InventoryTableSheet: React.FC<{ sheet: ItemsV1Json.Sheet; sheetIndex: number }> = ({ sheet, sheetIndex }) => {
-  const columns = sheet.headers;
-  if (!columns) return null;
-  // DEBUG: exclude huge sheets
-  if (sheetIndex < 15) return null;
+  if (0 && sheetIndex < 15) {
+    // DEBUG: exclude huge sheets
+    return null;
+  }
 
   const theadRow = (
     <tr className="text-xl border-blue-300 border-b border-solid">
