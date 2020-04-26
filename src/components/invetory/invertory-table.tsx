@@ -114,7 +114,7 @@ const InventoryTableSheet: React.FC<{ sheets: ItemsV1Json.Sheet[]; sheetIndex: n
 const StatusColumn: React.FC<{ item: ItemsV1Json.Item }> = props => {
   const [status, setStatus] = useState<OccupationStatus>(rollOccupationStatus);
   return (
-    <ButtonGroup fill>
+    <ButtonGroup fill vertical>
       <Button
         onClick={() => setStatus(OccupationStatus.own)}
         active={status === OccupationStatus.own}
