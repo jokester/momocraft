@@ -21,15 +21,23 @@ const nextConf = {
   },
 
   env: {
-    MOMO_SERVER_HOST: process.env.MOMO_SERVER_HOST || 'http://127.0.0.1:3000',
+    MOMO_API_ORIGIN: process.env.MOMO_API_ORIGIN || /* dev */ 'http://127.0.0.1:3000',
   },
 
   // see https://nextjs.org/docs/#customizing-webpack-config
   webpack(config, { buildId, dev, isServer }) {
     config.plugins.push(
       new webpack.DefinePlugin({
+        /**
+         * reliable: only true in "yarn dev", for both server/browser
+         */
         'process.env.NEXT_DEV': JSON.stringify(!!dev),
-        'process.env.NEXT_SERVER': JSON.stringify(!!isServer),
+        /**
+         * @deprecated UNREALIABLE
+         * true: in browser of dev build (!!)
+         * false: in browser of prod build (yarn start / yarn export)
+        */
+        // 'process.env.NEXT_SERVER': JSON.stringify(!!isServer),
       }),
     );
 
