@@ -30,9 +30,10 @@ export class UserAccount {
   constructor(init?: Pick<UserAccount, Exclude<keyof UserAccount, 'userId' | 'setMeta' | 'createdAt' | 'updatedAt'>>) {
     if (init) {
       this.shortId = init.shortId;
-      this.userMeta = init.userMeta;
       this.emailId = init.emailId;
       this.passwordHash = init.passwordHash;
+      this.userMeta = {};
+      this.setMeta(init.userMeta);
     }
   }
 
