@@ -17,6 +17,6 @@ export class EntropyService {
   }
 
   bcryptHash(pass: string): Promise<string> {
-    return bcrypt.hash(pass, 10)
+    return bcrypt.hash(pass, 12);
   }
 }
