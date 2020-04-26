@@ -5,7 +5,7 @@ interface UserMeta {
 }
 
 export interface SelfUser extends UserMeta {
-  authToken: string;
+  // authToken: string;
   userEmail: string;
   isMaintainer: boolean;
 }
