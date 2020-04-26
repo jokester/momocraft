@@ -17,8 +17,13 @@ export namespace TestDeps {
 
   export async function clearTestDatabase(): Promise<void> {
     const conn = await testConnection;
+    await conn.synchronize(true)
     await conn.createEntityManager().clear(UserAccount);
     await conn.createEntityManager().clear(OAuthAccount);
+  }
+
+  export async function dropTestDatabase() : Promise<void> {
+    const conn = await testConnection;
   }
 
   export const mockedEntropy = new EntropyService();
