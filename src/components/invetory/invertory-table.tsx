@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from 'react';
-import { Button, ButtonGroup } from '@blueprintjs/core';
+import { Button, ButtonGroup, IconName } from '@blueprintjs/core';
 import { ItemsV1Json } from '../../json/json';
 import { ItemColumnType, itemIdDef } from '../../model/item-id-def';
 import { FontAwesomeIcon } from '../icon/fontawesome-icon';
@@ -115,13 +115,17 @@ const StatusColumn: React.FC<{ item: ItemsV1Json.Item }> = props => {
   const [status, setStatus] = useState<OccupationStatus>(rollOccupationStatus);
   return (
     <ButtonGroup fill>
-      <Button onClick={() => setStatus(OccupationStatus.own)} active={status === OccupationStatus.own}>
+      <Button
+        onClick={() => setStatus(OccupationStatus.own)}
+        active={status === OccupationStatus.own}
+        icon="tick-circle"
+      >
         拥有
       </Button>
-      <Button onClick={() => setStatus(OccupationStatus.want)} active={status === OccupationStatus.want}>
+      <Button onClick={() => setStatus(OccupationStatus.want)} active={status === OccupationStatus.want} icon="hand">
         想摸
       </Button>
-      <Button onClick={() => setStatus(OccupationStatus.none)} active={status === OccupationStatus.none}>
+      <Button onClick={() => setStatus(OccupationStatus.none)} active={status === OccupationStatus.none} icon="remove">
         取消
       </Button>
     </ButtonGroup>
