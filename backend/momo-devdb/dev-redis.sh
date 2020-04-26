@@ -3,7 +3,7 @@
 set -ue
 
 DB_SERVER='127.0.0.1'
-DB_PORT='53379'
+DB_PORT='54379'
 DB_PWD='secret'
 
 exec redis-cli -h "$DB_SERVER" -p "$DB_PORT"

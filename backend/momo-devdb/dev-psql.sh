@@ -3,7 +3,7 @@
 set -ue
 
 DB_SERVER='127.0.0.1'
-DB_PORT='53432'
+DB_PORT='54432'
 DB_USER='pguser'
 DB_PWD='secret'
 

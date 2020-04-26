@@ -17,7 +17,7 @@ export class UserAccount {
   @UpdateDateColumn()
   readonly updatedAt!: Date;
 
-  constructor(init?: Pick<UserAccount, Exclude<keyof UserAccount, 'userId' | 'setMeta'>>) {
+  constructor(init?: Pick<UserAccount, Exclude<keyof UserAccount, 'userId' | 'setMeta' | 'createdAt' | 'updatedAt'>>) {
     if (init) {
       this.shortId = init.shortId;
       this.userMeta = init.userMeta;
