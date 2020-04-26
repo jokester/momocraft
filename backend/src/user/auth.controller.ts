@@ -3,6 +3,9 @@ import { getDebugLogger } from '../util/get-debug-logger';
 import { GoogleOAuthService } from './google-oauth.service';
 import { UserService } from './user.service';
 import { getRightOrThrow } from '../util/fpts-getter';
+import { EmailAuthPayload } from '../linked-frontend/service/all';
+import { SelfUser } from '../linked-frontend/model/user-identity';
+import { absent } from '../util/absent';
 
 const logger = getDebugLogger(__filename);
 
@@ -36,5 +39,12 @@ export class AuthController {
       return { jwtToken: await this.userService.createJwtTokenForUser(user) };
     }
     throw new BadRequestException();
+  }
+
+  @Post('email/signup')
+  @HttpCode(200)
+  @Header('Cache-Control', 'private;max-age=0;')
+  async doEmailSignUp(@Body() payload: EmailAuthPayload): Promise<SelfUser> {
+    absent('');
   }
 }

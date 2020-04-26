@@ -2,12 +2,21 @@ import { Column, CreateDateColumn, Entity, Index, PrimaryGeneratedColumn, Update
 
 @Entity()
 export class UserAccount {
+  /**
+   * internal user id
+   */
   @PrimaryGeneratedColumn()
   readonly userId!: number;
 
   @Column({ unique: true })
   @Index({})
   readonly shortId!: string;
+
+  @Column({ unique: true })
+  readonly emailId!: string;
+
+  @Column()
+  readonly passwordHash!: string;
 
   @Column({ type: 'jsonb', default: {} })
   readonly userMeta: Readonly<UserMeta> = {};
@@ -22,6 +31,8 @@ export class UserAccount {
     if (init) {
       this.shortId = init.shortId;
       this.userMeta = init.userMeta;
+      this.emailId = init.emailId;
+      this.passwordHash = init.passwordHash;
     }
   }
 

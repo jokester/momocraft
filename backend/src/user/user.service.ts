@@ -1,6 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { getDebugLogger } from '../util/get-debug-logger';
-import { Either, fromOption, left, right } from 'fp-ts/lib/Either';
+import { Either, fromOption, left, right, isLeft } from 'fp-ts/lib/Either';
 import { GoogleOAuthResponse } from './google-oauth.service';
 import { TypeORMConnection } from '../db/typeorm-connection.provider';
 import { Connection, DeepPartial } from 'typeorm';
@@ -9,8 +9,9 @@ import { UserAccount } from '../db/entities/user-account';
 import { EntropyService } from '../deps/entropy.service';
 import { JwtService } from '@nestjs/jwt';
 import { Option, fromNullable, map, isSome } from 'fp-ts/lib/Option';
-import { getSomeOrThrow } from '../util/fpts-getter';
+import { getRightOrThrow, getSomeOrThrow } from '../util/fpts-getter';
 import { absent } from '../util/absent';
+import { sanitizeEmail } from '../util/input-santinizer';
 
 const logger = getDebugLogger(__filename);
 
@@ -64,6 +65,10 @@ export class UserService {
     return right(user);
   }
 
+  async signUpWithEmail(email: string, password: string): Promise<Either<string, UserAccount>> {
+    absent('todo');
+  }
+
   async resolveUser(userAccount: UserAccount): Promise<ResolvedUser> {
     const oauthAccounts = await this.conn.getRepository(OAuthAccount).find({ userId: userAccount.userId });
     const resolved: ResolvedUser = {
@@ -95,7 +100,7 @@ export class UserService {
   }
 
   async findOrCreateWithGoogleOAuth(oauthResponse: GoogleOAuthResponse): Promise<Either<string, UserAccount>> {
-    if (oauthResponse?.userInfo?.verified_email !== true) {
+    if (!(oauthResponse?.userInfo?.verified_email && oauthResponse.userInfo.email)) {
       return left('email must be verified');
     }
     const oAuthAccountRepo = this.conn.getRepository(OAuthAccount);
@@ -119,12 +124,18 @@ export class UserService {
       return right(user);
     }
 
+    const sanitizedEmail = sanitizeEmail(oauthResponse.userInfo.email);
+
+    if (isLeft(sanitizedEmail)) return sanitizedEmail;
+
     // try create
     const res = await this.conn.transaction(async entityManager => {
       const userAccount = await entityManager.save(
         new UserAccount({
           shortId: this.entropy.createNanoId(),
           userMeta: {},
+          emailId: sanitizedEmail.right,
+          passwordHash: 'INVALID_BCRYPT_HASH',
         }),
       );
       const oauthAccount = await entityManager.save(
