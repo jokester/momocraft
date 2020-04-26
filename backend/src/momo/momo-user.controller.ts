@@ -1,16 +1,14 @@
-import { Controller, Get, Header } from "@nestjs/common";
-import { ResolvedUser, UserService } from "../user/user.service";
-import { AuthedUser } from "../user/user-jwt-auth.middleware";
-import { UserAccount } from "../db/entities/user-account";
-import { getDebugLogger } from "../util/get-debug-logger";
+import { Controller, Get, Header } from '@nestjs/common';
+import { ResolvedUser, UserService } from '../user/user.service';
+import { AuthedUser } from '../user/user-jwt-auth.middleware';
+import { UserAccount } from '../db/entities/user-account';
+import { getDebugLogger } from '../util/get-debug-logger';
 
 const logger = getDebugLogger(__filename);
 
 @Controller('momo/user')
 export class MomoUserController {
-
-  constructor(private readonly userService: UserService) {
-  }
+  constructor(private readonly userService: UserService) {}
 
   @Get('self')
   @Header('Cache-Control', 'private;max-age=0;')
@@ -19,5 +17,4 @@ export class MomoUserController {
 
     return this.userService.resolveUser(authedUser);
   }
-
 }

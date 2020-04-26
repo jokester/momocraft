@@ -1,4 +1,4 @@
-import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
+import { Column, CreateDateColumn, Entity, Index, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
 
 @Entity()
 export class UserAccount {
@@ -6,6 +6,7 @@ export class UserAccount {
   readonly userId!: number;
 
   @Column({ unique: true })
+  @Index({})
   readonly shortId!: string;
 
   @Column({ type: 'jsonb', default: {} })
