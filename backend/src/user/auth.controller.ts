@@ -5,8 +5,15 @@ import { ResolvedUser, UserService } from './user.service';
 import { getRightOrThrow } from '../util/fpts-getter';
 import { EmailAuthPayload } from '../linked-frontend/service/all';
 import { Sanitize } from '../util/input-santinizer';
+import { UserAccount } from '../db/entities/user-account';
+import { auth } from 'google-auth-library';
 
 const logger = getDebugLogger(__filename);
+
+export interface AuthSuccessRes {
+  jwtString: string;
+  user: ResolvedUser;
+}
 
 @Controller('auth')
 export class AuthController {
@@ -43,21 +50,41 @@ export class AuthController {
   @Post('email/signup')
   @HttpCode(201)
   @Header('Cache-Control', 'private;max-age=0;')
-  async doEmailSignUp(@Body() payload: EmailAuthPayload): Promise<{ jwtString: string; user: ResolvedUser }> {
-    if (!(Sanitize.isString(payload?.email) && Sanitize.isString(payload?.password))) {
-      throw new BadRequestException();
-    }
-
-    // logger('AuthController#doEmailSignup', payload);
+  async doEmailSignUp(@Body() payload: EmailAuthPayload): Promise<AuthSuccessRes> {
+    this.validateEmailAuthPaylod(payload);
 
     const created = getRightOrThrow(
       await this.userService.signUpWithEmail(payload.email, payload.password),
       l => new BadRequestException(l),
     );
 
+    return this.resolveAuthSuccess(created);
+  }
+
+  @Post('email/signin')
+  @HttpCode(200)
+  @Header('Cache-Control', 'private;max-age=0;')
+  async doEmailSignIn(@Body() payload: EmailAuthPayload): Promise<AuthSuccessRes> {
+    this.validateEmailAuthPaylod(payload);
+
+    const authedUser = getRightOrThrow(
+      await this.userService.signInWithEmail(payload.email, payload.password),
+      l => new BadRequestException('auth fail'),
+    );
+
+    return this.resolveAuthSuccess(authedUser);
+  }
+
+  private async resolveAuthSuccess(authedUser: UserAccount): Promise<AuthSuccessRes> {
     return {
-      jwtString: await this.userService.createJwtTokenForUser(created),
-      user: await this.userService.resolveUser(created),
+      jwtString: await this.userService.createJwtTokenForUser(authedUser),
+      user: await this.userService.resolveUser(authedUser),
     };
+  }
+
+  private validateEmailAuthPaylod(payload?: EmailAuthPayload) {
+    if (!(Sanitize.isString(payload?.email) && Sanitize.isString(payload?.password))) {
+      throw new BadRequestException();
+    }
   }
 }

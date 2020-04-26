@@ -9,7 +9,7 @@ import { UserAccount } from '../db/entities/user-account';
 import { EntropyService } from '../deps/entropy.service';
 import { JwtService } from '@nestjs/jwt';
 import { fromNullable, Option } from 'fp-ts/lib/Option';
-import { getSomeOrThrow } from '../util/fpts-getter';
+import { getRightOrThrow, getSomeOrThrow } from '../util/fpts-getter';
 import { absent } from '../util/absent';
 import { Sanitize } from '../util/input-santinizer';
 import { randomAlphaNum } from '../ts-commonutil/text/random-string';
@@ -46,6 +46,18 @@ export class UserService {
     return fromNullable(existedUser);
   }
 
+  async findByEmail(email: string): Promise<Either<string, UserAccount>> {
+    const sanitizedEmail = Sanitize.email(email);
+    if (isLeft(sanitizedEmail)) {
+      return sanitizedEmail;
+    }
+
+    const existedUser = await this.conn.getRepository(UserAccount).findOne({ emailId: sanitizedEmail.right });
+
+    if (existedUser) return right(existedUser);
+    return left('user not found');
+  }
+
   async findUserWithJwtToken(
     jwtToken: string,
     currentTimestamp = this.entropy.now(),
@@ -70,8 +82,6 @@ export class UserService {
     const sanitizedEmail = Sanitize.email(email),
       sanitizedPass = Sanitize.pass(password);
 
-    // logger('signUpWithEmail params', sanitizedEmail, sanitizedPass);
-
     if (isLeft(sanitizedEmail)) return sanitizedEmail;
     if (isLeft(sanitizedPass)) return sanitizedPass;
 
@@ -89,6 +99,22 @@ export class UserService {
         logger('UserService#signUpWithEmail error creating', err);
         return left('error creating user');
       });
+  }
+
+  async signInWithEmail(email: string, password: string): Promise<Either<string, UserAccount>> {
+    const sanitizedEmail = Sanitize.email(email),
+      sanitizedPass = Sanitize.pass(password);
+
+    if (isLeft(sanitizedEmail)) return sanitizedEmail;
+    if (isLeft(sanitizedPass)) return sanitizedPass;
+
+    const user = await this.findByEmail(email);
+    if (isLeft(user)) return user;
+
+    const passwordMatched = await this.entropy.bcryptValidate(sanitizedPass.right, user.right.passwordHash);
+
+    if (passwordMatched) return user;
+    return left('password incorrect');
   }
 
   async resolveUser(userAccount: UserAccount): Promise<ResolvedUser> {

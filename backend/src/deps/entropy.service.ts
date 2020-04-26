@@ -19,4 +19,8 @@ export class EntropyService {
   bcryptHash(pass: string): Promise<string> {
     return bcrypt.hash(pass, 10);
   }
+
+  bcryptValidate(pass: string, hash: string): Promise<boolean> {
+    return bcrypt.compare(pass, hash);
+  }
 }

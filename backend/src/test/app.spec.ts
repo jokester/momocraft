@@ -9,7 +9,7 @@ import { TypeORMConnection } from '../db/typeorm-connection.provider';
 import { JwtService } from '@nestjs/jwt';
 import { getDebugLogger } from '../util/get-debug-logger';
 import { UserService } from '../user/user.service';
-import { AuthController } from '../user/auth.controller';
+import { AuthController, AuthSuccessRes } from '../user/auth.controller';
 import { UserController } from '../user/user.controller';
 import { EntropyService } from '../deps/entropy.service';
 import { getSomeOrThrow } from '../util/fpts-getter';
@@ -108,20 +108,52 @@ describe('AppController (e2e)', () => {
 
     it('POST /auth/email/signup creates user and returns 201', async () => {
       {
+        // signup success
         const created = await request(app.getHttpServer())
           .post('/auth/email/signup')
-          .send({ email: 'a@b.com', password: '1234567' } as EmailAuthPayload)
+          .send(MockData.authPayload)
           .expect(201);
 
-        const res = await JSON.parse(created.text);
-        expect(res).toMatchSnapshot('POST /auth/email/signup 201');
+        const res: AuthSuccessRes = JSON.parse(created.text);
+        expect(res.jwtString).toBeTruthy();
+        expect(res.user).toMatchSnapshot('POST /auth/email/signup 201');
       }
 
-      // email must be unique
-      await request(app.getHttpServer())
-        .post('/auth/email/signup')
-        .send({ email: 'a@B.com', password: '1234567' } as EmailAuthPayload)
-        .expect(400);
+      {
+        // signup fail: email must be unique
+        await request(app.getHttpServer())
+          .post('/auth/email/signup')
+          .send({ email: 'a@B.com', password: '1234567' } as EmailAuthPayload)
+          .expect(400);
+      }
+    });
+
+    it('POST /auth/email/signin auths user', async () => {
+      {
+        /// signin success
+        const signedIn = await request(app.getHttpServer())
+          .post('/auth/email/signin')
+          .send(MockData.authPayload)
+          .expect(200);
+
+        const res: AuthSuccessRes = JSON.parse(signedIn.text);
+        expect(res.jwtString).toBeTruthy();
+        expect(res.user).toMatchSnapshot('POST /auth/email/signin 200');
+      }
+
+      {
+        // signin fail: password incorrect
+        await request(app.getHttpServer())
+          .post('/auth/email/signin')
+          .send({ ...MockData.authPayload, password: '123456789' })
+          .expect(400);
+
+        // signin fail: email incorrect
+        await request(app.getHttpServer())
+          .post('/auth/email/signin')
+          .send({ ...MockData.authPayload, email: 'b@c.com' })
+          .expect(400);
+      }
     });
   });
 

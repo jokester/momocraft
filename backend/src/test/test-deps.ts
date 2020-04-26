@@ -5,6 +5,7 @@ import { EntropyService } from '../deps/entropy.service';
 import { DeepReadonly } from '../ts-commonutil/type';
 import { GoogleOAuthResponse } from '../user/google-oauth.service';
 import { JwtService } from '@nestjs/jwt';
+import { EmailAuthPayload } from '../linked-frontend/service/all';
 
 export namespace TestDeps {
   export const testConnection = createConnection({
@@ -32,6 +33,8 @@ export namespace TestDeps {
 }
 
 export namespace MockData {
+  export const authPayload = { email: 'a@b.com', password: '1234567' } as EmailAuthPayload;
+
   export const googleOAuthResponseValid = {
     credentials: {
       tokens: {
