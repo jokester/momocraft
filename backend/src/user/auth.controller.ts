@@ -1,11 +1,10 @@
 import { BadRequestException, Body, Controller, Header, HttpCode, Post, Request } from '@nestjs/common';
 import { getDebugLogger } from '../util/get-debug-logger';
 import { GoogleOAuthService } from './google-oauth.service';
-import { UserService } from './user.service';
+import { ResolvedUser, UserService } from './user.service';
 import { getRightOrThrow } from '../util/fpts-getter';
 import { EmailAuthPayload } from '../linked-frontend/service/all';
-import { SelfUser } from '../linked-frontend/model/user-identity';
-import { absent } from '../util/absent';
+import { Sanitize } from '../util/input-santinizer';
 
 const logger = getDebugLogger(__filename);
 
@@ -42,9 +41,20 @@ export class AuthController {
   }
 
   @Post('email/signup')
-  @HttpCode(200)
+  @HttpCode(201)
   @Header('Cache-Control', 'private;max-age=0;')
-  async doEmailSignUp(@Body() payload: EmailAuthPayload): Promise<SelfUser> {
-    absent('');
+  async doEmailSignUp(@Body() payload: EmailAuthPayload): Promise<ResolvedUser> {
+    if (!(Sanitize.isString(payload?.email) && Sanitize.isString(payload?.password))) {
+      throw new BadRequestException();
+    }
+
+    // logger('AuthController#doEmailSignup', payload);
+
+    const created = getRightOrThrow(
+      await this.userService.signUpWithEmail(payload.email, payload.password),
+      l => new BadRequestException(l),
+    );
+
+    return this.userService.resolveUser(created);
   }
 }

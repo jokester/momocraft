@@ -14,6 +14,7 @@ import { UserController } from '../user/user.controller';
 import { EntropyService } from '../deps/entropy.service';
 import { getSomeOrThrow } from '../util/fpts-getter';
 import { absent } from '../util/absent';
+import { EmailAuthPayload } from '../linked-frontend/service/all';
 
 const logger = getDebugLogger(__filename);
 
@@ -103,6 +104,13 @@ describe('AppController (e2e)', () => {
         .post('/auth/oauth/google')
         .send({ code: '123', redirectUrl: 'someUrl' })
         .expect(400);
+    });
+
+    it('POST /auth/email/signup creates user and returns 201', async () => {
+      await request(app.getHttpServer())
+        .post('/auth/email/signup')
+        .send({ email: 'a@b.com', password: '1234567' } as EmailAuthPayload)
+        .expect(201);
     });
   });
 

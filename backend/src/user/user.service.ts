@@ -1,6 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { getDebugLogger } from '../util/get-debug-logger';
-import { Either, fromOption, left, right, isLeft } from 'fp-ts/lib/Either';
+import { Either, isLeft, left, right } from 'fp-ts/lib/Either';
 import { GoogleOAuthResponse } from './google-oauth.service';
 import { TypeORMConnection } from '../db/typeorm-connection.provider';
 import { Connection, DeepPartial } from 'typeorm';
@@ -8,11 +8,11 @@ import { OAuthAccount, OAuthProvider } from '../db/entities/oauth-account';
 import { UserAccount } from '../db/entities/user-account';
 import { EntropyService } from '../deps/entropy.service';
 import { JwtService } from '@nestjs/jwt';
-import { Option, fromNullable, map, isSome } from 'fp-ts/lib/Option';
-import { getRightOrThrow, getSomeOrThrow } from '../util/fpts-getter';
+import { fromNullable, Option } from 'fp-ts/lib/Option';
+import { getSomeOrThrow } from '../util/fpts-getter';
 import { absent } from '../util/absent';
-import { sanitizeEmail } from '../util/input-santinizer';
-import { randomAlphaNum } from "../ts-commonutil/text/random-string";
+import { Sanitize } from '../util/input-santinizer';
+import { randomAlphaNum } from '../ts-commonutil/text/random-string';
 
 const logger = getDebugLogger(__filename);
 
@@ -67,7 +67,28 @@ export class UserService {
   }
 
   async signUpWithEmail(email: string, password: string): Promise<Either<string, UserAccount>> {
-    absent('todo');
+    const sanitizedEmail = Sanitize.email(email),
+      sanitizedPass = Sanitize.pass(password);
+
+    // logger('signUpWithEmail params', sanitizedEmail, sanitizedPass);
+
+    if (isLeft(sanitizedEmail)) return sanitizedEmail;
+    if (isLeft(sanitizedPass)) return sanitizedPass;
+
+    const user = new UserAccount({
+      shortId: this.entropy.createNanoId(),
+      userMeta: {},
+      emailId: sanitizedEmail.right,
+      passwordHash: await this.entropy.bcryptHash(sanitizedPass.right),
+    });
+
+    return this.conn
+      .getRepository(UserAccount)
+      .save(user)
+      .then(right, err => {
+        logger('UserService#signUpWithEmail error creating', err);
+        return left('error creating user');
+      });
   }
 
   async resolveUser(userAccount: UserAccount): Promise<ResolvedUser> {
@@ -125,7 +146,7 @@ export class UserService {
       return right(user);
     }
 
-    const sanitizedEmail = sanitizeEmail(oauthResponse.userInfo.email);
+    const sanitizedEmail = Sanitize.email(oauthResponse.userInfo.email);
 
     if (isLeft(sanitizedEmail)) return sanitizedEmail;
 
