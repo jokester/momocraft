@@ -1,6 +1,5 @@
 import React, { useMemo, useState } from 'react';
-import { dynamicItemsV1 } from '../../json/dynamic-items-v1';
-import { usePromised } from '@jokester/ts-commonutil/react/hook/use-promised';
+import { Button, ButtonGroup } from '@blueprintjs/core';
 import { ItemsV1Json } from '../../json/json';
 import { ItemColumnType, itemIdDef } from '../../model/item-id-def';
 import { FontAwesomeIcon } from '../icon/fontawesome-icon';
@@ -9,13 +8,14 @@ import { TypedRoutes } from '../../typed-routes';
 import { useItemsDB } from '../hooks/use-items-db';
 import { RenderArray } from '../hoc/render-array';
 import { createLogger } from '../../util/debug-logger';
+import { OccupationStatus, rollOccupationStatus } from '../../model/occupation';
 
 const logger = createLogger(__filename);
 
 export const InventoryDb: React.FC = () => {
   const itemsDb = useItemsDB();
 
-  const [currentSheetId, setSheetId] = useState(-1);
+  const [currentSheetId, setSheetId] = useState(2);
 
   logger('InventoryDb', itemsDb, currentSheetId);
 
@@ -63,6 +63,7 @@ const InventoryTableSheet: React.FC<{ sheets: ItemsV1Json.Sheet[]; sheetIndex: n
       <td className={tdClass}>图片</td>
       <td className={tdClass}>变体</td>
       <td className={tdClass}>meta</td>
+      <td className={tdClass}>我的状态</td>
     </tr>
   );
 
@@ -70,7 +71,7 @@ const InventoryTableSheet: React.FC<{ sheets: ItemsV1Json.Sheet[]; sheetIndex: n
     return currentSheet?.items.map((item, itemNoInSheet) => {
       const link = TypedRoutes.items.show(itemIdDef(sheetIndex, itemNoInSheet));
       return (
-        <tr key={itemNoInSheet} className="border-blue-200 border-b border-solid">
+        <tr key={link} className="border-blue-200 border-b border-solid">
           <Link href={link}>
             <td className={`w-1/3 cursor-pointer ${tdClass}`}>
               {/* name */}
@@ -91,6 +92,9 @@ const InventoryTableSheet: React.FC<{ sheets: ItemsV1Json.Sheet[]; sheetIndex: n
           </Link>
           <td className={tdClass}>TODO</td>
           <td className={tdClass}>TODO</td>
+          <td className={tdClass}>
+            <StatusColumn item={item} />
+          </td>
         </tr>
       );
     });
@@ -104,5 +108,22 @@ const InventoryTableSheet: React.FC<{ sheets: ItemsV1Json.Sheet[]; sheetIndex: n
         <tbody>{tbodyRows}</tbody>
       </table>
     </div>
+  );
+};
+
+const StatusColumn: React.FC<{ item: ItemsV1Json.Item }> = props => {
+  const [status, setStatus] = useState<OccupationStatus>(rollOccupationStatus);
+  return (
+    <ButtonGroup fill>
+      <Button onClick={() => setStatus(OccupationStatus.own)} active={status === OccupationStatus.own}>
+        拥有
+      </Button>
+      <Button onClick={() => setStatus(OccupationStatus.want)} active={status === OccupationStatus.want}>
+        想摸
+      </Button>
+      <Button onClick={() => setStatus(OccupationStatus.none)} active={status === OccupationStatus.none}>
+        取消
+      </Button>
+    </ButtonGroup>
   );
 };

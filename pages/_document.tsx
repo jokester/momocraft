@@ -19,6 +19,18 @@ export default class CustomDocument extends Document {
             integrity="sha256-SRNuJFvxpvNe8ECgkgQlcrxElNwUe1vZ+DKqwcxw6Dc="
             crossOrigin="anonymous"
           />
+          <link
+            rel="stylesheet"
+            href="https://cdn.jsdelivr.net/npm/@blueprintjs/core@3.26.0/lib/css/blueprint.css"
+            integrity="sha256-/i9735G9mgvjeAUMvgwrJaRoGOiZpnCwoWH8tuvPqq4="
+            crossOrigin="anonymous"
+          />
+          <link
+            rel="stylesheet"
+            href="https://cdn.jsdelivr.net/npm/@blueprintjs/icons@3.15.1/lib/css/blueprint-icons.css"
+            integrity="sha256-TCBL18Dgf7kFC0vKWhEaFD+87xslflRbMTAaChRCyTc="
+            crossOrigin="anonymous"
+          />
         </Head>
         <body className="bg-dark">
           <Main />
