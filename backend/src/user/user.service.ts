@@ -12,6 +12,7 @@ import { Option, fromNullable, map, isSome } from 'fp-ts/lib/Option';
 import { getRightOrThrow, getSomeOrThrow } from '../util/fpts-getter';
 import { absent } from '../util/absent';
 import { sanitizeEmail } from '../util/input-santinizer';
+import { randomAlphaNum } from "../ts-commonutil/text/random-string";
 
 const logger = getDebugLogger(__filename);
 
@@ -128,6 +129,8 @@ export class UserService {
 
     if (isLeft(sanitizedEmail)) return sanitizedEmail;
 
+    const randomHash = await this.entropy.bcryptHash(randomAlphaNum(16));
+
     // try create
     const res = await this.conn.transaction(async entityManager => {
       const userAccount = await entityManager.save(
@@ -135,7 +138,7 @@ export class UserService {
           shortId: this.entropy.createNanoId(),
           userMeta: {},
           emailId: sanitizedEmail.right,
-          passwordHash: 'INVALID_BCRYPT_HASH',
+          passwordHash: randomHash,
         }),
       );
       const oauthAccount = await entityManager.save(
