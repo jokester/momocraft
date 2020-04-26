@@ -8,7 +8,7 @@ import { TypedRoutes } from '../../typed-routes';
 import { useItemsDB } from '../hooks/use-items-db';
 import { RenderArray } from '../hoc/render-array';
 import { createLogger } from '../../util/debug-logger';
-import { OccupationStatus, rollOccupationStatus } from '../../model/occupation';
+import { PossessionState, randomPossessionState } from '../../model/item-possession';
 
 const logger = createLogger(__filename);
 
@@ -112,20 +112,16 @@ const InventoryTableSheet: React.FC<{ sheets: ItemsV1Json.Sheet[]; sheetIndex: n
 };
 
 const StatusColumn: React.FC<{ item: ItemsV1Json.Item }> = props => {
-  const [status, setStatus] = useState<OccupationStatus>(rollOccupationStatus);
+  const [status, setStatus] = useState<PossessionState>(randomPossessionState);
   return (
     <ButtonGroup fill vertical>
-      <Button
-        onClick={() => setStatus(OccupationStatus.own)}
-        active={status === OccupationStatus.own}
-        icon="tick-circle"
-      >
+      <Button onClick={() => setStatus(PossessionState.own)} active={status === PossessionState.own} icon="tick-circle">
         拥有
       </Button>
-      <Button onClick={() => setStatus(OccupationStatus.want)} active={status === OccupationStatus.want} icon="hand">
+      <Button onClick={() => setStatus(PossessionState.with)} active={status === PossessionState.with} icon="hand">
         想摸
       </Button>
-      <Button onClick={() => setStatus(OccupationStatus.none)} active={status === OccupationStatus.none} icon="remove">
+      <Button onClick={() => setStatus(PossessionState.none)} active={status === PossessionState.none} icon="remove">
         取消
       </Button>
     </ButtonGroup>
