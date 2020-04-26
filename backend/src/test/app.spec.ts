@@ -136,6 +136,11 @@ describe('AppController (e2e)', () => {
         .get('/user/self')
         .set('Authorization', `Bearer ${jwtToken}`)
         .expect(200);
+
+      await request(app.getHttpServer())
+        .get('/momo/user/self')
+        .set('Authorization', `Bearer ${jwtToken}`)
+        .expect(200);
     });
 
     it('PUT /user/self updated resolved user', async () => {
