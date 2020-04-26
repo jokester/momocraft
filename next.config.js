@@ -20,6 +20,10 @@ const nextConf = {
     },
   },
 
+  env: {
+    MOMO_SERVER_HOST: process.env.MOMO_SERVER_HOST || 'http://127.0.0.1:3000',
+  },
+
   // see https://nextjs.org/docs/#customizing-webpack-config
   webpack(config, { buildId, dev, isServer }) {
     config.plugins.push(
