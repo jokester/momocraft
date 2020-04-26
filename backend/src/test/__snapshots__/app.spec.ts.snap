@@ -1,5 +1,15 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`AppController (e2e) AuthController POST /auth/email/signup creates user and returns 201: POST /auth/email/signup 201 1`] = `
+Object {
+  "jwtString": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzaG9ydElkIjoibmFub2lkLTIiLCJpYXQiOjE1ODc5MTA1MzksImV4cCI6MTU4ODUxNTMzOX0.L2YDKYSADnUmBAGshF3u61v-orYA25YGcxHAIXaqbx4",
+  "user": Object {
+    "nickName": "(not set)",
+    "shortId": "nanoid-2",
+  },
+}
+`;
+
 exports[`AppController (e2e) AuthController POST /auth/oauth/google returns jwtToken on succeed: GET /user/self 1`] = `
 Object {
   "avatarUrl": "https://example.com/a.png",

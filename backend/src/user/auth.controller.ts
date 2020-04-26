@@ -43,7 +43,7 @@ export class AuthController {
   @Post('email/signup')
   @HttpCode(201)
   @Header('Cache-Control', 'private;max-age=0;')
-  async doEmailSignUp(@Body() payload: EmailAuthPayload): Promise<ResolvedUser> {
+  async doEmailSignUp(@Body() payload: EmailAuthPayload): Promise<{ jwtString: string; user: ResolvedUser }> {
     if (!(Sanitize.isString(payload?.email) && Sanitize.isString(payload?.password))) {
       throw new BadRequestException();
     }
@@ -55,6 +55,9 @@ export class AuthController {
       l => new BadRequestException(l),
     );
 
-    return this.userService.resolveUser(created);
+    return {
+      jwtString: await this.userService.createJwtTokenForUser(created),
+      user: await this.userService.resolveUser(created),
+    };
   }
 }

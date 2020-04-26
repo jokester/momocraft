@@ -107,10 +107,21 @@ describe('AppController (e2e)', () => {
     });
 
     it('POST /auth/email/signup creates user and returns 201', async () => {
+      {
+        const created = await request(app.getHttpServer())
+          .post('/auth/email/signup')
+          .send({ email: 'a@b.com', password: '1234567' } as EmailAuthPayload)
+          .expect(201);
+
+        const res = await JSON.parse(created.text);
+        expect(res).toMatchSnapshot('POST /auth/email/signup 201');
+      }
+
+      // email must be unique
       await request(app.getHttpServer())
         .post('/auth/email/signup')
-        .send({ email: 'a@b.com', password: '1234567' } as EmailAuthPayload)
-        .expect(201);
+        .send({ email: 'a@B.com', password: '1234567' } as EmailAuthPayload)
+        .expect(400);
     });
   });
 
