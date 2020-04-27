@@ -1,6 +1,6 @@
 import React, { createContext, createElement, useContext, useMemo } from 'react';
 import { createLogger } from '../util/debug-logger';
-import { BuildEnv, isDevBuild } from '../config/build-env';
+import { buildEnv, BuildEnv, isDevBuild } from '../config/build-env';
 
 type Singletons = ReturnType<typeof initSingletons>;
 
@@ -9,8 +9,9 @@ const AppContext = createContext<Singletons>(null!);
 function initSingletons() {
   if (1) {
     const logger = createLogger(__filename);
-    logger('build env', isDevBuild, BuildEnv);
+    logger('build env', isDevBuild, buildEnv);
   }
+
   return {} as const;
 }
 
