@@ -1,5 +1,5 @@
 interface UserMeta {
-  userNick?: string;
+  nickname?: string;
   avatarUrl?: string;
   userId: string;
 }

@@ -1,11 +1,11 @@
 import { SelfUser } from '../model/user-identity';
 import { Either } from 'fp-ts/lib/Either';
-import { ItemPossession, } from '../model/item-possession';
+import { ItemPossession } from '../model/item-possession';
 import { FriendEntry, FriendInventory } from '../model/friend';
-import { Observable } from "rxjs";
-import { Option } from "fp-ts/lib/Option";
+import { Observable } from 'rxjs';
+import { Option } from 'fp-ts/lib/Option';
 
-type ApiResponse<T> = Promise<Either<string, T>>;
+export type ApiResponse<T> = Promise<Either<string, T>>;
 
 export interface EmailAuthPayload {
   email: string;
@@ -13,7 +13,7 @@ export interface EmailAuthPayload {
 }
 
 export interface UserAuthService {
-  authed: Observable<Option<SelfUser>>
+  authed: Observable<Option<SelfUser>>;
   emailSignUp(param: EmailAuthPayload): ApiResponse<SelfUser>;
   emailSignIn(param: EmailAuthPayload): ApiResponse<SelfUser>;
 }

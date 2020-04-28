@@ -1,6 +1,9 @@
 import React, { createContext, createElement, useContext, useMemo } from 'react';
 import { createLogger } from '../util/debug-logger';
-import { buildEnv, BuildEnv, isDevBuild } from '../config/build-env';
+import { buildEnv, BuildEnv, inServer, isDevBuild } from '../config/build-env';
+import { Never } from '@jokester/ts-commonutil/concurrency/timing';
+import { ApiClient } from './service-impl/client';
+import { AuthServiceImpl } from './service-impl/user-auth';
 
 type Singletons = ReturnType<typeof initSingletons>;
 
@@ -12,7 +15,15 @@ function initSingletons() {
     logger('build env', isDevBuild, buildEnv);
   }
 
-  return {} as const;
+  // FIXME: Never may cause memory leak in server (if any)
+  const fetchImpl = inServer ? () => Never : fetch;
+  const apiClient = new ApiClient(fetchImpl, buildEnv.MOMO_SERVER_ORIGIN);
+
+  const auth = new AuthServiceImpl(apiClient);
+
+  return {
+    auth,
+  } as const;
 }
 
 export const AppContextHolder: React.FC = ({ children }) => {
