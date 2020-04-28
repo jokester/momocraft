@@ -28,8 +28,16 @@ export class ApiClient {
     try {
       const res = await resP;
 
+      if (!res.ok) {
       // TODO: detect http status
-      if (!res.ok) return left(ErrorCodeEnum.requestFail);
+      switch (res.status) {
+          case 403:
+            return left(ErrorCodeEnum.httpFail)
+        }
+        res.status
+        return left(ErrorCodeEnum.requestFail);
+
+      } 
 
       // assuming non-empty resBody
       const resBody: T & { error?: string | string[] } = await res.json();

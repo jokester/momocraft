@@ -4,6 +4,7 @@ export const enum ErrorCodeEnum {
   requestFail = 'request_fail',
 
   // auth
+  authFail = 'auth_fail',
 
   // app
 
