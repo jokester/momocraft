@@ -11,7 +11,7 @@ import { auth } from 'google-auth-library';
 const logger = getDebugLogger(__filename);
 
 export interface AuthSuccessRes {
-  jwtString: string;
+  jwtToken: string;
   user: ResolvedUser;
 }
 
@@ -77,7 +77,7 @@ export class AuthController {
 
   private async resolveAuthSuccess(authedUser: UserAccount): Promise<AuthSuccessRes> {
     return {
-      jwtString: await this.userService.createJwtTokenForUser(authedUser),
+      jwtToken: await this.userService.createJwtTokenForUser(authedUser),
       user: await this.userService.resolveUser(authedUser),
     };
   }

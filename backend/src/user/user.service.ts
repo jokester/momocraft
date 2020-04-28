@@ -22,7 +22,7 @@ interface JwtTokenPayload {
 
 export interface ResolvedUser {
   shortId: string;
-  nickName: string;
+  nick: string;
   avatarUrl?: string;
 }
 

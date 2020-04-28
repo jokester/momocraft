@@ -100,10 +100,12 @@ describe('AppController (e2e)', () => {
         .spyOn(GoogleOAuthService.prototype, 'auth')
         .mockResolvedValue(right<string, GoogleOAuthResponse>(MockData.googleOAuthResponseEmailUnverified));
 
-      await request(app.getHttpServer())
+      const authErrorRes = await request(app.getHttpServer())
         .post('/auth/oauth/google')
         .send({ code: '123', redirectUrl: 'someUrl' })
         .expect(400);
+
+      expect(authErrorRes.body).toMatchSnapshot('auth 400 res');
     });
 
     it('POST /auth/email/signup creates user and returns 201', async () => {
@@ -115,7 +117,7 @@ describe('AppController (e2e)', () => {
           .expect(201);
 
         const res: AuthSuccessRes = JSON.parse(created.text);
-        expect(res.jwtString).toBeTruthy();
+        expect(res.jwtToken).toBeTruthy();
         expect(res.user).toMatchSnapshot('POST /auth/email/signup 201');
       }
 
@@ -137,7 +139,7 @@ describe('AppController (e2e)', () => {
           .expect(200);
 
         const res: AuthSuccessRes = JSON.parse(signedIn.text);
-        expect(res.jwtString).toBeTruthy();
+        expect(res.jwtToken).toBeTruthy();
         expect(res.user).toMatchSnapshot('POST /auth/email/signin 200');
       }
 

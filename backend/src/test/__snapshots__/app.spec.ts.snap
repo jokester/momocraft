@@ -14,6 +14,14 @@ Object {
 }
 `;
 
+exports[`AppController (e2e) AuthController POST /auth/oauth/google return 400 on auth error: auth 400 res 1`] = `
+Object {
+  "error": "Bad Request",
+  "message": "auth failed",
+  "statusCode": 400,
+}
+`;
+
 exports[`AppController (e2e) AuthController POST /auth/oauth/google returns jwtToken on succeed: GET /user/self 1`] = `
 Object {
   "avatarUrl": "https://example.com/a.png",
