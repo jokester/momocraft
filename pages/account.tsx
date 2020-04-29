@@ -29,8 +29,8 @@ const AuthState: React.FC = () => {
 
   const wtf = useObserved(authState, dummyAuthState);
 
-  const [email, setEmail] = useState('momocraft@gmail.com');
-  const [password, setPass] = useState('1234567');
+  const [email, setEmail] = useState('');
+  const [password, setPass] = useState('');
 
   logger('AuthState', self, pendingAuth, wtf);
 
