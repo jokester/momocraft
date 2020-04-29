@@ -1,8 +1,7 @@
-import { Sanitize } from "./input-santinizer";
+import { Sanitize } from './input-santinizer';
 
 describe('Sanitize', () => {
   it('launders email', () => {
-      expect(Sanitize.email('momocraft@gmail.com')).toMatchSnapshot()
-    }
-  )
-})
+    expect(Sanitize.email('momocraft@gmail.com')).toMatchSnapshot();
+  });
+});

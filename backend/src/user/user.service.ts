@@ -8,7 +8,7 @@ import { OAuthAccount, OAuthProvider } from '../db/entities/oauth-account';
 import { UserAccount } from '../db/entities/user-account';
 import { EntropyService } from '../deps/entropy.service';
 import { JwtService } from '@nestjs/jwt';
-import { fromNullable, Option } from 'fp-ts/lib/Option';
+import { fromNullable, isNone, Option } from 'fp-ts/lib/Option';
 import { getSomeOrThrow } from '../util/fpts-getter';
 import { absent } from '../util/absent';
 import { Sanitize } from '../util/input-santinizer';
@@ -17,12 +17,12 @@ import { randomAlphaNum } from '../ts-commonutil/text/random-string';
 const logger = getDebugLogger(__filename);
 
 interface JwtTokenPayload {
-  shortId: string;
+  userId: string;
 }
 
 export interface ResolvedUser {
-  shortId: string;
-  nickname?: string;
+  userId: string;
+  email: string;
   avatarUrl?: string;
 }
 
@@ -34,28 +34,11 @@ export class UserService {
     private entropy: EntropyService,
   ) {}
 
-  async find(userId: number): Promise<Option<UserAccount>> {
-    const existedUser = await this.conn.getRepository(UserAccount).findOne({ userId });
-
+  async findUser(
+    condition: {userId: string}|{emailId: string}|{internalUserId: number}
+  ): Promise<Option<UserAccount>> {
+    const existedUser = await this.conn.getRepository(UserAccount).findOne(condition);
     return fromNullable(existedUser);
-  }
-
-  async findByShortId(shortId: string): Promise<Option<UserAccount>> {
-    const existedUser = await this.conn.getRepository(UserAccount).findOne({ shortId });
-
-    return fromNullable(existedUser);
-  }
-
-  async findByEmail(email: string): Promise<Either<string, UserAccount>> {
-    const sanitizedEmail = Sanitize.email(email);
-    if (isLeft(sanitizedEmail)) {
-      return sanitizedEmail;
-    }
-
-    const existedUser = await this.conn.getRepository(UserAccount).findOne({ emailId: sanitizedEmail.right });
-
-    if (existedUser) return right(existedUser);
-    return left('user not found');
   }
 
   async findUserWithJwtToken(
@@ -71,7 +54,7 @@ export class UserService {
       return left('invalid token');
     }
 
-    const user = await this.conn.getRepository(UserAccount).findOne({ shortId: payload.shortId });
+    const user = await this.conn.getRepository(UserAccount).findOne({ userId: payload.userId });
     if (!user) {
       throw new Error('user not found');
     }
@@ -86,8 +69,8 @@ export class UserService {
     if (isLeft(sanitizedPass)) return sanitizedPass;
 
     const user = new UserAccount({
-      shortId: this.entropy.createNanoId(),
-      userMeta: {},
+      userId: this.entropy.createNanoId(),
+      internalMeta: {},
       emailId: sanitizedEmail.right,
       passwordHash: await this.entropy.bcryptHash(sanitizedPass.right),
     });
@@ -108,21 +91,21 @@ export class UserService {
     if (isLeft(sanitizedEmail)) return sanitizedEmail;
     if (isLeft(sanitizedPass)) return sanitizedPass;
 
-    const user = await this.findByEmail(email);
-    if (isLeft(user)) return user;
+    const user = await this.findUser({emailId: sanitizedEmail.right});
+    if (isNone(user)) return left('user not found');
 
-    const passwordMatched = await this.entropy.bcryptValidate(sanitizedPass.right, user.right.passwordHash);
+    const passwordMatched = await this.entropy.bcryptValidate(sanitizedPass.right, user.value.passwordHash);
 
-    if (passwordMatched) return user;
+    if (passwordMatched) return right(user.value);
     return left('password incorrect');
   }
 
   async resolveUser(userAccount: UserAccount): Promise<ResolvedUser> {
-    const oauthAccounts = await this.conn.getRepository(OAuthAccount).find({ userId: userAccount.userId });
+    const oauthAccounts = await this.conn.getRepository(OAuthAccount).find({ userId: userAccount.internalUserId });
     const resolved: ResolvedUser = {
-      shortId: userAccount.shortId,
-      nickname: userAccount.userMeta.nickname ?? `(not set)`,
-      avatarUrl: userAccount.userMeta.avatarUrl,
+      userId: userAccount.userId,
+      email: userAccount.emailId,
+      avatarUrl: undefined,
     };
 
     for (const o of oauthAccounts) {
@@ -135,14 +118,16 @@ export class UserService {
   }
 
   createJwtTokenForUser(user: UserAccount): Promise<string> {
-    return this.jwtService.signAsync({ shortId: user.shortId } as JwtTokenPayload);
+    return this.jwtService.signAsync({ userId: user.userId } as JwtTokenPayload);
   }
 
-  async updateUserMeta(authedUser: UserAccount, meta: {}): Promise<UserAccount> {
-    const user = getSomeOrThrow(await this.findByShortId(authedUser.shortId), () => new Error('user not available'));
-
-    user.setMeta(meta);
-
+  async updateUserMeta(
+    condition: Partial<Pick<UserAccount, 'userId' | 'internalUserId' | 'emailId'>>,
+    meta: object,
+  ): Promise<UserAccount> {
+    const user =
+      (await this.conn.getRepository(UserAccount).findOne(condition)) || absent('updateInternalMeta: user not found');
+    user.setInternalMeta(meta);
     await this.conn.getRepository(UserAccount).save(user);
     return user;
   }
@@ -159,7 +144,7 @@ export class UserService {
     if (existedOAuth) {
       const [user = absent('user by existedOAuth')] = await this.conn
         .getRepository(UserAccount)
-        .find({ userId: existedOAuth.userId });
+        .find({ internalUserId: existedOAuth.userId });
 
       // update oauth account
       Object.assign(existedOAuth, {
@@ -182,8 +167,8 @@ export class UserService {
     const res = await this.conn.transaction(async entityManager => {
       const userAccount = await entityManager.save(
         new UserAccount({
-          shortId: this.entropy.createNanoId(),
-          userMeta: {},
+          userId: this.entropy.createNanoId(),
+          internalMeta: {},
           emailId: sanitizedEmail.right,
           passwordHash: randomHash,
         }),
@@ -191,7 +176,7 @@ export class UserService {
       const oauthAccount = await entityManager.save(
         new OAuthAccount({
           provider: OAuthProvider.googleOAuth2,
-          userId: userAccount.userId,
+          userId: userAccount.internalUserId,
           externalId: oauthResponse.credentials.tokens.id_token!,
           credentials: oauthResponse.credentials,
           userInfo: oauthResponse.userInfo,

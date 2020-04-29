@@ -25,8 +25,8 @@ describe(UserService, () => {
     it('does create with proper auth info', async () => {
       const created1 = foldUser(await testee.findOrCreateWithGoogleOAuth(MockData.googleOAuthResponseValid));
 
+      expect(created1?.internalUserId).toBeTruthy();
       expect(created1?.userId).toBeTruthy();
-      expect(created1?.shortId).toBeTruthy();
 
       const created2 = foldUser(await testee.findOrCreateWithGoogleOAuth(MockData.googleOAuthResponseValid));
 

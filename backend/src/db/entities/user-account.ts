@@ -7,20 +7,21 @@ export class UserAccount {
    * @internal
    */
   @PrimaryGeneratedColumn()
-  readonly userId!: number;
+  readonly internalUserId!: number;
 
   @Column({ unique: true })
   @Index({})
-  readonly shortId!: string;
+  readonly userId!: string;
 
   @Column({ unique: true })
+  @Index({})
   readonly emailId!: string;
 
   @Column()
   readonly passwordHash!: string;
 
   @Column({ type: 'jsonb', default: {} })
-  readonly userMeta: Readonly<UserMeta> = {};
+  readonly internalMeta: Readonly<object> = {};
 
   @CreateDateColumn()
   readonly createdAt!: Date;
@@ -28,26 +29,23 @@ export class UserAccount {
   @UpdateDateColumn()
   readonly updatedAt!: Date;
 
-  constructor(init?: Pick<UserAccount, Exclude<keyof UserAccount, 'userId' | 'setMeta' | 'createdAt' | 'updatedAt'>>) {
+  constructor(
+    init?: Pick<
+      UserAccount,
+      Exclude<keyof UserAccount, 'internalUserId' | 'setInternalMeta' | 'createdAt' | 'updatedAt'>
+    >,
+  ) {
     if (init) {
-      this.shortId = init.shortId;
+      this.userId = init.userId;
       this.emailId = init.emailId;
       this.passwordHash = init.passwordHash;
-      this.userMeta = {};
-      this.setMeta(init.userMeta);
+      this.internalMeta = {};
+      this.setInternalMeta(init.internalMeta);
     }
   }
 
-  setMeta(other: UserMeta): this {
-    const writable = this.userMeta as UserMeta;
-    if (typeof other.nickname === 'string') {
-      writable.nickname = other.nickname;
-    }
-
-    if (typeof other.avatarUrl === 'string') {
-      writable.avatarUrl = other.avatarUrl;
-    }
-
+  setInternalMeta(other: object): this {
+    Object.assign(this.internalMeta, other);
     return this;
   }
 }
