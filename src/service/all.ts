@@ -1,9 +1,8 @@
-import { SelfUser } from '../model/user-identity';
 import { Either } from 'fp-ts/lib/Either';
 import { ItemPossession } from '../model/item-possession';
 import { FriendEntry, FriendInventory } from '../model/friend';
 import { Observable } from 'rxjs';
-import { EmailAuthPayload } from '../model/http-api';
+import { EmailAuthPayload, HankoUser } from '../api/hanko-api';
 
 export type ApiResponse<T> = Promise<ApiResponseSync<T>>;
 
@@ -11,8 +10,8 @@ export type ApiResponseSync<T> = Either<string, T>;
 
 export interface UserAuthService {
   authed: Observable<ExposedAuthState>;
-  emailSignUp(param: EmailAuthPayload): ApiResponse<SelfUser>;
-  emailSignIn(param: EmailAuthPayload): ApiResponse<SelfUser>;
+  emailSignUp(param: EmailAuthPayload): ApiResponse<HankoUser>;
+  emailSignIn(param: EmailAuthPayload): ApiResponse<HankoUser>;
   signOut(): Either<string, void>;
 }
 
@@ -33,11 +32,13 @@ export interface FriendService {
 }
 
 export interface ExposedAuthState {
-  self: SelfUser | null;
+  user?: HankoUser;
+  profile: null;
   pendingAuth: boolean;
 }
 
 export const dummyAuthState = {
-  self: null,
+  user: undefined,
+  profile: null,
   pendingAuth: false,
 } as const;

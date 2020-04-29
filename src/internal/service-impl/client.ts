@@ -2,7 +2,8 @@ import { left, right } from 'fp-ts/lib/Either';
 import { ErrorCodeEnum } from '../../model/error-code';
 import { createLogger } from '../../util/debug-logger';
 import { ApiResponse } from '../../service/all';
-import { ErrorResponse } from '../../model/http-api';
+import { ErrorResponse } from '../../api/hanko-api';
+import { buildApiRoute } from '../../api/api-route';
 
 const logger = createLogger(__filename);
 
@@ -64,22 +65,3 @@ export class ApiClient {
     }
   }
 }
-
-/**
- * TODO: move to hanko
- * @param {string} apiOrigin
- */
-const buildApiRoute = (apiOrigin: string) =>
-  ({
-    hankoUser: {
-      show: (id: string) => `${apiOrigin}/user/id/${encodeURIComponent(id)}`,
-      self: `/user/self`,
-    },
-    hankoAuth: {
-      emailSignUp: `${apiOrigin}/auth/email/signup`,
-      emailSignIn: `${apiOrigin}/auth/email/signin`,
-      oauthGoogle: `${apiOrigin}/auth/oauth/google`,
-    },
-
-    // TODO: xxx
-  } as const);

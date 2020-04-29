@@ -4,12 +4,13 @@ import { Button, H2, FormGroup, InputGroup } from '@blueprintjs/core';
 import React, { useMemo, useState } from 'react';
 import { useSingletons } from '../src/internal/app-context';
 import { useLast, useObserved } from '../src/components/hooks/use-observed';
-import { SelfUser } from '../src/model/user-identity';
 import { ApiResponseSync, dummyAuthState } from '../src/service/all';
 import { isLeft } from 'fp-ts/lib/Either';
 import { createLogger } from '../src/util/debug-logger';
+import { HankoUser } from '../src/api/hanko-api';
+import gravatarUrl from 'gravatar-url';
 
-const onAuthResult = (res: ApiResponseSync<SelfUser>) => {
+const onAuthResult = (res: ApiResponseSync<HankoUser>) => {
   if (isLeft(res)) {
     alert(res.left);
   } else {
@@ -24,7 +25,7 @@ const AuthState: React.FC = () => {
   const { auth } = useSingletons();
   const authState = useMemo(() => auth.authed, [auth]);
 
-  const { self, pendingAuth } = useLast(authState, dummyAuthState);
+  const { user: self, pendingAuth } = useLast(authState, dummyAuthState);
 
   const wtf = useObserved(authState, dummyAuthState);
 
@@ -37,8 +38,13 @@ const AuthState: React.FC = () => {
     return (
       <div>
         <H2>已登录</H2>
-        <p>{self.userEmail}</p>
-        <p>{self.nickname ?? '(nick not set)'}</p>
+        <p>
+          <img src={gravatarUrl(self.email || 'user@example.com', { size: 320 })} />
+          {self.email}
+        </p>
+        <p>
+          用户id: <span className="monospace">{self.userId}</span>
+        </p>
         <br />
         <Button onClick={() => auth.signOut()}>退出登录</Button>
       </div>
@@ -83,7 +89,6 @@ const AuthState: React.FC = () => {
 const AccountPageContent: React.FC = () => {
   return (
     <div>
-      <H2>我的帐号</H2>
       <AuthState />
     </div>
   );

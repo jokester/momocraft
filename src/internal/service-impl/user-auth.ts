@@ -1,10 +1,10 @@
 import { ApiResponse, ExposedAuthState, UserAuthService } from '../../service/all';
 import { Either, fold, fromOption, left, map as mapEither, right } from 'fp-ts/lib/Either';
 import { BehaviorSubject, Observable } from 'rxjs';
-import { SelfUser } from '../../model/user-identity';
+import { SelfUser } from '../../service/user-identity';
 
-import * as HttpApi from '../../model/http-api';
-import { AuthResponse, EmailAuthPayload } from '../../model/http-api';
+import * as HttpApi from '../../api/hanko-api';
+import { AuthResponse, EmailAuthPayload, HankoUser } from '../../api/hanko-api';
 
 import { ApiClient } from './client';
 import { map } from 'rxjs/operators';
@@ -21,7 +21,8 @@ interface InternalAuthState {
 
 const exposeAuthState = map<InternalAuthState, ExposedAuthState>((_: InternalAuthState) => ({
   pendingAuth: _.pendingAuth,
-  self: _.identity?.user || null,
+  user: _.identity?.user,
+  profile: null,
 }));
 
 export class AuthServiceImpl implements UserAuthService {
@@ -52,13 +53,13 @@ export class AuthServiceImpl implements UserAuthService {
     return this._authState.pipe(exposeAuthState);
   }
 
-  async emailSignUp(param: EmailAuthPayload): ApiResponse<SelfUser> {
+  async emailSignUp(param: EmailAuthPayload): ApiResponse<HankoUser> {
     this.onStartAuth();
     const res = await this.c.postJson<HttpApi.AuthResponse>(this.r.hankoAuth.emailSignUp, {}, param);
     return this.onAuthResponse(res);
   }
 
-  async emailSignIn(param: EmailAuthPayload): ApiResponse<SelfUser> {
+  async emailSignIn(param: EmailAuthPayload): ApiResponse<HankoUser> {
     this.onStartAuth();
     const res = await this.c.postJson<HttpApi.AuthResponse>(this.r.hankoAuth.emailSignIn, {}, param);
     return this.onAuthResponse(res);
@@ -99,7 +100,7 @@ export class AuthServiceImpl implements UserAuthService {
     this._authState.next({ ...this._authState.value, pendingAuth: true });
   };
 
-  private onAuthResponse = fold<string, HttpApi.AuthResponse, Either<string, SelfUser>>(
+  private onAuthResponse = fold<string, HttpApi.AuthResponse, Either<string, HankoUser>>(
     l => {
       this._authState.next({ identity: null, pendingAuth: false });
       return left(l);
