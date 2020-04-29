@@ -2,6 +2,8 @@ import React, { useEffect } from 'react';
 import Router from 'next/router';
 import { buildEnv } from '../config/build-env';
 
+declare function gtag(...args: any[]): void;
+
 /**
  * taken from https://github.com/zeit/next.js/blob/canary/examples/with-google-analytics/pages/_document.js
  * @returns {any}
@@ -9,8 +11,6 @@ import { buildEnv } from '../config/build-env';
  */
 export const GoogleAnalyticsTag: React.FC = () => {
   const { GA_TRACKING_ID } = buildEnv;
-
-  declare function gtag(...args: any[]): void;
 
   useEffect(() => {
     if (GA_TRACKING_ID) {
