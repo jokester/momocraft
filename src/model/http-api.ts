@@ -1,6 +1,9 @@
 import { SelfUser } from './user-identity';
 
-export interface EmailAuthPayload {}
+export interface EmailAuthPayload {
+  email: string;
+  password: string;
+}
 
 /**
  * TODO: align with hanko/momocraft-backend
@@ -17,5 +20,5 @@ export interface ErrorResponse {
   message: string;
 
   // app-errors
-  error?: string;
+  error?: string | string[];
 }

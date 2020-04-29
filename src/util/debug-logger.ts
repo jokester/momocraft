@@ -1,4 +1,5 @@
 import debug from 'debug';
+import { isDevBuild } from '../config/build-env';
 
 const pathSegments = __dirname.split(/[/\\]/);
 
@@ -28,6 +29,21 @@ const getDebugNamespace = (rootDir: string, prefix: string, stripCodeExt = true)
 
 const ns = getDebugNamespace(pathSegments.slice(0, pathSegments.length - 2).join('/'), 'momocraft');
 
-export function createLogger(srcFile: string) {
-  return debug(ns(srcFile));
+export function createLogger(srcFile: string, attachTapper = isDevBuild) {
+  const debugLogger = debug(ns(srcFile));
+
+  const withTapper = {
+    tap: attachTapper
+      ? <A>(value: A): typeof value => {
+          debugLogger('tap', value);
+          return value;
+        }
+      : emptyTapper,
+  };
+
+  Object.assign(debugLogger, withTapper);
+
+  return debugLogger as typeof debugLogger & typeof withTapper;
 }
+
+const emptyTapper = <A>(value: A) => value;

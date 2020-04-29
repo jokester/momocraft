@@ -1,11 +1,11 @@
-import { ApiResponse, EmailAuthPayload, UserAuthService } from '../../service/all';
+import { ApiResponse, UserAuthService } from '../../service/all';
 import { Either, fromOption, left, map as mapEither } from 'fp-ts/lib/Either';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { SelfUser } from '../../model/user-identity';
 import { map as mapOpt, none, Option, some } from 'fp-ts/lib/Option';
 
 import * as HttpApi from '../../model/http-api';
-import { AuthResponse } from '../../model/http-api';
+import { AuthResponse, EmailAuthPayload } from '../../model/http-api';
 
 import { ApiClient } from './client';
 import { map } from 'rxjs/operators';

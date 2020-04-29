@@ -4,15 +4,11 @@ import { ItemPossession } from '../model/item-possession';
 import { FriendEntry, FriendInventory } from '../model/friend';
 import { Observable } from 'rxjs';
 import { Option } from 'fp-ts/lib/Option';
+import { EmailAuthPayload } from '../model/http-api';
 
 export type ApiResponse<T> = Promise<ApiResponseSync<T>>;
 
 export type ApiResponseSync<T> = Either<string, T>;
-
-export interface EmailAuthPayload {
-  email: string;
-  password: string;
-}
 
 export interface UserAuthService {
   authed: Observable<Option<SelfUser>>;

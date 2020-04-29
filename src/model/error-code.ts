@@ -4,7 +4,8 @@ export const enum ErrorCodeEnum {
   requestFail = 'request_fail',
 
   // auth
-  authFail = 'auth_fail',
+  notAuthenticated = 'not_authenticated',
+  forbidden = 'forbidden',
 
   // app
 
