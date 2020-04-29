@@ -1,7 +1,7 @@
 import { PageType } from '../src/next-types';
 import { Layout } from '../src/components/layout/layout';
-import { Button, H2, FormGroup, InputGroup } from '@blueprintjs/core';
-import React, { useMemo, useState } from 'react';
+import { Button, H2, FormGroup, InputGroup, Label } from '@blueprintjs/core';
+import React, { useMemo, useState, ChangeEvent } from 'react';
 import { useSingletons } from '../src/internal/app-context';
 import { useLast, useObserved } from '../src/components/hooks/use-observed';
 import { ApiResponseSync, dummyAuthState } from '../src/service/all';
@@ -27,12 +27,8 @@ const AuthState: React.FC = () => {
 
   const { user: self, pendingAuth } = useLast(authState, dummyAuthState);
 
-  const wtf = useObserved(authState, dummyAuthState);
-
   const [email, setEmail] = useState('');
   const [password, setPass] = useState('');
-
-  logger('AuthState', self, pendingAuth, wtf);
 
   if (self) {
     return (
@@ -57,19 +53,21 @@ const AuthState: React.FC = () => {
     <div>
       <H2>{pendingAuth ? '正在登录' : '未登录'}</H2>
       <FormGroup>
-        <InputGroup
-          type="text"
-          value={email}
-          leftIcon="envelope"
-          disabled={pendingAuth}
-          onInput={ev => setEmail((ev.target as HTMLInputElement).value)}
-        />
+        <Label>
+          <InputGroup
+            type="text"
+            value={email}
+            leftIcon="envelope"
+            disabled={pendingAuth}
+            onChange={(ev: ChangeEvent<HTMLInputElement>) => setEmail(ev.target.value)}
+          />
+        </Label>
         <InputGroup
           type="password"
           value={password}
           leftIcon="lock"
           disabled={pendingAuth}
-          onInput={ev => setPass((ev.target as HTMLInputElement).value)}
+          onChange={(ev: ChangeEvent<HTMLInputElement>) => setPass((ev.target as HTMLInputElement).value)}
         />
       </FormGroup>
       <FormGroup>
@@ -80,6 +78,7 @@ const AuthState: React.FC = () => {
           注册
         </Button>
         <Button
+          type="submit"
           onClick={() => email && password && auth.emailSignIn({ email, password }).then(onAuthResult)}
           disabled={pendingAuth}
         >
