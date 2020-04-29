@@ -71,7 +71,6 @@ describe('AppController (e2e)', () => {
       logger('decoded', decoded);
 
       await jwtService.verifyAsync(jwtToken);
-
     });
 
     it('POST /auth/oauth/google return 400 on malformed request', async () => {
@@ -166,7 +165,7 @@ describe('AppController (e2e)', () => {
     });
 
     it('GET /user/self with proper auth returns resolved user', async () => {
-      const userAccount1 = getSomeOrThrow(await userService.findUser({userId: createdUserShortId}), () =>
+      const userAccount1 = getSomeOrThrow(await userService.findUser({ userId: createdUserShortId }), () =>
         absent('user by shortId'),
       );
 
@@ -184,7 +183,7 @@ describe('AppController (e2e)', () => {
     });
 
     it('PUT /user/self updated resolved user', async () => {
-      const userAccount1 = getSomeOrThrow(await userService.findUser({userId: createdUserShortId}), () =>
+      const userAccount1 = getSomeOrThrow(await userService.findUser({ userId: createdUserShortId }), () =>
         absent('user by shortId'),
       );
 

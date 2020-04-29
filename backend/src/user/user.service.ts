@@ -9,7 +9,6 @@ import { UserAccount } from '../db/entities/user-account';
 import { EntropyService } from '../deps/entropy.service';
 import { JwtService } from '@nestjs/jwt';
 import { fromNullable, isNone, Option } from 'fp-ts/lib/Option';
-import { getSomeOrThrow } from '../util/fpts-getter';
 import { absent } from '../util/absent';
 import { Sanitize } from '../util/input-santinizer';
 import { randomAlphaNum } from '../ts-commonutil/text/random-string';
@@ -35,7 +34,7 @@ export class UserService {
   ) {}
 
   async findUser(
-    condition: {userId: string}|{emailId: string}|{internalUserId: number}
+    condition: { userId: string } | { emailId: string } | { internalUserId: number },
   ): Promise<Option<UserAccount>> {
     const existedUser = await this.conn.getRepository(UserAccount).findOne(condition);
     return fromNullable(existedUser);
@@ -91,7 +90,7 @@ export class UserService {
     if (isLeft(sanitizedEmail)) return sanitizedEmail;
     if (isLeft(sanitizedPass)) return sanitizedPass;
 
-    const user = await this.findUser({emailId: sanitizedEmail.right});
+    const user = await this.findUser({ emailId: sanitizedEmail.right });
     if (isNone(user)) return left('user not found');
 
     const passwordMatched = await this.entropy.bcryptValidate(sanitizedPass.right, user.value.passwordHash);
