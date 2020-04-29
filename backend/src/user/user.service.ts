@@ -68,7 +68,7 @@ export class UserService {
     if (isLeft(sanitizedPass)) return sanitizedPass;
 
     const user = new UserAccount({
-      userId: this.entropy.createNanoId(),
+      userId: this.entropy.createUserStringId(),
       internalMeta: {},
       emailId: sanitizedEmail.right,
       passwordHash: await this.entropy.bcryptHash(sanitizedPass.right),
@@ -166,7 +166,7 @@ export class UserService {
     const res = await this.conn.transaction(async entityManager => {
       const userAccount = await entityManager.save(
         new UserAccount({
-          userId: this.entropy.createNanoId(),
+          userId: this.entropy.createUserStringId(),
           internalMeta: {},
           emailId: sanitizedEmail.right,
           passwordHash: randomHash,

@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import nanoid from 'nanoid';
 import * as bcrypt from 'bcrypt';
+import { randomString } from '../ts-commonutil/text/random-string';
 
 @Injectable()
 export class EntropyService {
@@ -14,6 +15,11 @@ export class EntropyService {
 
   createNanoId(): string {
     return nanoid(9);
+  }
+
+  createUserStringId() {
+    // https://zelark.github.io/nano-id-cc/
+    return randomString('ABCDEFGHJKLMNPRTUVWXYZ3456789', 10);
   }
 
   bcryptHash(pass: string): Promise<string> {
