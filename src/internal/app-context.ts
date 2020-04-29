@@ -4,6 +4,7 @@ import { buildEnv, inServer, isDevBuild } from '../config/build-env';
 import { Never } from '@jokester/ts-commonutil/concurrency/timing';
 import { ApiClient } from './service-impl/client';
 import { AuthServiceImpl } from './service-impl/user-auth';
+import { UserAuthService } from '../service/all';
 
 type Singletons = ReturnType<typeof initSingletons>;
 
@@ -19,7 +20,7 @@ function initSingletons() {
   const fetchImpl = inServer ? () => Never : fetch;
   const apiClient = new ApiClient(fetchImpl, buildEnv.MOMO_SERVER_ORIGIN);
 
-  const auth = new AuthServiceImpl(apiClient);
+  const auth = new AuthServiceImpl(apiClient) as UserAuthService;
 
   return {
     auth,
