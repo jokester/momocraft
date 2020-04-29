@@ -9,7 +9,7 @@ services:
     volumes:
       - ./pg-data:/var/lib/postgresql/data
     ports:
-      - 53432:5432
+      - 54432:5432
     restart: always
 
   redis:
@@ -17,6 +17,6 @@ services:
     volumes:
       - ./redis-data:/data
     ports:
-      - 53379:6379
+      - 54379:6379
     restart: always
 

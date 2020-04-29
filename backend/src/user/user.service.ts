@@ -1,6 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { getDebugLogger } from '../util/get-debug-logger';
-import { Either, fromOption, left, right } from 'fp-ts/lib/Either';
+import { Either, isLeft, left, right } from 'fp-ts/lib/Either';
 import { GoogleOAuthResponse } from './google-oauth.service';
 import { TypeORMConnection } from '../db/typeorm-connection.provider';
 import { Connection, DeepPartial } from 'typeorm';
@@ -8,9 +8,11 @@ import { OAuthAccount, OAuthProvider } from '../db/entities/oauth-account';
 import { UserAccount } from '../db/entities/user-account';
 import { EntropyService } from '../deps/entropy.service';
 import { JwtService } from '@nestjs/jwt';
-import { Option, fromNullable, map, isSome } from 'fp-ts/lib/Option';
+import { fromNullable, Option } from 'fp-ts/lib/Option';
 import { getSomeOrThrow } from '../util/fpts-getter';
 import { absent } from '../util/absent';
+import { Sanitize } from '../util/input-santinizer';
+import { randomAlphaNum } from '../ts-commonutil/text/random-string';
 
 const logger = getDebugLogger(__filename);
 
@@ -20,7 +22,7 @@ interface JwtTokenPayload {
 
 export interface ResolvedUser {
   shortId: string;
-  nickName: string;
+  nickname?: string;
   avatarUrl?: string;
 }
 
@@ -44,6 +46,18 @@ export class UserService {
     return fromNullable(existedUser);
   }
 
+  async findByEmail(email: string): Promise<Either<string, UserAccount>> {
+    const sanitizedEmail = Sanitize.email(email);
+    if (isLeft(sanitizedEmail)) {
+      return sanitizedEmail;
+    }
+
+    const existedUser = await this.conn.getRepository(UserAccount).findOne({ emailId: sanitizedEmail.right });
+
+    if (existedUser) return right(existedUser);
+    return left('user not found');
+  }
+
   async findUserWithJwtToken(
     jwtToken: string,
     currentTimestamp = this.entropy.now(),
@@ -64,11 +78,50 @@ export class UserService {
     return right(user);
   }
 
+  async signUpWithEmail(email: string, password: string): Promise<Either<string, UserAccount>> {
+    const sanitizedEmail = Sanitize.email(email),
+      sanitizedPass = Sanitize.pass(password);
+
+    if (isLeft(sanitizedEmail)) return sanitizedEmail;
+    if (isLeft(sanitizedPass)) return sanitizedPass;
+
+    const user = new UserAccount({
+      shortId: this.entropy.createNanoId(),
+      userMeta: {},
+      emailId: sanitizedEmail.right,
+      passwordHash: await this.entropy.bcryptHash(sanitizedPass.right),
+    });
+
+    return this.conn
+      .getRepository(UserAccount)
+      .save(user)
+      .then(right, err => {
+        logger('UserService#signUpWithEmail error creating', err);
+        return left('error creating user');
+      });
+  }
+
+  async signInWithEmail(email: string, password: string): Promise<Either<string, UserAccount>> {
+    const sanitizedEmail = Sanitize.email(email),
+      sanitizedPass = Sanitize.pass(password);
+
+    if (isLeft(sanitizedEmail)) return sanitizedEmail;
+    if (isLeft(sanitizedPass)) return sanitizedPass;
+
+    const user = await this.findByEmail(email);
+    if (isLeft(user)) return user;
+
+    const passwordMatched = await this.entropy.bcryptValidate(sanitizedPass.right, user.right.passwordHash);
+
+    if (passwordMatched) return user;
+    return left('password incorrect');
+  }
+
   async resolveUser(userAccount: UserAccount): Promise<ResolvedUser> {
     const oauthAccounts = await this.conn.getRepository(OAuthAccount).find({ userId: userAccount.userId });
     const resolved: ResolvedUser = {
       shortId: userAccount.shortId,
-      nickName: userAccount.userMeta.nickName ?? `(not set)`,
+      nickname: userAccount.userMeta.nickname ?? `(not set)`,
       avatarUrl: userAccount.userMeta.avatarUrl,
     };
 
@@ -95,7 +148,7 @@ export class UserService {
   }
 
   async findOrCreateWithGoogleOAuth(oauthResponse: GoogleOAuthResponse): Promise<Either<string, UserAccount>> {
-    if (oauthResponse?.userInfo?.verified_email !== true) {
+    if (!(oauthResponse?.userInfo?.verified_email && oauthResponse.userInfo.email)) {
       return left('email must be verified');
     }
     const oAuthAccountRepo = this.conn.getRepository(OAuthAccount);
@@ -119,12 +172,20 @@ export class UserService {
       return right(user);
     }
 
+    const sanitizedEmail = Sanitize.email(oauthResponse.userInfo.email);
+
+    if (isLeft(sanitizedEmail)) return sanitizedEmail;
+
+    const randomHash = await this.entropy.bcryptHash(randomAlphaNum(16));
+
     // try create
     const res = await this.conn.transaction(async entityManager => {
       const userAccount = await entityManager.save(
         new UserAccount({
           shortId: this.entropy.createNanoId(),
           userMeta: {},
+          emailId: sanitizedEmail.right,
+          passwordHash: randomHash,
         }),
       );
       const oauthAccount = await entityManager.save(

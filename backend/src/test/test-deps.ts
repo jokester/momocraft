@@ -5,11 +5,12 @@ import { EntropyService } from '../deps/entropy.service';
 import { DeepReadonly } from '../ts-commonutil/type';
 import { GoogleOAuthResponse } from '../user/google-oauth.service';
 import { JwtService } from '@nestjs/jwt';
+import { EmailAuthPayload } from '../linked-frontend/model/http-api';
 
 export namespace TestDeps {
   export const testConnection = createConnection({
     type: 'postgres',
-    url: 'postgresql://pguser:secret@127.0.0.1:53432/hanko_test',
+    url: 'postgresql://pguser:secret@127.0.0.1:54432/momo_test',
     synchronize: true,
     logger: 'debug',
     entities: [UserAccount, OAuthAccount],
@@ -17,8 +18,13 @@ export namespace TestDeps {
 
   export async function clearTestDatabase(): Promise<void> {
     const conn = await testConnection;
+    await conn.synchronize(true);
     await conn.createEntityManager().clear(UserAccount);
     await conn.createEntityManager().clear(OAuthAccount);
+  }
+
+  export async function dropTestDatabase(): Promise<void> {
+    const conn = await testConnection;
   }
 
   export const mockedEntropy = new EntropyService();
@@ -27,6 +33,8 @@ export namespace TestDeps {
 }
 
 export namespace MockData {
+  export const authPayload = { email: 'a@b.com', password: '1234567' } as EmailAuthPayload;
+
   export const googleOAuthResponseValid = {
     credentials: {
       tokens: {

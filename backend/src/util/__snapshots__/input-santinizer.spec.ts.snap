@@ -1,0 +1,8 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Sanitize launders email 1`] = `
+Object {
+  "_tag": "Right",
+  "right": "momocraft@gmail.com",
+}
+`;

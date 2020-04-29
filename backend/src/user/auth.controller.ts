@@ -1,10 +1,18 @@
 import { BadRequestException, Body, Controller, Header, HttpCode, Post, Request } from '@nestjs/common';
 import { getDebugLogger } from '../util/get-debug-logger';
 import { GoogleOAuthService } from './google-oauth.service';
-import { UserService } from './user.service';
+import { ResolvedUser, UserService } from './user.service';
 import { getRightOrThrow } from '../util/fpts-getter';
+import { EmailAuthPayload } from '../linked-frontend/model/http-api';
+import { Sanitize } from '../util/input-santinizer';
+import { UserAccount } from '../db/entities/user-account';
 
 const logger = getDebugLogger(__filename);
+
+export interface AuthSuccessRes {
+  jwtToken: string;
+  user: ResolvedUser;
+}
 
 @Controller('auth')
 export class AuthController {
@@ -36,5 +44,47 @@ export class AuthController {
       return { jwtToken: await this.userService.createJwtTokenForUser(user) };
     }
     throw new BadRequestException();
+  }
+
+  @Post('email/signup')
+  @HttpCode(201)
+  @Header('Cache-Control', 'private;max-age=0;')
+  async doEmailSignUp(@Body() payload: EmailAuthPayload): Promise<AuthSuccessRes> {
+    // this.validateEmailAuthPaylod(payload);
+
+    const created = getRightOrThrow(
+      await this.userService.signUpWithEmail(payload.email, payload.password),
+      l => new BadRequestException(l),
+    );
+
+    return this.resolveAuthSuccess(created);
+  }
+
+  @Post('email/signin')
+  @HttpCode(200)
+  @Header('Cache-Control', 'private;max-age=0;')
+  async doEmailSignIn(@Body() payload: EmailAuthPayload): Promise<AuthSuccessRes> {
+    // this.validateEmailAuthPaylod(payload);
+
+    const authedUser = getRightOrThrow(
+      await this.userService.signInWithEmail(payload.email, payload.password),
+      l => new BadRequestException(l),
+    );
+
+    return this.resolveAuthSuccess(authedUser);
+  }
+
+  private async resolveAuthSuccess(authedUser: UserAccount): Promise<AuthSuccessRes> {
+    return {
+      jwtToken: await this.userService.createJwtTokenForUser(authedUser),
+      user: await this.userService.resolveUser(authedUser),
+    };
+  }
+
+  private validateEmailAuthPaylod(payload?: EmailAuthPayload) {
+    // FIXME: move validate here
+    if (!(Sanitize.isString(payload?.email) && Sanitize.isString(payload?.password))) {
+      throw new BadRequestException();
+    }
   }
 }

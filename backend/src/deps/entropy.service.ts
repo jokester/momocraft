@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import nanoid from 'nanoid';
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class EntropyService {
@@ -13,5 +14,13 @@ export class EntropyService {
 
   createNanoId(): string {
     return nanoid(9);
+  }
+
+  bcryptHash(pass: string): Promise<string> {
+    return bcrypt.hash(pass, 10);
+  }
+
+  bcryptValidate(pass: string, hash: string): Promise<boolean> {
+    return bcrypt.compare(pass, hash);
   }
 }
