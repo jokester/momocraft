@@ -44,7 +44,10 @@ export class UserAccount {
     }
   }
 
-  setInternalMeta(other: object): this {
+  setInternalMeta(other: unknown): this {
+    if (typeof other !== 'object') {
+      throw new Error('internalMeta must be object');
+    }
     Object.assign(this.internalMeta, other);
     return this;
   }
