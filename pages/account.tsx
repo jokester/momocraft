@@ -3,19 +3,22 @@ import { Layout } from '../src/components/layout/layout';
 import { Button, H2, FormGroup, InputGroup } from '@blueprintjs/core';
 import React, { useMemo, useState } from 'react';
 import { useSingletons } from '../src/internal/app-context';
-import { useLast } from '../src/components/hooks/use-observed';
-import { fold } from 'fp-ts/es6/Option';
+import { useLast, useObserved } from '../src/components/hooks/use-observed';
 import { SelfUser } from '../src/model/user-identity';
 import { ApiResponseSync, dummyAuthState } from '../src/service/all';
 import { isLeft } from 'fp-ts/lib/Either';
-import IndexPage from './index';
+import { createLogger } from '../src/util/debug-logger';
 
 const onAuthResult = (res: ApiResponseSync<SelfUser>) => {
   if (isLeft(res)) {
     alert(res.left);
+  } else {
+    alert('登录成功');
   }
   return res;
 };
+
+const logger = createLogger(__filename);
 
 const AuthState: React.FC = () => {
   const { auth } = useSingletons();
@@ -23,8 +26,12 @@ const AuthState: React.FC = () => {
 
   const { self, pendingAuth } = useLast(authState, dummyAuthState);
 
-  const [email, setEmail] = useState('');
-  const [password, setPass] = useState('');
+  const wtf = useObserved(authState, dummyAuthState);
+
+  const [email, setEmail] = useState('momocraft@gmail.com');
+  const [password, setPass] = useState('1234567');
+
+  logger('AuthState', self, pendingAuth, wtf);
 
   if (self) {
     return (
@@ -42,8 +49,18 @@ const AuthState: React.FC = () => {
     <div>
       <H2>{pendingAuth ? '正在登录' : '未登录'}</H2>
       <FormGroup>
-        <InputGroup value={email} leftIcon="envelope" onInput={ev => setEmail((ev.target as HTMLInputElement).value)} />
-        <InputGroup value={password} leftIcon={'lock'} onInput={ev => setPass((ev.target as HTMLInputElement).value)} />
+        <InputGroup
+          type="text"
+          value={email}
+          leftIcon="envelope"
+          onInput={ev => setEmail((ev.target as HTMLInputElement).value)}
+        />
+        <InputGroup
+          type="password"
+          value={password}
+          leftIcon={'lock'}
+          onInput={ev => setPass((ev.target as HTMLInputElement).value)}
+        />
       </FormGroup>
       <FormGroup>
         <Button

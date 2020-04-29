@@ -19,7 +19,10 @@ export class ApiClient {
   postJson<T>(url: string, headers: Record<string, string>, payload: object): ApiResponse<T> {
     return this.launderJsonResponse(
       this._fetch(url, {
-        headers,
+        headers: {
+          ...headers,
+          'content-type': 'application/json',
+        },
         method: 'POST',
         body: JSON.stringify(payload),
       }),
@@ -34,24 +37,26 @@ export class ApiClient {
         return right(await res.json());
       }
 
-      if (!res.ok) {
-        // TODO: detect http status
-        switch (res.status) {
-          case 401:
-            return left(ErrorCodeEnum.notAuthenticated);
-          case 403:
-            return left(ErrorCodeEnum.forbidden);
-        }
-        return left(ErrorCodeEnum.requestFail);
+      switch (res.status) {
+        case 401:
+          return left(ErrorCodeEnum.notAuthenticated);
+        case 403:
+          return left(ErrorCodeEnum.forbidden);
+        case 400:
+        // catch it later
       }
 
       // assuming non-empty resBody
       const resBody: T & Partial<ErrorResponse> = await res.json();
 
+      if (typeof resBody?.message === 'string') return left(resBody.message);
       if (typeof resBody?.error === 'string') return left(resBody.error);
-      if (resBody?.error instanceof Array) return left(resBody.error[0] || ErrorCodeEnum.requestFail);
 
-      return right(resBody);
+      if (res.ok) {
+        return right(resBody);
+      } else {
+        return left(ErrorCodeEnum.requestFail);
+      }
     } catch (transportOrParseError) {
       logger('apiClient#launderJsonResponse', transportOrParseError);
 
@@ -67,13 +72,13 @@ export class ApiClient {
 const buildApiRoute = (apiOrigin: string) =>
   ({
     hankoUser: {
-      show: (id: string) => `/user/id/${encodeURIComponent(id)}`,
+      show: (id: string) => `${apiOrigin}/user/id/${encodeURIComponent(id)}`,
       self: `/user/self`,
     },
     hankoAuth: {
-      emailSignUp: `/auth/email/signup`,
-      emailSignIn: `/auth/email/signin`,
-      oauthGoogle: `/auth/oauth/google`,
+      emailSignUp: `${apiOrigin}/auth/email/signup`,
+      emailSignIn: `${apiOrigin}/auth/email/signin`,
+      oauthGoogle: `${apiOrigin}/auth/oauth/google`,
     },
 
     // TODO: xxx

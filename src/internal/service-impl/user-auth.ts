@@ -1,5 +1,5 @@
 import { ApiResponse, ExposedAuthState, UserAuthService } from '../../service/all';
-import { Either, fromOption, left, map as mapEither, right } from 'fp-ts/lib/Either';
+import { Either, fold, fromOption, left, map as mapEither, right } from 'fp-ts/lib/Either';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { SelfUser } from '../../model/user-identity';
 
@@ -10,6 +10,9 @@ import { ApiClient } from './client';
 import { map } from 'rxjs/operators';
 import { ErrorCodeEnum } from '../../model/error-code';
 import { toTypedLocalStorage } from '../../util/typed-local-storage';
+import { createLogger } from '../../util/debug-logger';
+
+const logger = createLogger(__filename);
 
 interface InternalAuthState {
   identity: null | AuthResponse;
@@ -18,12 +21,10 @@ interface InternalAuthState {
 
 const exposeAuthState = map<InternalAuthState, ExposedAuthState>((_: InternalAuthState) => ({
   pendingAuth: _.pendingAuth,
-  self: _.identity?.self || null,
+  self: _.identity?.user || null,
 }));
 
 export class AuthServiceImpl implements UserAuthService {
-  constructor(private readonly apiClient: ApiClient) {}
-
   private readonly persist = toTypedLocalStorage<{
     moAur: AuthResponse;
   }>();
@@ -33,16 +34,34 @@ export class AuthServiceImpl implements UserAuthService {
     identity: this.persist.getItem('moAur'),
   });
 
+  constructor(private readonly apiClient: ApiClient) {
+    logger('authState.init', this._authState.value);
+    this._authState
+      .pipe(_ => _)
+      .subscribe({
+        next(v) {
+          logger('authState.next', v);
+        },
+        error(e) {
+          logger('authState.error', e);
+        },
+      });
+  }
+
   get authed(): Observable<ExposedAuthState> {
-    return this._authState.asObservable().pipe(exposeAuthState);
+    return this._authState.pipe(exposeAuthState);
   }
 
   async emailSignUp(param: EmailAuthPayload): ApiResponse<SelfUser> {
-    return this.onAuthResponse(await this.c.postJson<HttpApi.AuthResponse>(this.r.hankoAuth.emailSignUp, {}, param));
+    this.onStartAuth();
+    const res = await this.c.postJson<HttpApi.AuthResponse>(this.r.hankoAuth.emailSignUp, {}, param);
+    return this.onAuthResponse(res);
   }
 
   async emailSignIn(param: EmailAuthPayload): ApiResponse<SelfUser> {
-    return this.onAuthResponse(await this.c.postJson<HttpApi.AuthResponse>(this.r.hankoAuth.emailSignIn, {}, param));
+    this.onStartAuth();
+    const res = await this.c.postJson<HttpApi.AuthResponse>(this.r.hankoAuth.emailSignIn, {}, param);
+    return this.onAuthResponse(res);
   }
 
   signOut(): Either<string, void> {
@@ -50,6 +69,7 @@ export class AuthServiceImpl implements UserAuthService {
       return left('incorrect state');
     }
     this._authState.next({ identity: null, pendingAuth: false });
+    this.persist.removeItem('moAur');
     return right(0 as never);
   }
 
@@ -79,11 +99,17 @@ export class AuthServiceImpl implements UserAuthService {
     this._authState.next({ ...this._authState.value, pendingAuth: true });
   };
 
-  private onAuthResponse = mapEither<HttpApi.AuthResponse, SelfUser>(r => {
-    this.persist.setItem('moAur', r);
-    this._authState.next({ identity: r, pendingAuth: false });
-    return r.self;
-  });
+  private onAuthResponse = fold<string, HttpApi.AuthResponse, Either<string, SelfUser>>(
+    l => {
+      this._authState.next({ identity: null, pendingAuth: false });
+      return left(l);
+    },
+    r => {
+      this.persist.setItem('moAur', r);
+      this._authState.next({ identity: r, pendingAuth: false });
+      return right(r.user);
+    },
+  );
 }
 
 export interface AuthTokenProvider {

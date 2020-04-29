@@ -4,7 +4,6 @@ import { ItemPossession } from '../model/item-possession';
 import { FriendEntry, FriendInventory } from '../model/friend';
 import { Observable } from 'rxjs';
 import { EmailAuthPayload } from '../model/http-api';
-import { boolean } from 'fp-ts';
 
 export type ApiResponse<T> = Promise<ApiResponseSync<T>>;
 

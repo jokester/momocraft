@@ -10,15 +10,15 @@ export interface EmailAuthPayload {
  */
 export interface AuthResponse {
   jwtToken: string;
-  self: SelfUser;
+  user: SelfUser;
 }
 
 // matches nestjs builtin exception response
 export interface ErrorResponse {
   // http-errors
   statusCode: number;
-  message: string;
+  error?: string;
 
   // app-errors
-  error?: string | string[];
+  message: string;
 }
