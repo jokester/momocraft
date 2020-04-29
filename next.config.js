@@ -21,7 +21,7 @@ const nextConf = {
   },
 
   env: {
-    MOMO_API_ORIGIN: process.env.MOMO_API_ORIGIN || /* dev */ 'http://127.0.0.1:3000',
+    MOMO_API_ORIGIN: process.env.MOMO_API_ORIGIN || /* dev */ 'http://127.0.0.1:3001',
   },
 
   // see https://nextjs.org/docs/#customizing-webpack-config

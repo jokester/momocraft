@@ -1,6 +1,6 @@
 import { PageType } from '../src/next-types';
 import { Layout } from '../src/components/layout/layout';
-import { Button, H2, FormGroup } from '@blueprintjs/core';
+import { Button, H2, FormGroup, InputGroup } from '@blueprintjs/core';
 import React, { useMemo, useState } from 'react';
 import { useSingletons } from '../src/internal/app-context';
 import { useLast } from '../src/components/hooks/use-observed';
@@ -8,6 +8,7 @@ import { fold } from 'fp-ts/es6/Option';
 import { SelfUser } from '../src/model/user-identity';
 import { ApiResponseSync, dummyAuthState } from '../src/service/all';
 import { isLeft } from 'fp-ts/lib/Either';
+import IndexPage from './index';
 
 const onAuthResult = (res: ApiResponseSync<SelfUser>) => {
   if (isLeft(res)) {
@@ -40,7 +41,10 @@ const AuthState: React.FC = () => {
   return (
     <div>
       <H2>{pendingAuth ? '正在登录' : '未登录'}</H2>
-      <FormGroup></FormGroup>
+      <FormGroup>
+        <InputGroup value={email} leftIcon="envelope" onInput={ev => setEmail((ev.target as HTMLInputElement).value)} />
+        <InputGroup value={password} leftIcon={'lock'} onInput={ev => setPass((ev.target as HTMLInputElement).value)} />
+      </FormGroup>
       <FormGroup>
         <Button
           onClick={() => email && password && auth.emailSignUp({ email, password }).then(onAuthResult)}
