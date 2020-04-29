@@ -1,6 +1,6 @@
 import React, { createContext, createElement, useContext, useMemo } from 'react';
 import { createLogger } from '../util/debug-logger';
-import { buildEnv, BuildEnv, inServer, isDevBuild } from '../config/build-env';
+import { buildEnv, inServer, isDevBuild } from '../config/build-env';
 import { Never } from '@jokester/ts-commonutil/concurrency/timing';
 import { ApiClient } from './service-impl/client';
 import { AuthServiceImpl } from './service-impl/user-auth';

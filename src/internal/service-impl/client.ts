@@ -1,9 +1,8 @@
-import { Either, left, right } from 'fp-ts/lib/Either';
+import { left, right } from 'fp-ts/lib/Either';
 import { ErrorCodeEnum } from '../../model/error-code';
 import { createLogger } from '../../util/debug-logger';
 import { ApiResponse } from '../../service/all';
 import { ErrorResponse } from '../../model/http-api';
-import { inServer } from '../../config/build-env';
 
 const logger = createLogger(__filename);
 

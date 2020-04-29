@@ -2,7 +2,7 @@ import { ApiResponse, UserAuthService } from '../../service/all';
 import { Either, fromOption, left, map as mapEither } from 'fp-ts/lib/Either';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { SelfUser } from '../../model/user-identity';
-import { map as mapOpt, none, Option, some } from 'fp-ts/lib/Option';
+import { fromNullable, map as mapOpt, Option, some } from 'fp-ts/lib/Option';
 
 import * as HttpApi from '../../model/http-api';
 import { AuthResponse, EmailAuthPayload } from '../../model/http-api';
@@ -10,6 +10,7 @@ import { AuthResponse, EmailAuthPayload } from '../../model/http-api';
 import { ApiClient } from './client';
 import { map } from 'rxjs/operators';
 import { ErrorCodeEnum } from '../../model/error-code';
+import { useTypedLocalStorage } from '../../util/typed-local-storage';
 
 interface InternalAuthState extends AuthResponse {
   authedAt: number;
@@ -20,7 +21,13 @@ const exposeAuthState = map(mapOpt((_: InternalAuthState) => _.self));
 export class AuthServiceImpl implements UserAuthService {
   constructor(private readonly apiClient: ApiClient) {}
 
-  private readonly _authState = new BehaviorSubject<Option<InternalAuthState>>(none);
+  private readonly persist = useTypedLocalStorage<{
+    ias: InternalAuthState;
+  }>();
+
+  private readonly _authState = new BehaviorSubject<Option<InternalAuthState>>(
+    fromNullable(this.persist.getItem('ias')),
+  );
 
   get authed(): Observable<Option<SelfUser>> {
     return this._authState.asObservable().pipe(exposeAuthState);
@@ -54,7 +61,9 @@ export class AuthServiceImpl implements UserAuthService {
   }
 
   private onAuthResponse = mapEither<HttpApi.AuthResponse, SelfUser>(r => {
-    this._authState.next(some({ ...r, authedAt: Date.now() }));
+    const newState = { ...r, authedAt: Date.now() };
+    this.persist.setItem('ias', newState);
+    this._authState.next(some(newState));
     return r.self;
   });
 }
