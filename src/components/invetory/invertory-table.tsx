@@ -1,6 +1,6 @@
 import React, { useMemo, useState } from 'react';
 import { Button, ButtonGroup } from '@blueprintjs/core';
-import { ItemsV1Json } from '../../json/json';
+import { ItemsV2Json } from '../../json/json';
 import { ItemColumnType, itemIdDef } from '../../model/item-id-def';
 import { FontAwesomeIcon } from '../icon/fontawesome-icon';
 import Link from 'next/link';
@@ -33,7 +33,7 @@ export const InventoryDb: React.FC = () => {
 const tdClass = 'p-2';
 
 export const SheetPicker: React.FC<{
-  sheets: ItemsV1Json.Sheet[];
+  sheets: ItemsV2Json.Sheet[];
   curentSheetId: number;
   setSheetId(sheetId: number): void;
 }> = props => {
@@ -54,7 +54,7 @@ export const SheetPicker: React.FC<{
   );
 };
 
-const InventoryTableSheet: React.FC<{ sheets: ItemsV1Json.Sheet[]; sheetIndex: number }> = ({ sheets, sheetIndex }) => {
+const InventoryTableSheet: React.FC<{ sheets: ItemsV2Json.Sheet[]; sheetIndex: number }> = ({ sheets, sheetIndex }) => {
   const currentSheet = useMemo(() => sheets.find((_, i) => i === sheetIndex), [sheets, sheetIndex]);
 
   const theadRow = (
@@ -75,13 +75,13 @@ const InventoryTableSheet: React.FC<{ sheets: ItemsV1Json.Sheet[]; sheetIndex: n
           <Link href={link}>
             <td className={`w-1/3 cursor-pointer ${tdClass}`}>
               {/* name */}
-              {item[ItemColumnType.nameZhS]}
+              {item.base[ItemColumnType.nameZhS]}
               <br />
-              {item[ItemColumnType.nameZhT]}
+              {item.base[ItemColumnType.nameZhT]}
               <br />
-              {item[ItemColumnType.nameJa]}
+              {item.base[ItemColumnType.nameJa]}
               <br />
-              {item[ItemColumnType.nameEn]}
+              {item.base[ItemColumnType.nameEn]}
             </td>
           </Link>
           <Link href={link}>
@@ -111,7 +111,7 @@ const InventoryTableSheet: React.FC<{ sheets: ItemsV1Json.Sheet[]; sheetIndex: n
   );
 };
 
-const StatusColumn: React.FC<{ item: ItemsV1Json.Item }> = props => {
+const StatusColumn: React.FC<{ item: ItemsV2Json.Item }> = props => {
   const [status, setStatus] = useState<PossessionState>(randomPossessionState);
   return (
     <ButtonGroup fill vertical>
