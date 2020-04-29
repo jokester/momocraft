@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useEffect } from 'react';
+import Router from 'next/router';
 import { buildEnv } from '../config/build-env';
 
 /**
@@ -8,6 +9,22 @@ import { buildEnv } from '../config/build-env';
  */
 export const GoogleAnalyticsTag: React.FC = () => {
   const { GA_TRACKING_ID } = buildEnv;
+
+  declare function gtag(...args: any[]): void;
+
+  useEffect(() => {
+    if (GA_TRACKING_ID) {
+      Router.events.on('routeChangeComplete', url => {
+        setTimeout(() => {
+          typeof gtag === 'function' &&
+            gtag('config', GA_TRACKING_ID, {
+              page_location: url,
+              page_title: document.title,
+            });
+        }, 0);
+      });
+    }
+  }, []);
 
   return (
     (GA_TRACKING_ID && (
