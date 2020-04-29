@@ -31,6 +31,6 @@ const ssrImpl = {
   removeItem: () => {},
 } as const;
 
-export function useTypedLocalStorage<M extends Record<string, {}>>(): TypedLocalStorage<M> {
+export function toTypedLocalStorage<M extends Record<string, {}>>(): TypedLocalStorage<M> {
   return inServer ? ssrImpl : (browserImpl as any);
 }

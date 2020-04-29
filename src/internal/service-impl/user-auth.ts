@@ -10,7 +10,7 @@ import { AuthResponse, EmailAuthPayload } from '../../model/http-api';
 import { ApiClient } from './client';
 import { map } from 'rxjs/operators';
 import { ErrorCodeEnum } from '../../model/error-code';
-import { useTypedLocalStorage } from '../../util/typed-local-storage';
+import { toTypedLocalStorage } from '../../util/typed-local-storage';
 
 interface InternalAuthState extends AuthResponse {
   authedAt: number;
@@ -21,7 +21,7 @@ const exposeAuthState = map(mapOpt((_: InternalAuthState) => _.self));
 export class AuthServiceImpl implements UserAuthService {
   constructor(private readonly apiClient: ApiClient) {}
 
-  private readonly persist = useTypedLocalStorage<{
+  private readonly persist = toTypedLocalStorage<{
     ias: InternalAuthState;
   }>();
 
