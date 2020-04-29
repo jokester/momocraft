@@ -14,7 +14,7 @@ import { UserController } from '../user/user.controller';
 import { EntropyService } from '../deps/entropy.service';
 import { getSomeOrThrow } from '../util/fpts-getter';
 import { absent } from '../util/absent';
-import { EmailAuthPayload } from '../linked-frontend/service/all';
+import { EmailAuthPayload } from '../linked-frontend/model/http-api';
 
 const logger = getDebugLogger(__filename);
 
