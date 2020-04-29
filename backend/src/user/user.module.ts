@@ -4,7 +4,6 @@ import { EntropyService } from '../deps/entropy.service';
 import { DatabaseModule } from '../db/database.module';
 import { JwtModule } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
-import { UserController } from './user.controller';
 import { absent } from '../util/absent';
 import { AuthController } from './auth.controller';
 import { GoogleOAuthService } from './google-oauth.service';
@@ -26,7 +25,7 @@ import { UserJwtAuthMiddleware } from './user-jwt-auth.middleware';
       },
     }),
   ],
-  controllers: [UserController, AuthController],
+  controllers: [AuthController],
   providers: [EntropyService, UserService, GoogleOAuthService],
   exports: [UserService],
 })

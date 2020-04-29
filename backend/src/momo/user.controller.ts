@@ -10,11 +10,11 @@ import {
   Put,
   UnauthorizedException,
 } from '@nestjs/common';
-import { ResolvedUser, UserService } from './user.service';
+import { ResolvedUser, UserService } from '../user/user.service';
 import { getRightOrThrow, getSomeOrThrow } from '../util/fpts-getter';
 import { getDebugLogger } from '../util/get-debug-logger';
 import { UserAccount } from '../db/entities/user-account';
-import { AuthedUser } from './user-jwt-auth.middleware';
+import { AuthedUser } from '../user/user-jwt-auth.middleware';
 
 const logger = getDebugLogger(__filename);
 
@@ -22,11 +22,11 @@ const logger = getDebugLogger(__filename);
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
-  @Get('id/:shortId')
-  async getUser(@Param() params: { shortId: string }): Promise<ResolvedUser> {
+  @Get('id/:userId')
+  async getUser(@Param() params: { userId: string }): Promise<ResolvedUser> {
     logger('UserController#getUser', params);
 
-    const user = getSomeOrThrow(await this.userService.findByShortId(params.shortId), () => new NotFoundException());
+    const user = getSomeOrThrow(await this.userService.findUser(params), () => new NotFoundException());
 
     return this.userService.resolveUser(user);
   }
