@@ -17,7 +17,7 @@ function initSingletons() {
   }
 
   // FIXME: Never may cause memory leak in server (if any)
-  const fetchImpl = inServer ? () => Never : fetch;
+  const fetchImpl = inServer ? () => Never : fetch.bind(window);
   const apiClient = new ApiClient(fetchImpl, buildEnv.MOMO_SERVER_ORIGIN);
 
   const auth = new AuthServiceImpl(apiClient) as UserAuthService;

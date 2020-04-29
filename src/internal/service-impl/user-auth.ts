@@ -1,8 +1,7 @@
-import { ApiResponse, UserAuthService } from '../../service/all';
-import { Either, fromOption, left, map as mapEither } from 'fp-ts/lib/Either';
+import { ApiResponse, ExposedAuthState, UserAuthService } from '../../service/all';
+import { Either, fromOption, left, map as mapEither, right } from 'fp-ts/lib/Either';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { SelfUser } from '../../model/user-identity';
-import { fromNullable, map as mapOpt, Option, some } from 'fp-ts/lib/Option';
 
 import * as HttpApi from '../../model/http-api';
 import { AuthResponse, EmailAuthPayload } from '../../model/http-api';
@@ -12,24 +11,29 @@ import { map } from 'rxjs/operators';
 import { ErrorCodeEnum } from '../../model/error-code';
 import { toTypedLocalStorage } from '../../util/typed-local-storage';
 
-interface InternalAuthState extends AuthResponse {
-  authedAt: number;
+interface InternalAuthState {
+  identity: null | AuthResponse;
+  pendingAuth: boolean;
 }
 
-const exposeAuthState = map(mapOpt((_: InternalAuthState) => _.self));
+const exposeAuthState = map<InternalAuthState, ExposedAuthState>((_: InternalAuthState) => ({
+  pendingAuth: _.pendingAuth,
+  self: _.identity?.self || null,
+}));
 
 export class AuthServiceImpl implements UserAuthService {
   constructor(private readonly apiClient: ApiClient) {}
 
   private readonly persist = toTypedLocalStorage<{
-    ias: InternalAuthState;
+    moAur: AuthResponse;
   }>();
 
-  private readonly _authState = new BehaviorSubject<Option<InternalAuthState>>(
-    fromNullable(this.persist.getItem('ias')),
-  );
+  private readonly _authState = new BehaviorSubject<InternalAuthState>({
+    pendingAuth: false,
+    identity: this.persist.getItem('moAur'),
+  });
 
-  get authed(): Observable<Option<SelfUser>> {
+  get authed(): Observable<ExposedAuthState> {
     return this._authState.asObservable().pipe(exposeAuthState);
   }
 
@@ -39,6 +43,14 @@ export class AuthServiceImpl implements UserAuthService {
 
   async emailSignIn(param: EmailAuthPayload): ApiResponse<SelfUser> {
     return this.onAuthResponse(await this.c.postJson<HttpApi.AuthResponse>(this.r.hankoAuth.emailSignIn, {}, param));
+  }
+
+  signOut(): Either<string, void> {
+    if (this._authState.value.pendingAuth || !this._authState.value.identity) {
+      return left('incorrect state');
+    }
+    this._authState.next({ identity: null, pendingAuth: false });
+    return right(0 as never);
   }
 
   async useAuthToken<T>(
@@ -55,15 +67,21 @@ export class AuthServiceImpl implements UserAuthService {
     return this.apiClient.route;
   }
 
-  private buildAuthHeader(): Either<string, string> {
+  private buildAuthHeader(): Either<string, Record<string, string>> {
     const last = this._authState.value;
-    return fromOption(() => ErrorCodeEnum.httpFail)(mapOpt<InternalAuthState, string>(_ => _.jwtToken)(last));
+
+    const token = last.identity?.jwtToken;
+
+    return token ? right({ Authorization: `Bearer ${token}` }) : left(ErrorCodeEnum.notAuthenticated);
   }
 
+  private onStartAuth = () => {
+    this._authState.next({ ...this._authState.value, pendingAuth: true });
+  };
+
   private onAuthResponse = mapEither<HttpApi.AuthResponse, SelfUser>(r => {
-    const newState = { ...r, authedAt: Date.now() };
-    this.persist.setItem('ias', newState);
-    this._authState.next(some(newState));
+    this.persist.setItem('moAur', r);
+    this._authState.next({ identity: r, pendingAuth: false });
     return r.self;
   });
 }

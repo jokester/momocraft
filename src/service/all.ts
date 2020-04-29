@@ -3,17 +3,18 @@ import { Either } from 'fp-ts/lib/Either';
 import { ItemPossession } from '../model/item-possession';
 import { FriendEntry, FriendInventory } from '../model/friend';
 import { Observable } from 'rxjs';
-import { Option } from 'fp-ts/lib/Option';
 import { EmailAuthPayload } from '../model/http-api';
+import { boolean } from 'fp-ts';
 
 export type ApiResponse<T> = Promise<ApiResponseSync<T>>;
 
 export type ApiResponseSync<T> = Either<string, T>;
 
 export interface UserAuthService {
-  authed: Observable<Option<SelfUser>>;
+  authed: Observable<ExposedAuthState>;
   emailSignUp(param: EmailAuthPayload): ApiResponse<SelfUser>;
   emailSignIn(param: EmailAuthPayload): ApiResponse<SelfUser>;
+  signOut(): Either<string, void>;
 }
 
 export interface PossessionService {
@@ -31,3 +32,13 @@ export interface FriendService {
   resolveOwnWish(): ApiResponse<FriendInventory[]>;
   resolveFriendWish(): ApiResponse<FriendInventory[]>;
 }
+
+export interface ExposedAuthState {
+  self: SelfUser | null;
+  pendingAuth: boolean;
+}
+
+export const dummyAuthState = {
+  self: null,
+  pendingAuth: false,
+} as const;
