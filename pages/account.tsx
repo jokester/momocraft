@@ -46,7 +46,9 @@ const AuthState: React.FC = () => {
           用户id: <span className="monospace">{self.userId}</span>
         </p>
         <br />
-        <Button onClick={() => auth.signOut()}>退出登录</Button>
+        <Button onClick={() => auth.signOut()} disabled={pendingAuth}>
+          退出登录
+        </Button>
       </div>
     );
   }
@@ -59,12 +61,14 @@ const AuthState: React.FC = () => {
           type="text"
           value={email}
           leftIcon="envelope"
+          disabled={pendingAuth}
           onInput={ev => setEmail((ev.target as HTMLInputElement).value)}
         />
         <InputGroup
           type="password"
           value={password}
-          leftIcon={'lock'}
+          leftIcon="lock"
+          disabled={pendingAuth}
           onInput={ev => setPass((ev.target as HTMLInputElement).value)}
         />
       </FormGroup>
