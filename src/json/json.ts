@@ -1,4 +1,4 @@
-import sheet1schema2json from './sheet1-schema2.json';
+import * as sheet1schema2json from './sheet1-schema2.json';
 
 export const itemsV2: { default: ItemsV2Json.Root } = sheet1schema2json as any;
 
@@ -44,20 +44,20 @@ export namespace ItemsV2Json {
   export interface Root {
     sheets: Sheet[];
   }
-  
+
   export interface Sheet {
     sheetName: string;
     headers: string[];
     items: Item[];
   }
-  
+
   export interface Item {
     itemName: string;
     itemAliases: string[];
     base: Base;
     variants: Variant[];
   }
-  
+
   export interface Base {
     改造类型A?: string;
     类型?: string;
@@ -81,11 +81,10 @@ export namespace ItemsV2Json {
     价格?: string;
     订购类型2?: string;
   }
-  
+
   export interface Variant {
     颜色?: string;
     类型?: string;
     序号?: string;
   }
-  
 }
