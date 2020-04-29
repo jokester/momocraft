@@ -1,6 +1,7 @@
 import { Either, left, right } from 'fp-ts/lib/Either';
 import { ErrorCodeEnum } from '../../model/error-code';
 import { createLogger } from '../../util/debug-logger';
+import { ApiResponse } from '../../service/all';
 
 const logger = createLogger(__filename);
 
@@ -10,11 +11,11 @@ export class ApiClient {
     this.route = buildApiRoute(apiOrigin);
   }
 
-  getJson<T>(url: string, headers: {}): Promise<Either<string, T>> {
+  getJson<T>(url: string, headers: {}): ApiResponse<T> {
     return this.launderJsonResponse(this._fetch(url, { headers }));
   }
 
-  postJson<T>(url: string, headers: {}, payload: object) {
+  postJson<T>(url: string, headers: {}, payload: object): ApiResponse<T> {
     return this.launderJsonResponse(
       this._fetch(url, {
         headers,

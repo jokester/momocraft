@@ -5,7 +5,9 @@ import { FriendEntry, FriendInventory } from '../model/friend';
 import { Observable } from 'rxjs';
 import { Option } from 'fp-ts/lib/Option';
 
-export type ApiResponse<T> = Promise<Either<string, T>>;
+export type ApiResponse<T> = Promise<ApiResponseSync<T>>;
+
+export type ApiResponseSync<T> = Either<string, T>;
 
 export interface EmailAuthPayload {
   email: string;
