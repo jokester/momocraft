@@ -1,5 +1,5 @@
 interface UserMeta {
-  userNick?: string;
+  nickname?: string;
   avatarUrl?: string;
   userId: string;
 }
@@ -7,6 +7,7 @@ interface UserMeta {
 export interface SelfUser extends UserMeta {
   // authToken: string;
   userEmail: string;
+  isTrustedUser: boolean;
   isMaintainer: boolean;
 }
 

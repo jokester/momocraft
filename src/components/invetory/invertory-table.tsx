@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from 'react';
-import { Button, ButtonGroup, IconName } from '@blueprintjs/core';
+import { Button, ButtonGroup } from '@blueprintjs/core';
 import { ItemsV1Json } from '../../json/json';
 import { ItemColumnType, itemIdDef } from '../../model/item-id-def';
 import { FontAwesomeIcon } from '../icon/fontawesome-icon';

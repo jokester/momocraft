@@ -1,21 +1,18 @@
-import { SelfUser } from '../model/user-identity';
 import { Either } from 'fp-ts/lib/Either';
-import { ItemPossession, } from '../model/item-possession';
+import { ItemPossession } from '../model/item-possession';
 import { FriendEntry, FriendInventory } from '../model/friend';
-import { Observable } from "rxjs";
-import { Option } from "fp-ts/lib/Option";
+import { Observable } from 'rxjs';
+import { EmailAuthPayload, HankoUser } from '../api/hanko-api';
 
-type ApiResponse<T> = Promise<Either<string, T>>;
+export type ApiResponse<T> = Promise<ApiResponseSync<T>>;
 
-export interface EmailAuthPayload {
-  email: string;
-  password: string;
-}
+export type ApiResponseSync<T> = Either<string, T>;
 
 export interface UserAuthService {
-  authed: Observable<Option<SelfUser>>
-  emailSignUp(param: EmailAuthPayload): ApiResponse<SelfUser>;
-  emailSignIn(param: EmailAuthPayload): ApiResponse<SelfUser>;
+  authed: Observable<ExposedAuthState>;
+  emailSignUp(param: EmailAuthPayload): ApiResponse<HankoUser>;
+  emailSignIn(param: EmailAuthPayload): ApiResponse<HankoUser>;
+  signOut(): Either<string, void>;
 }
 
 export interface PossessionService {
@@ -33,3 +30,15 @@ export interface FriendService {
   resolveOwnWish(): ApiResponse<FriendInventory[]>;
   resolveFriendWish(): ApiResponse<FriendInventory[]>;
 }
+
+export interface ExposedAuthState {
+  user?: HankoUser;
+  profile: null;
+  pendingAuth: boolean;
+}
+
+export const dummyAuthState = {
+  user: undefined,
+  profile: null,
+  pendingAuth: false,
+} as const;
