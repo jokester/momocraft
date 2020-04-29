@@ -22,7 +22,7 @@ interface JwtTokenPayload {
 
 export interface ResolvedUser {
   shortId: string;
-  nick: string;
+  nickname?: string;
   avatarUrl?: string;
 }
 
@@ -121,7 +121,7 @@ export class UserService {
     const oauthAccounts = await this.conn.getRepository(OAuthAccount).find({ userId: userAccount.userId });
     const resolved: ResolvedUser = {
       shortId: userAccount.shortId,
-      nickName: userAccount.userMeta.nickName ?? `(not set)`,
+      nickname: userAccount.userMeta.nickname ?? `(not set)`,
       avatarUrl: userAccount.userMeta.avatarUrl,
     };
 

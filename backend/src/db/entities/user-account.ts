@@ -4,6 +4,7 @@ import { Column, CreateDateColumn, Entity, Index, PrimaryGeneratedColumn, Update
 export class UserAccount {
   /**
    * internal user id
+   * @internal
    */
   @PrimaryGeneratedColumn()
   readonly userId!: number;
@@ -39,8 +40,8 @@ export class UserAccount {
 
   setMeta(other: UserMeta): this {
     const writable = this.userMeta as UserMeta;
-    if (typeof other.nickName === 'string') {
-      writable.nickName = other.nickName;
+    if (typeof other.nickname === 'string') {
+      writable.nickname = other.nickname;
     }
 
     if (typeof other.avatarUrl === 'string') {
@@ -52,6 +53,6 @@ export class UserAccount {
 }
 
 interface UserMeta {
-  nickName?: string;
+  nickname?: string;
   avatarUrl?: string;
 }
