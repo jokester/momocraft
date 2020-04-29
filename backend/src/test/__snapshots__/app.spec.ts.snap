@@ -2,14 +2,14 @@
 
 exports[`AppController (e2e) AuthController POST /auth/email/signin auths user: POST /auth/email/signin 200 1`] = `
 Object {
-  "nickName": "(not set)",
+  "nickname": "(not set)",
   "shortId": "nanoid-2",
 }
 `;
 
 exports[`AppController (e2e) AuthController POST /auth/email/signup creates user and returns 201: POST /auth/email/signup 201 1`] = `
 Object {
-  "nickName": "(not set)",
+  "nickname": "(not set)",
   "shortId": "nanoid-2",
 }
 `;
@@ -25,7 +25,7 @@ Object {
 exports[`AppController (e2e) AuthController POST /auth/oauth/google returns jwtToken on succeed: GET /user/self 1`] = `
 Object {
   "avatarUrl": "https://example.com/a.png",
-  "nickName": "(not set)",
+  "nickname": "(not set)",
   "shortId": "nanoid-1",
 }
 `;
@@ -33,7 +33,7 @@ Object {
 exports[`AppController (e2e) UserController PUT /user/self updated resolved user: updated user 1`] = `
 Object {
   "avatarUrl": "https://corp.com/a.gif",
-  "nickName": "samuel mf jackson",
+  "nickname": "(not set)",
   "shortId": "nanoid-1",
 }
 `;

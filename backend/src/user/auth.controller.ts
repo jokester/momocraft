@@ -6,7 +6,6 @@ import { getRightOrThrow } from '../util/fpts-getter';
 import { EmailAuthPayload } from '../linked-frontend/model/http-api';
 import { Sanitize } from '../util/input-santinizer';
 import { UserAccount } from '../db/entities/user-account';
-import { auth } from 'google-auth-library';
 
 const logger = getDebugLogger(__filename);
 
@@ -51,7 +50,7 @@ export class AuthController {
   @HttpCode(201)
   @Header('Cache-Control', 'private;max-age=0;')
   async doEmailSignUp(@Body() payload: EmailAuthPayload): Promise<AuthSuccessRes> {
-    this.validateEmailAuthPaylod(payload);
+    // this.validateEmailAuthPaylod(payload);
 
     const created = getRightOrThrow(
       await this.userService.signUpWithEmail(payload.email, payload.password),
@@ -65,11 +64,11 @@ export class AuthController {
   @HttpCode(200)
   @Header('Cache-Control', 'private;max-age=0;')
   async doEmailSignIn(@Body() payload: EmailAuthPayload): Promise<AuthSuccessRes> {
-    this.validateEmailAuthPaylod(payload);
+    // this.validateEmailAuthPaylod(payload);
 
     const authedUser = getRightOrThrow(
       await this.userService.signInWithEmail(payload.email, payload.password),
-      l => new BadRequestException('auth fail'),
+      l => new BadRequestException(l),
     );
 
     return this.resolveAuthSuccess(authedUser);
@@ -83,6 +82,7 @@ export class AuthController {
   }
 
   private validateEmailAuthPaylod(payload?: EmailAuthPayload) {
+    // FIXME: move validate here
     if (!(Sanitize.isString(payload?.email) && Sanitize.isString(payload?.password))) {
       throw new BadRequestException();
     }

@@ -9,7 +9,7 @@ import { UserAccount } from '../db/entities/user-account';
 import { EntropyService } from '../deps/entropy.service';
 import { JwtService } from '@nestjs/jwt';
 import { fromNullable, Option } from 'fp-ts/lib/Option';
-import { getRightOrThrow, getSomeOrThrow } from '../util/fpts-getter';
+import { getSomeOrThrow } from '../util/fpts-getter';
 import { absent } from '../util/absent';
 import { Sanitize } from '../util/input-santinizer';
 import { randomAlphaNum } from '../ts-commonutil/text/random-string';
