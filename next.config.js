@@ -20,12 +20,27 @@ const nextConf = {
     },
   },
 
+  env: {
+    MOMO_API_ORIGIN:
+      process.env.MOMO_API_ORIGIN ||
+      // 'http://192.168.2.110:3001' || // iris-dev
+      /* dev */ 'http://127.0.0.1:3001',
+  },
+
   // see https://nextjs.org/docs/#customizing-webpack-config
   webpack(config, { buildId, dev, isServer }) {
     config.plugins.push(
       new webpack.DefinePlugin({
+        /**
+         * reliable: only true in "yarn dev", for both server/browser
+         */
         'process.env.NEXT_DEV': JSON.stringify(!!dev),
-        'process.env.NEXT_SERVER': JSON.stringify(!!isServer),
+        /**
+         * @deprecated UNREALIABLE
+         * true: in browser of dev build (!!)
+         * false: in browser of prod build (yarn start / yarn export)
+         */
+        // 'process.env.NEXT_SERVER': JSON.stringify(!!isServer),
       }),
     );
 
@@ -42,13 +57,12 @@ const nextConf = {
   },
 };
 
-
 module.exports = withPlugins(
   [
     [optimizedImages, { optimizeImages: false }],
     [withBundleAnalyzer],
     // [withSourceMap],  // this does not work
-    withTM(['lodash-es', '@jokester',]),
+    withTM(['lodash-es', '@jokester']),
   ],
   withSourceMap(nextConf),
 );

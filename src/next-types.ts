@@ -10,6 +10,9 @@ type PageGetInitialProps<UrlParam = {}, PageProps = {}> = (
   ctx: NextPageContext & { query: UrlParam },
 ) => PageProps | Promise<PageProps>;
 
+/**
+ * TODO: move to next's getServerSideProps etc
+ */
 export type PageType<UrlParam = {}, PageProps = {}> = ComponentType<FullPageProps<UrlParam, PageProps>> & {
   getInitialProps?: PageGetInitialProps<UrlParam, PageProps>;
 };
