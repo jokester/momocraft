@@ -1,11 +1,13 @@
 import React from 'react';
 import Document, { Head, Main, NextScript } from 'next/document';
+import { GoogleAnalyticsTag } from '../src/tracking/tracking-tags';
 
 export default class CustomDocument extends Document {
   render() {
     return (
       <html lang="zh-CN">
         <Head>
+          <GoogleAnalyticsTag />
           <link
             key="font-awesome"
             rel="stylesheet"
