@@ -36,7 +36,7 @@ export const DummyModelListHeader: React.FunctionComponent<{ title: string }> = 
 );
 
 export const InventoryCardList: React.FunctionComponent<{ items: ItemsV2Json.Item[] }> = props => (
-  <div className="flex flex-wrap mx-2 -mt-2">
+  <div className="flex flex-wrap mx-2 -mt-2 z-0">
     {props.items.map((_, i) => (
       <InventoryCard item={_} key={i} />
     ))}
