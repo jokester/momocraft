@@ -11,5 +11,6 @@ interface CollectionUpdate {
 export interface CollectionService {
   saveCollections(changes: CollectionItem[]): ApiResponse<void>;
   fetchCollections(): ApiResponse<CollectionItem[]>;
-  observeCollections(itemName: string): Observable<{}>;
+  // hard to get this performant?
+  // observeCollections(itemName: string): Observable<{}>;
 }
