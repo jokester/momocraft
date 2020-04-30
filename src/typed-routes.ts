@@ -1,4 +1,5 @@
 import { ParsedUrlQuery } from 'querystring';
+import { ItemsV2Json } from './json/json';
 
 /**
  * a tree of statically typed route nodes (or, href-generators)
@@ -8,6 +9,7 @@ export const TypedRoutes = {
   items: {
     index: '/items',
     show: (itemId: string) => `/items/${itemId}`,
+    show2: (item: ItemsV2Json.Item) => `/items/${item.itemName}`,
   },
   friends: '/friends',
   about: '/about',
