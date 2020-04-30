@@ -1,7 +1,6 @@
-import { ApiResponse, ExposedAuthState, UserAuthService } from '../../service/all';
+import { ApiResponse } from '../../service/all';
 import { Either, fold, fromOption, left, map as mapEither, right } from 'fp-ts/lib/Either';
 import { BehaviorSubject, Observable } from 'rxjs';
-import { SelfUser } from '../../service/user-identity';
 
 import * as HttpApi from '../../api/hanko-api';
 import { AuthResponse, EmailAuthPayload, HankoUser } from '../../api/hanko-api';
@@ -11,6 +10,7 @@ import { map } from 'rxjs/operators';
 import { ErrorCodeEnum } from '../../model/error-code';
 import { toTypedLocalStorage } from '../../util/typed-local-storage';
 import { createLogger } from '../../util/debug-logger';
+import { ExposedAuthState, UserAuthService } from '../../service/user-auth';
 
 const logger = createLogger(__filename);
 
@@ -76,7 +76,7 @@ export class AuthServiceImpl implements UserAuthService {
 
   async useAuthToken<T>(
     consumer: (authToken: string, isRetry: boolean) => Promise<Either<string, T>>,
-    authRefresh = true,
+    authRefresh = false,
   ): Promise<Either<string, T>> {
     return left(ErrorCodeEnum.notImplemented);
   }

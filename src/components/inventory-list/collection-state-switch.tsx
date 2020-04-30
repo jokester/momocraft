@@ -1,16 +1,16 @@
 import React, { useState } from 'react';
 import { ItemsV2Json } from '../../json/json';
-import { PossessionState, randomPossessionState } from '../../model/item-possession';
+import { CollectionState, randomCollectionState } from '../../model/collection';
 import { Button, ButtonGroup } from '@blueprintjs/core';
 
 export const CollectionStateSwitch: React.FC<{ item: ItemsV2Json.Item }> = props => {
-  const [status, setStatus] = useState<PossessionState>(randomPossessionState);
+  const [status, setStatus] = useState<CollectionState>(randomCollectionState);
   return (
     <ButtonGroup vertical>
       <Button
         small
-        onClick={() => setStatus(PossessionState.own)}
-        active={status === PossessionState.own}
+        onClick={() => setStatus(CollectionState.own)}
+        active={status === CollectionState.own}
         className="text-xl"
         icon="tick-circle"
       >
@@ -18,16 +18,16 @@ export const CollectionStateSwitch: React.FC<{ item: ItemsV2Json.Item }> = props
       </Button>
       <Button
         small
-        onClick={() => setStatus(PossessionState.with)}
-        active={status === PossessionState.with}
+        onClick={() => setStatus(CollectionState.with)}
+        active={status === CollectionState.with}
         icon="hand"
       >
         想摸
       </Button>
       <Button
         small
-        onClick={() => setStatus(PossessionState.none)}
-        active={status === PossessionState.none}
+        onClick={() => setStatus(CollectionState.none)}
+        active={status === CollectionState.none}
         icon="remove"
       >
         取消

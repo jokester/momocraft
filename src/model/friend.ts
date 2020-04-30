@@ -1,4 +1,4 @@
-import { PossessionState } from './item-possession';
+import { CollectionState } from './collection';
 
 export interface FriendEntry {
   userId: string;
@@ -8,5 +8,5 @@ export interface FriendEntry {
 
 export interface FriendInventory {
   userId: string;
-  possession: PossessionState;
+  possession: CollectionState;
 }

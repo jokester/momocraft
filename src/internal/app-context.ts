@@ -4,7 +4,7 @@ import { buildEnv, inServer, isDevBuild } from '../config/build-env';
 import { Never } from '@jokester/ts-commonutil/concurrency/timing';
 import { ApiClient } from './service-impl/client';
 import { AuthServiceImpl } from './service-impl/user-auth';
-import { UserAuthService } from '../service/all';
+import { UserAuthService } from '../service/user-auth';
 
 type Singletons = ReturnType<typeof initSingletons>;
 
