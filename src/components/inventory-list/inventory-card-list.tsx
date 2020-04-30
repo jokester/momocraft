@@ -14,7 +14,10 @@ const InventoryCard: React.FunctionComponent<{ item: ItemsV2Json.Item }> = ({ it
         className="model-cell bg-blue-100 border border-solid border-blue-300 my-1 mx-2 h-full flex-col rounded-lg p-2"
         style={createAspectRatioStyle(16 / 10)}
       >
-        <h3 className="text-xl">{title}</h3>
+        <div className="flex justify-between align-baseline">
+          <h3 className="text-xl inline-block">{title}</h3>
+          <Link href={TypedRoutes.items.show2(item)}>查看详细</Link>
+        </div>
         <div className="flex mt-2 justify-around">
           <img
             src="https://dummyimage.com/400x300/cff/000"

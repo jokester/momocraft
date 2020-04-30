@@ -4,13 +4,12 @@ import { PreJson } from '../../dummy/pre-json';
 import { useItemsDB } from '../hooks/use-items-db';
 
 export const InventoryShow: React.FC<{ encodedItemId: string }> = ({ encodedItemId }) => {
-  const itemId = useMemo(() => itemIdExtract(encodedItemId), [encodedItemId]);
   const itemsDb = useItemsDB();
 
-  const item = useMemo(
-    () => itemId && itemsDb.fulfilled && itemsDb.value.sheets[itemId.sheetIndex]?.items?.[itemId.itemIndexInSheet],
-    [itemsDb, itemId],
-  );
+  const item = useMemo(() => (itemsDb.fulfilled && itemsDb.value.itemsMap.get(encodedItemId)) || null, [
+    itemsDb,
+    encodedItemId,
+  ]);
 
   if (itemsDb.rejected) return <div>ERROR</div>;
   if (itemsDb.pending) return <div>LOADING</div>;
