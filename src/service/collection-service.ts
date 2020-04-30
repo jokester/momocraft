@@ -10,8 +10,6 @@ interface CollectionUpdate {
 
 export interface CollectionService {
   saveCollections(changes: CollectionItem[]): ApiResponse<void>;
-
   fetchCollections(): ApiResponse<CollectionItem[]>;
-
   observeCollections(itemName: string): Observable<{}>;
 }

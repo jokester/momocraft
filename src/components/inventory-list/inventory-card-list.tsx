@@ -1,15 +1,27 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 import Link from 'next/link';
 import { TypedRoutes } from '../../typed-routes';
 import { ItemsV2Json } from '../../json/json';
 import { createAspectRatioStyle } from '../../style/aspect-ratio';
 import { CollectionStateSwitch } from './collection-state-switch';
 import { ItemUtils } from '../../json/item-utils';
+import { createLogger } from '../../util/debug-logger';
+import ViewportObserver from 'viewport-observer';
+
+const logger = createLogger(__filename);
 
 const InventoryCard: React.FunctionComponent<{ item: ItemsV2Json.Item }> = ({ item }) => {
   const title = useMemo(() => ItemUtils.extractDisplayName(item), [item]);
+
+  const [isInViewport, setInViewport] = useState(false);
+
   return (
-    <div className="inline-block my-2 w-full sm:w-1/2 md:w-1/3 lg:w-1/5 h-32">
+    <ViewportObserver
+      tagName="div"
+      className="inline-block my-2 w-full sm:w-1/2 md:w-1/3 lg:w-1/5 h-32"
+      onEnter={() => setInViewport(true)}
+      onLeave={() => setInViewport(false)}
+    >
       <div
         className="model-cell bg-blue-100 border border-solid border-blue-300 my-1 mx-2 h-full flex-col rounded-lg p-2"
         style={createAspectRatioStyle(16 / 10)}
@@ -24,10 +36,10 @@ const InventoryCard: React.FunctionComponent<{ item: ItemsV2Json.Item }> = ({ it
             alt="image"
             className="max-h-full h-20 object-cover inline-block bg-blue-200 mr-2"
           />
-          <CollectionStateSwitch item={item} />
+          <CollectionStateSwitch item={item} isVisible={isInViewport} />
         </div>
       </div>
-    </div>
+    </ViewportObserver>
   );
 };
 

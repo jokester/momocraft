@@ -2,8 +2,15 @@ import React, { useState } from 'react';
 import { ItemsV2Json } from '../../json/json';
 import { CollectionState, randomCollectionState } from '../../model/collection';
 import { Button, ButtonGroup } from '@blueprintjs/core';
+import { createLogger } from '../../util/debug-logger';
 
-export const CollectionStateSwitch: React.FC<{ item: ItemsV2Json.Item }> = props => {
+const logger = createLogger(__filename);
+
+export const CollectionStateSwitch: React.FC<{ item: ItemsV2Json.Item; isVisible: boolean }> = ({
+  item,
+  isVisible,
+}) => {
+  logger('rendered', item, isVisible);
   const [status, setStatus] = useState<CollectionState>(randomCollectionState);
   return (
     <ButtonGroup vertical>
