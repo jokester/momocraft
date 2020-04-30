@@ -6,11 +6,7 @@ import { createLogger } from '../../util/debug-logger';
 
 const logger = createLogger(__filename);
 
-export const CollectionStateSwitch: React.FC<{ item: ItemsV2Json.Item; isVisible: boolean }> = ({
-  item,
-  isVisible,
-}) => {
-  logger('rendered', item, isVisible);
+export const CollectionStateSwitch: React.FC<{ item: ItemsV2Json.Item }> = ({ item }) => {
   const [status, setStatus] = useState<CollectionState>(randomCollectionState);
   return (
     <ButtonGroup vertical>
