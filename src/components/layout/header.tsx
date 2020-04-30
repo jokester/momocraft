@@ -11,7 +11,7 @@ const SectionLink: React.FC<{ text: string; linkTo: string }> = props => {
 };
 
 export const Header: React.FC<{ here: string }> = props => (
-  <div className="flex flex-none flex-wrap px-2 bg-gray-300 shadow-lg sticky z-10" style={{ top: 0 }}>
+  <div className="flex flex-none justify-end flex-wrap px-2 bg-gray-300 shadow-lg sticky z-10" style={{ top: 0 }}>
     <SectionLink text="首页" linkTo={TypedRoutes.index} />
     <SectionLink text="物品列表" linkTo={TypedRoutes.items.index} />
     <SectionLink text="好友" linkTo={TypedRoutes.friends} />

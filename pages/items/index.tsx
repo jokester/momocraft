@@ -1,6 +1,6 @@
 import { PageType } from '../../src/next-types';
 import { Layout } from '../../src/components/layout/layout';
-import { InventoryDb } from '../../src/components/invetory/invertory-table';
+import { InventoryDb } from '../../src/components/inventory-list/invertory-table';
 import React from 'react';
 
 /**

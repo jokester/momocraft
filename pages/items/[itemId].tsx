@@ -1,7 +1,7 @@
 import { PreJson } from '../../src/dummy/pre-json';
 import { PageType } from '../../src/next-types';
 import { Layout } from '../../src/components/layout/layout';
-import { InventoryShow } from '../../src/components/invetory/inventory-show';
+import { InventoryShow } from '../../src/components/inventory-detail/inventory-show';
 
 /**
  * URL params from route (path) and query
