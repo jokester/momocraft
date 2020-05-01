@@ -5,9 +5,9 @@ import { AppContextHolder } from '../../internal/app-context';
 
 export const Layout: React.FC = props => (
   <AppContextHolder>
-    <div className="min-h-screen flex flex-col">
+    <div className="h-screen flex flex-col">
       <Header here={'HERE'} />
-      <div className="flex-grow z-0">{props.children}</div>
+      <div className="flex-grow z-0 overflow-y-scroll">{/* */ props.children}</div>
       <Footer />
     </div>
   </AppContextHolder>

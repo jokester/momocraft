@@ -20,7 +20,7 @@ export const enum ItemColumnType {
   // variants?
   customizationA = '改造类型A',
   customizationB = '改造类型B',
-  color = '颜色',
+  // color = '颜色',
   // meta?
   type = '类型',
   orderType = '订购类型',
@@ -38,5 +38,11 @@ export const enum ItemColumnType {
   // '价格',
   // id?
   officialItemId = '官方序号',
+  itemId = '序号',
+}
+
+export const enum VariantColumnType {
+  color = '颜色',
+  type = '类型',
   itemId = '序号',
 }
