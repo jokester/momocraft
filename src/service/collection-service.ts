@@ -1,5 +1,4 @@
 import { CollectionItem, CollectionState } from '../model/collection';
-import { Observable } from 'rxjs';
 import { ApiResponse } from './all';
 
 interface CollectionUpdate {
