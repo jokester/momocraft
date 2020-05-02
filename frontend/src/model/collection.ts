@@ -1,5 +1,5 @@
 export const enum CollectionState {
-  with = 'with',
+  want = 'want',
   own = 'own',
   none = 'none',
 
@@ -9,14 +9,7 @@ export const enum CollectionState {
   // unset = 'unset', (just use null)
 }
 
-export interface CollectionItem {
+export interface ItemCollectionEntry {
   itemId: string;
   state: CollectionState;
-}
-
-export function randomCollectionState() {
-  const m = Math.random();
-  if (m < 0.1) return CollectionState.own;
-  else if (m < 0.3) return CollectionState.with;
-  else return CollectionState.none;
 }

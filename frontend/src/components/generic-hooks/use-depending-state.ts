@@ -1,5 +1,11 @@
 import { useEffect, useRef, useState } from 'react';
 
+/**
+ * @deprecated force dismount with key={} props seems simpler
+ * @param {F} initialize
+ * @param {Parameters<F>} deps
+ * @returns {readonly [T, <T>(value: ((<T>(prevState: T) => T) | T)) => void]}
+ */
 export function useDependingState<T, F extends (...args: any) => T = (...args: any) => any>(
   initialize: F,
   deps: Parameters<F>,

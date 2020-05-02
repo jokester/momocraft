@@ -1,9 +1,9 @@
 import React from 'react';
-import { ItemsV2Json } from '../../json/json';
+import { ItemsV3Json } from '../../items-db/json-schema';
 import { RenderArray } from '../hoc/render-array';
 
 export const InventoryCategoryPicker: React.FC<{
-  sheets: ItemsV2Json.Sheet[];
+  sheets: ItemsV3Json.Sheet[];
   curentSheetId: number;
   setSheetId(sheetId: number): void;
 }> = props => {

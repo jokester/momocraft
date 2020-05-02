@@ -10,7 +10,7 @@ import { JwtService } from '@nestjs/jwt';
 import { getDebugLogger } from '../util/get-debug-logger';
 import { UserService } from '../user/user.service';
 import { AuthController, AuthSuccessRes } from '../user/auth.controller';
-import { UserController } from '../momo/user.controller';
+import { MomoUserController } from '../momo/momo-user.controller';
 import { EntropyService } from '../deps/entropy.service';
 import { getSomeOrThrow } from '../util/fpts-getter';
 import { absent } from '../util/absent';
@@ -144,7 +144,7 @@ describe('AppController (e2e)', () => {
     });
   });
 
-  describe.skip(UserController, () => {
+  describe.skip(MomoUserController, () => {
     it('GET /user/:userId returns 404', async () => {
       await request(app.getHttpServer())
         .get('/user/__s')

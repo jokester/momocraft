@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import { ItemsV2Json } from '../../json/json';
+import { ItemsV3Json } from '../../items-db/json-schema';
 import { TypedRoutes } from '../../typed-routes';
 import { ItemColumnType, itemIdDef } from '../../model/item-id-def';
 import Link from 'next/link';
@@ -9,12 +9,12 @@ const tdClass = 'p-2';
 
 /**
  * @deprecated
- * @param {ItemsV2Json.Sheet[]} sheets
+ * @param {ItemsV3Json.Sheet[]} sheets
  * @param {number} sheetIndex
  * @returns {any}
  * @constructor
  */
-export const InventoryTableSheet: React.FC<{ sheets: ItemsV2Json.Sheet[]; sheetIndex: number }> = ({
+export const InventoryTableSheet: React.FC<{ sheets: ItemsV3Json.Sheet[]; sheetIndex: number }> = ({
   sheets,
   sheetIndex,
 }) => {

@@ -16,9 +16,17 @@ function sanitizePass(password: string): Either<string, string> {
   return left('password too short');
 }
 
+function userId(orig: unknown) {
+  if (typeof orig === 'string' && / /.test(orig)) {
+    return right(orig);
+  }
+  return left('incorrect userId');
+}
+
 export const Sanitize = {
   email: sanitizeEmail,
   pass: sanitizePass,
+  userId,
 
   isString(x: unknown): x is string {
     return typeof x === 'string';

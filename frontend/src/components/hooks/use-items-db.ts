@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { dynamicItemsV2 } from '../../json/dynamic-items-v1';
+import { dynamicItemsV2 } from '../../items-db/dynamic-load-db';
 import { usePromised } from '@jokester/ts-commonutil/react/hook/use-promised';
 
 export function useItemsDB() {
