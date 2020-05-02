@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import { ItemsV2Json } from '../../json/json';
+import { ItemsV2Json } from '../../items-db/json-schema';
 import { TypedRoutes } from '../../typed-routes';
 import { ItemColumnType, itemIdDef } from '../../model/item-id-def';
 import Link from 'next/link';

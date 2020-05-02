@@ -1,5 +1,5 @@
 import React from 'react';
-import { ItemsV2Json } from '../../json/json';
+import { ItemsV2Json } from '../../items-db/json-schema';
 import { CollectionState } from '../../model/collection';
 import { Button, ButtonGroup } from '@blueprintjs/core';
 import { createLogger } from '../../util/debug-logger';

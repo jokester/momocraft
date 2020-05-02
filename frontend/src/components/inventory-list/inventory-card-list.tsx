@@ -1,10 +1,10 @@
-import React, { useMemo, useState } from 'react';
+import React, { useMemo } from 'react';
 import Link from 'next/link';
 import { TypedRoutes } from '../../typed-routes';
-import { ItemsV2Json } from '../../json/json';
+import { ItemsV2Json } from '../../items-db/json-schema';
 import { createAspectRatioStyle } from '../../style/aspect-ratio';
 import { CollectionStateSwitch } from './collection-state-switch';
-import { ItemUtils } from '../../json/item-utils';
+import { ItemUtils } from '../../items-db/item-utils';
 import { CollectionStateMap, useFetchedCollections } from '../hooks/use-collections-api';
 
 const InventoryCard: React.FunctionComponent<{ item: ItemsV2Json.Item; collectionMap: null | CollectionStateMap }> = ({

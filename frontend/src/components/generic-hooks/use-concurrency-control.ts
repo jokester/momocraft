@@ -1,5 +1,5 @@
 import { useMounted } from './use-mounted';
-import { useCallback, useRef, useState } from 'react';
+import { useCallback, useState } from 'react';
 import { ErrorCodeEnum } from '../../model/error-code';
 
 const inc = (_: number) => _ + 1;

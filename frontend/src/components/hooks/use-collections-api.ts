@@ -2,7 +2,7 @@ import { useSingletons } from '../../internal/app-context';
 import { useMemo } from 'react';
 import { CollectionState, ItemCollectionEntry } from '../../model/collection';
 import { Maps } from '@jokester/ts-commonutil/collection/maps';
-import { fold, isRight, map } from 'fp-ts/lib/Either';
+import { fold, map } from 'fp-ts/lib/Either';
 import { useConcurrencyControl } from '../generic-hooks/use-concurrency-control';
 import { usePromised } from '@jokester/ts-commonutil/react/hook/use-promised';
 import { useDependingState } from '../generic-hooks/use-depending-state';

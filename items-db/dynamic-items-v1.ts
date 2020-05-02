@@ -1,5 +1,5 @@
 import { Maps } from '@jokester/ts-commonutil/collection/maps';
-import { ItemsV2Json } from './json';
+import { ItemsV2Json } from './json-schema';
 import { createLogger } from '../util/debug-logger';
 
 const logger = createLogger(__filename);

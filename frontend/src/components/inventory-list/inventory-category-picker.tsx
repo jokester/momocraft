@@ -1,5 +1,5 @@
 import React from 'react';
-import { ItemsV2Json } from '../../json/json';
+import { ItemsV2Json } from '../../items-db/json-schema';
 import { RenderArray } from '../hoc/render-array';
 
 export const InventoryCategoryPicker: React.FC<{

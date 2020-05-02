@@ -1,5 +1,5 @@
 import { ParsedUrlQuery } from 'querystring';
-import { ItemsV2Json } from './json/json';
+import { ItemsV2Json } from './items-db/json-schema';
 
 /**
  * a tree of statically typed route nodes (or, href-generators)

@@ -1,4 +1,4 @@
-import { ItemsV2Json } from './json';
+import { ItemsV2Json } from './json-schema';
 import { ItemColumnType } from '../model/item-id-def';
 
 export const ItemUtils = {

@@ -1,5 +1,5 @@
 import { ApiResponse } from '../../service/api-convention';
-import { Either, fold, isLeft, left, right } from 'fp-ts/lib/Either';
+import { Either, fold, left, right } from 'fp-ts/lib/Either';
 import { BehaviorSubject, Observable } from 'rxjs';
 
 import * as HttpApi from '../../api/hanko-api';
