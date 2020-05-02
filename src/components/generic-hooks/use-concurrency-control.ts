@@ -1,26 +1,27 @@
 import { useMounted } from './use-mounted';
-import { useCallback, useRef } from 'react';
+import { useCallback, useRef, useState } from 'react';
 import { ErrorCodeEnum } from '../../model/error-code';
+
+const inc = (_: number) => _ + 1;
+const dec = (_: number) => _ - 1;
 
 export function useConcurrencyControl(maxConcurrency = 1) {
   const mounted = useMounted();
-  const locked = useRef(maxConcurrency);
+  /**
+   * using useState instead of useRef: UI may infer pending/blocked from it
+   */
+  const [running, setRunning] = useState(0);
 
   const runWithLock = useCallback(
     <T>(foo: (m: typeof mounted) => Promise<T>): Promise<T> => {
-      if (mounted.current && locked.current < maxConcurrency) {
-        --locked.current;
-
-        return foo(mounted).finally(() => mounted.current && ++locked.current);
+      if (mounted.current && running < maxConcurrency) {
+        setRunning(inc);
+        return foo(mounted).finally(() => mounted.current && setRunning(dec));
       }
       return Promise.reject(ErrorCodeEnum.maxConcurrencyExceeded);
     },
-    [maxConcurrency],
+    [running, maxConcurrency],
   );
 
-  return [
-    runWithLock,
-    // FIXME: not sure we should expose this:
-    locked.current,
-  ] as const;
+  return [runWithLock, running] as const;
 }
