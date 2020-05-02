@@ -2,7 +2,11 @@ export const enum CollectionState {
   with = 'with',
   own = 'own',
   none = 'none',
+
+  // internal
   unknown = 'unknown',
+
+  // unset = 'unset', (just use null)
 }
 
 export interface CollectionItem {

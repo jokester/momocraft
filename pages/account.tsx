@@ -3,7 +3,7 @@ import { Layout } from '../src/components/layout/layout';
 import { Button, H2, FormGroup, InputGroup, Label } from '@blueprintjs/core';
 import React, { useMemo, useState, ChangeEvent } from 'react';
 import { useSingletons } from '../src/internal/app-context';
-import { useObserved } from '../src/components/hooks/use-observed';
+import { useObserved } from '../src/components/generic-hooks/use-observed';
 import { ApiResponseSync, dummyAuthState } from '../src/service/api-convention';
 import { isLeft } from 'fp-ts/lib/Either';
 import { createLogger } from '../src/util/debug-logger';

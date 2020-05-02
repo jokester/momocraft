@@ -1,6 +1,6 @@
 import { useSingletons } from '../../internal/app-context';
 import { useMemo } from 'react';
-import { useObserved } from './use-observed';
+import { useObserved } from '../generic-hooks/use-observed';
 import { dummyAuthState } from '../../service/api-convention';
 import { ExposedAuthState } from '../../service/auth-service';
 
