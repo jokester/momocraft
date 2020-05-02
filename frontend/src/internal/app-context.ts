@@ -1,4 +1,4 @@
-import React, { createContext, createElement, useContext, useEffect, useMemo } from 'react';
+import React, { createContext, createElement, MutableRefObject, useContext, useEffect, useMemo } from 'react';
 import { createLogger } from '../util/debug-logger';
 import { buildEnv, inServer, isDevBuild } from '../config/build-env';
 import { Never } from '@jokester/ts-commonutil/concurrency/timing';
@@ -7,12 +7,13 @@ import { AuthServiceImpl } from './service-impl/auth-service';
 import { AuthService } from '../service/auth-service';
 import { CollectionServiceImpl } from './service-impl/collection-service';
 import { CollectionService } from '../service/collection-service';
+import { Toaster } from '@blueprintjs/core';
 
 type Singletons = ReturnType<typeof initSingletons>;
 
 const AppContext = createContext<Singletons>(null!);
 
-function initSingletons() {
+function initSingletons(props: { toasterRef: MutableRefObject<Toaster> }) {
   if (1) {
     const logger = createLogger(__filename);
     logger('build env', isDevBuild, buildEnv);
@@ -28,11 +29,12 @@ function initSingletons() {
   return {
     auth: auth as AuthService,
     collection: collection as CollectionService,
+    toaster: props.toasterRef as { readonly current: Toaster },
   } as const;
 }
 
-export const AppContextHolder: React.FC = ({ children }) => {
-  const singletons = useMemo(initSingletons, []);
+export const AppContextHolder: React.FC<{ toasterRef: MutableRefObject<Toaster> }> = ({ toasterRef, children }) => {
+  const singletons = useMemo(() => initSingletons({ toasterRef }), []);
 
   useEffect(() => () => console.error('unexpected: AppContextHolder unmounted'), []);
 

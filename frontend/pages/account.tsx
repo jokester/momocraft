@@ -1,7 +1,7 @@
 import { PageType } from '../src/next-types';
 import { Layout } from '../src/components/layout/layout';
 import { Button, H2, FormGroup, InputGroup, Label } from '@blueprintjs/core';
-import React, { useState, ChangeEvent } from 'react';
+import React, { useState, ChangeEvent, useCallback } from 'react';
 import { useSingletons } from '../src/internal/app-context';
 import { ApiResponseSync } from '../src/service/api-convention';
 import { isLeft } from 'fp-ts/lib/Either';
@@ -10,23 +10,23 @@ import { HankoUser } from '../src/api/hanko-api';
 import gravatarUrl from 'gravatar-url';
 import { useAuthState } from '../src/components/hooks/use-auth-state';
 
-const onAuthResult = (res: ApiResponseSync<HankoUser>) => {
-  if (isLeft(res)) {
-    alert(res.left);
-  } else {
-    alert('登录成功');
-  }
-  return res;
-};
-
 const logger = createLogger(__filename);
 
 const AuthState: React.FC = () => {
-  const { auth } = useSingletons();
+  const { auth, toaster } = useSingletons();
   const [email, setEmail] = useState('');
   const [password, setPass] = useState('');
 
   const { user: self, pendingAuth } = useAuthState();
+
+  const onAuthResult = useCallback((res: ApiResponseSync<HankoUser>) => {
+    if (isLeft(res)) {
+      toaster.current.show({ intent: 'warning', message: `登录失败: ${res.left}` });
+    } else {
+      toaster.current.show({ intent: 'success', message: '登录成功' });
+    }
+    return res;
+  }, []);
 
   if (self) {
     return (
@@ -73,7 +73,7 @@ const AuthState: React.FC = () => {
         </FormGroup>
         <FormGroup>
           <Button
-            onClick={() => email && password && auth.emailSignUp({ email, password }).then(onAuthResult)}
+            onClick={() => email && password && auth.emailSignUp({ email, password }).then(result => {})}
             disabled={pendingAuth}
           >
             注册
