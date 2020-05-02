@@ -45,7 +45,7 @@ describe('AppController (e2e)', () => {
 
     let nanoIdSeq = 0;
 
-    jest.spyOn(TestDeps.mockedEntropy, 'createNanoId').mockImplementation(() => `nanoid-${++nanoIdSeq}`);
+    jest.spyOn(TestDeps.mockedEntropy, 'createUserStringId').mockImplementation(() => `nanoid-${++nanoIdSeq}`);
   });
 
   afterAll(async () => {
