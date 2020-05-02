@@ -17,22 +17,22 @@ import { UserAccount } from '../db/entities/user-account';
 import { AuthedUser } from '../user/user-jwt-auth.middleware';
 import { Sanitize } from '../util/input-santinizer';
 import { CollectionResBody } from '../linked-frontend/api/momo-api';
+import { UserCollectionService } from './user-collection.service';
 
 const logger = getDebugLogger(__filename);
 
 @Controller('momo/user')
 export class MomoUserController {
-  constructor(private readonly userService: UserService) {}
+  constructor(private readonly userService: UserService, private readonly collectionService: UserCollectionService) {}
 
   @Get(':userId/collections')
   async getCollections(@Param() params: { userId: string }): Promise<CollectionResBody> {
     logger('UserController#getCollections', params);
 
     const userId = getRightOrThrow(Sanitize.pass(params?.userId), l => new BadRequestException(l));
-
     const user = getSomeOrThrow(await this.userService.findUser({ userId }), () => new NotFoundException());
-
-    return { collections: [] };
+    const found = await this.collectionService.findByUser(user);
+    return { collections: found };
   }
 
   @Put(':userId/collections')
