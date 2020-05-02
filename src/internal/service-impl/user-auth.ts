@@ -1,4 +1,4 @@
-import { ApiResponse } from '../../service/all';
+import { ApiResponse } from '../../service/api-convention';
 import { Either, fold, fromOption, left, map as mapEither, right } from 'fp-ts/lib/Either';
 import { BehaviorSubject, Observable } from 'rxjs';
 
@@ -10,7 +10,7 @@ import { map } from 'rxjs/operators';
 import { ErrorCodeEnum } from '../../model/error-code';
 import { toTypedLocalStorage } from '../../util/typed-local-storage';
 import { createLogger } from '../../util/debug-logger';
-import { ExposedAuthState, UserAuthService } from '../../service/user-auth';
+import { ExposedAuthState, AuthService } from '../../service/auth-service';
 
 const logger = createLogger(__filename);
 
@@ -25,7 +25,7 @@ const exposeAuthState = map<InternalAuthState, ExposedAuthState>((_: InternalAut
   profile: null,
 }));
 
-export class AuthServiceImpl implements UserAuthService {
+export class AuthServiceImpl implements AuthService {
   private readonly persist = toTypedLocalStorage<{
     moAur: AuthResponse;
   }>();

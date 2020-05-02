@@ -1,6 +1,6 @@
 import { CollectionService } from '../../service/collection-service';
 import { CollectionItem } from '../../model/collection';
-import { ApiResponse } from '../../service/all';
+import { ApiResponse } from '../../service/api-convention';
 import { Observable } from 'rxjs';
 
 export class CollectionServiceImpl implements CollectionService {

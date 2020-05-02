@@ -4,7 +4,7 @@ import { Button, H2, FormGroup, InputGroup, Label } from '@blueprintjs/core';
 import React, { useMemo, useState, ChangeEvent } from 'react';
 import { useSingletons } from '../src/internal/app-context';
 import { useObserved } from '../src/components/hooks/use-observed';
-import { ApiResponseSync, dummyAuthState } from '../src/service/all';
+import { ApiResponseSync, dummyAuthState } from '../src/service/api-convention';
 import { isLeft } from 'fp-ts/lib/Either';
 import { createLogger } from '../src/util/debug-logger';
 import { HankoUser } from '../src/api/hanko-api';

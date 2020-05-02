@@ -1,7 +1,7 @@
 import { left, right } from 'fp-ts/lib/Either';
 import { ErrorCodeEnum } from '../../model/error-code';
 import { createLogger } from '../../util/debug-logger';
-import { ApiResponse } from '../../service/all';
+import { ApiResponse } from '../../service/api-convention';
 import { ErrorResponse } from '../../api/hanko-api';
 import { buildApiRoute } from '../../api/api-route';
 

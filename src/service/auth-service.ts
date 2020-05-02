@@ -1,7 +1,7 @@
 import { Observable } from 'rxjs';
 import { EmailAuthPayload, HankoUser } from '../api/hanko-api';
 import { Either } from 'fp-ts/lib/Either';
-import { ApiResponse } from './all';
+import { ApiResponse } from './api-convention';
 
 export interface ExposedAuthState {
   user?: HankoUser;
@@ -9,7 +9,7 @@ export interface ExposedAuthState {
   pendingAuth: boolean;
 }
 
-export interface UserAuthService {
+export interface AuthService {
   authed: Observable<ExposedAuthState>;
 
   emailSignUp(param: EmailAuthPayload): ApiResponse<HankoUser>;

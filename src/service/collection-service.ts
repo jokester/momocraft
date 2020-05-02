@@ -1,5 +1,5 @@
 import { CollectionItem, CollectionState } from '../model/collection';
-import { ApiResponse } from './all';
+import { ApiResponse } from './api-convention';
 
 interface CollectionUpdate {
   itemName: string;
