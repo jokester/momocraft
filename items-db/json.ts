@@ -1,7 +1,3 @@
-import * as sheet1schema2json from './sheet1-schema2.json';
-
-export const itemsV2: { default: ItemsV2Json.Root } = sheet1schema2json as any;
-
 export namespace ItemsV1Json {
   export interface Root {
     sheets: Sheet[];
