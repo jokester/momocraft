@@ -1,15 +1,14 @@
 import { useSingletons } from '../../internal/app-context';
 import { useMemo } from 'react';
-import { CollectionItem, CollectionState } from '../../model/collection';
+import { CollectionState, ItemCollectionEntry } from '../../model/collection';
 import { Maps } from '@jokester/ts-commonutil/collection/maps';
 import { fold, isRight, map } from 'fp-ts/lib/Either';
 import { useConcurrencyControl } from '../generic-hooks/use-concurrency-control';
 import { usePromised } from '@jokester/ts-commonutil/react/hook/use-promised';
 import { useDependingState } from '../generic-hooks/use-depending-state';
-import { useMounted } from '../generic-hooks/use-mounted';
 
 const builder = {
-  buildCollectionMap: (fetched: CollectionItem[]) => ({
+  buildCollectionMap: (fetched: ItemCollectionEntry[]) => ({
     raw: fetched,
     map: Maps.buildMap(fetched, item => item.itemId),
   }),
@@ -58,7 +57,7 @@ export function useCollectionApi(itemName: string, initialMap: null | Collection
             (l: string) => {
               singletons.toaster.current.show({ intent: 'warning', message: `保存失败: ${l}` });
             },
-            (r: CollectionItem[]) => {
+            (r: ItemCollectionEntry[]) => {
               mounted.current && setLocalState(newState);
               singletons.toaster.current.show({ intent: 'success', message: `保存成功`, timeout: 1e3 });
             },

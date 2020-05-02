@@ -1,5 +1,5 @@
 import { CollectionService } from '../../service/collection-service';
-import { CollectionItem } from '../../model/collection';
+import { ItemCollectionEntry } from '../../model/collection';
 import { ApiResponse } from '../../service/api-convention';
 import { Observable } from 'rxjs';
 import { AuthServiceImpl } from './auth-service';
@@ -14,7 +14,7 @@ const mappers = {
 export class CollectionServiceImpl implements CollectionService {
   constructor(private auth: AuthServiceImpl, private readonly apiClient: ApiClient) {}
 
-  saveCollections(collections: CollectionItem[]): ApiResponse<CollectionItem[]> {
+  saveCollections(collections: ItemCollectionEntry[]): ApiResponse<ItemCollectionEntry[]> {
     return this.auth
       .withAuthedIdentity((user, authHeader) =>
         this.apiClient.putJson<CollectionResBody>(this.apiClient.route.momo.user.collection(user.userId), authHeader, {
@@ -23,7 +23,7 @@ export class CollectionServiceImpl implements CollectionService {
       )
       .then(mappers.unResObject);
   }
-  fetchCollections(): ApiResponse<CollectionItem[]> {
+  fetchCollections(): ApiResponse<ItemCollectionEntry[]> {
     return this.auth
       .withAuthedIdentity((user, authHeader) =>
         this.apiClient.getJson<CollectionResBody>(this.apiClient.route.momo.user.collection(user.userId), authHeader),
