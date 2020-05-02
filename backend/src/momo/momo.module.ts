@@ -11,6 +11,6 @@ import { UserJwtAuthMiddleware } from '../user/user-jwt-auth.middleware';
 })
 export class MomoModule implements NestModule {
   configure(consumer: MiddlewareConsumer): void {
-    consumer.apply(UserJwtAuthMiddleware).forRoutes({ path: '/momo/user/self', method: RequestMethod.ALL });
+    consumer.apply(UserJwtAuthMiddleware).forRoutes({ path: '/', method: RequestMethod.ALL });
   }
 }

@@ -5,10 +5,7 @@ import { Observable } from 'rxjs';
 import { AuthServiceImpl } from './auth-service';
 import { ApiClient } from './client';
 import { map } from 'fp-ts/lib/Either';
-
-interface CollectionResBody {
-  collections: CollectionItem[];
-}
+import { CollectionResBody } from '../../api/momo-api';
 
 const mappers = {
   unResObject: map((resBody: CollectionResBody) => resBody.collections),
