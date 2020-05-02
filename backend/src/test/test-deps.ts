@@ -5,7 +5,7 @@ import { EntropyService } from '../deps/entropy.service';
 import { DeepReadonly } from '../ts-commonutil/type';
 import { GoogleOAuthResponse } from '../user/google-oauth.service';
 import { JwtService } from '@nestjs/jwt';
-import { EmailAuthPayload } from '../linked-frontend/model/http-api';
+import { EmailAuthPayload } from '../linked-frontend/api/hanko-api';
 
 export namespace TestDeps {
   export const testConnection = createConnection({

@@ -3,9 +3,9 @@ import { getDebugLogger } from '../util/get-debug-logger';
 import { GoogleOAuthService } from './google-oauth.service';
 import { ResolvedUser, UserService } from './user.service';
 import { getRightOrThrow } from '../util/fpts-getter';
-import { EmailAuthPayload } from '../linked-frontend/model/http-api';
 import { Sanitize } from '../util/input-santinizer';
 import { UserAccount } from '../db/entities/user-account';
+import { EmailAuthPayload } from '../linked-frontend/api/hanko-api';
 
 const logger = getDebugLogger(__filename);
 
