@@ -1,5 +1,5 @@
 import React from 'react';
-import { ItemsV2Json } from '../../items-db/json-schema';
+import { ItemsV3Json } from '../../items-db/json-schema';
 import { CollectionState } from '../../model/collection';
 import { Button, ButtonGroup } from '@blueprintjs/core';
 import { createLogger } from '../../util/debug-logger';
@@ -7,11 +7,11 @@ import { CollectionStateMap, useCollectionApi } from '../hooks/use-collections-a
 
 const logger = createLogger(__filename);
 
-export const CollectionStateSwitch: React.FC<{ item: ItemsV2Json.Item; collectionMap: null | CollectionStateMap }> = ({
+export const CollectionStateSwitch: React.FC<{ item: ItemsV3Json.Item; collectionMap: null | CollectionStateMap }> = ({
   item,
   collectionMap,
 }) => {
-  const [state, api, saving] = useCollectionApi(item.itemName, collectionMap);
+  const [state, api, saving] = useCollectionApi(item.itemId, collectionMap);
   return (
     <ButtonGroup vertical>
       <Button

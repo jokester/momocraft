@@ -1,5 +1,5 @@
 import { ParsedUrlQuery } from 'querystring';
-import { ItemsV2Json } from './items-db/json-schema';
+import { ItemsV3Json } from './items-db/json-schema';
 
 /**
  * a tree of statically typed route nodes (or, href-generators)
@@ -9,7 +9,7 @@ export const TypedRoutes = {
   items: {
     index: '/items',
     show: (itemId: string) => `/items/${itemId}`,
-    show2: (item: ItemsV2Json.Item) => `/items/${item.itemName}`,
+    show2: (item: ItemsV3Json.Item) => `/items/${item.itemId}`,
   },
   friends: '/friends',
   about: '/about',

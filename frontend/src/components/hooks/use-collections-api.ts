@@ -35,13 +35,10 @@ function initialCollectionState(
 
 export type CollectionStateMap = ReturnType<typeof builder.buildCollectionMap>;
 
-export function useCollectionApi(itemName: string, initialMap: null | CollectionStateMap) {
+export function useCollectionApi(itemId: string, initialMap: null | CollectionStateMap) {
   const singletons = useSingletons();
 
-  const serverState = useMemo(() => initialMap?.map.get(itemName)?.state || CollectionState.none, [
-    itemName,
-    initialMap,
-  ]);
+  const serverState = useMemo(() => initialMap?.map.get(itemId)?.state || CollectionState.none, [itemId, initialMap]);
 
   const [localState, setLocalState] = useDependingState<null | CollectionState>(() => null, [serverState]);
 
@@ -51,7 +48,7 @@ export function useCollectionApi(itemName: string, initialMap: null | Collection
     return {
       setState: (newState: CollectionState) => {
         withLock(async mounted => {
-          const x = await singletons.collection.saveCollections([{ itemId: itemName, state: newState }]);
+          const x = await singletons.collection.saveCollections([{ itemId: itemId, state: newState }]);
 
           fold(
             (l: string) => {
@@ -65,7 +62,7 @@ export function useCollectionApi(itemName: string, initialMap: null | Collection
         });
       },
     } as const;
-  }, [itemName, singletons]);
+  }, [itemId, singletons]);
 
   return [localState || serverState, api, concurrency > 0] as const;
 }

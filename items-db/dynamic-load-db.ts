@@ -1,23 +1,23 @@
 import { Maps } from '@jokester/ts-commonutil/collection/maps';
-import { ItemsV2Json } from './json-schema';
+import { ItemsV3Json } from './json-schema';
 import { createLogger } from '../util/debug-logger';
 
 const logger = createLogger(__filename);
 
-function* iterateItems(root: ItemsV2Json.Root): Generator<ItemsV2Json.Item> {
+function* iterateItems(root: ItemsV3Json.Root): Generator<ItemsV3Json.Item> {
   for (const s of root.sheets) {
     for (const i of s.items) yield i;
   }
 }
 
 export const dynamicItemsV2 = () =>
-  import('./sheet1-schema2.json')
+  import('./sheet01-schema03.json')
     .then((_: any) => {
       logger('dynamicLoaded', _);
-      return _.default as ItemsV2Json.Root;
+      return _.default as ItemsV3Json.Root;
     })
     .then(_ => {
-      const itemsMap = Maps.buildMap(iterateItems(_), _ => _.itemName);
+      const itemsMap = Maps.buildMap(iterateItems(_), _ => _.itemId);
       return {
         sheets: _.sheets,
         itemsMap,

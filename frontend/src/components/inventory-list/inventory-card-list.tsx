@@ -1,13 +1,13 @@
 import React, { useMemo } from 'react';
 import Link from 'next/link';
 import { TypedRoutes } from '../../typed-routes';
-import { ItemsV2Json } from '../../items-db/json-schema';
+import { ItemsV3Json } from '../../items-db/json-schema';
 import { createAspectRatioStyle } from '../../style/aspect-ratio';
 import { CollectionStateSwitch } from './collection-state-switch';
 import { ItemUtils } from '../../items-db/item-utils';
 import { CollectionStateMap, useFetchedCollections } from '../hooks/use-collections-api';
 
-const InventoryCard: React.FunctionComponent<{ item: ItemsV2Json.Item; collectionMap: null | CollectionStateMap }> = ({
+const InventoryCard: React.FunctionComponent<{ item: ItemsV3Json.Item; collectionMap: null | CollectionStateMap }> = ({
   item,
   collectionMap,
 }) => {
@@ -40,14 +40,14 @@ export const DummyModelListHeader: React.FunctionComponent<{ title: string }> = 
   <h3 className="px-2 my-1 font-bold ">{title}</h3>
 );
 
-export const InventoryCardList: React.FunctionComponent<{ items: ItemsV2Json.Item[] }> = props => {
+export const InventoryCardList: React.FunctionComponent<{ items: ItemsV3Json.Item[] }> = props => {
   const fetchedCollections = useFetchedCollections();
 
   const collections = fetchedCollections.fulfilled && fetchedCollections.value;
   return (
     <div className="flex flex-wrap mx-2 -mt-2 z-0">
       {props.items.map((_, i) => (
-        <InventoryCard item={_} key={_.itemName} collectionMap={collections} />
+        <InventoryCard item={_} key={_.itemId} collectionMap={collections} />
       ))}
     </div>
   );
