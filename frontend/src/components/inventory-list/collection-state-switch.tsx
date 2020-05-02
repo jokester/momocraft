@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { ItemsV2Json } from '../../json/json';
-import { CollectionState, randomCollectionState } from '../../model/collection';
+import { CollectionState } from '../../model/collection';
 import { Button, ButtonGroup } from '@blueprintjs/core';
 import { createLogger } from '../../util/debug-logger';
 import { CollectionStateMap, useCollectionApi } from '../hooks/use-collections-api';
@@ -16,8 +16,15 @@ export const CollectionStateSwitch: React.FC<{ item: ItemsV2Json.Item; collectio
     <ButtonGroup vertical>
       <Button
         small
-        onClick={() => api.setState(CollectionState.own)}
+        onClick={() => {
+          if (state !== CollectionState.own) {
+            api.setState(CollectionState.own);
+          } else {
+            api.setState(CollectionState.none);
+          }
+        }}
         active={state === CollectionState.own}
+        loading={saving}
         className="text-xl"
         icon="tick-circle"
       >
@@ -25,19 +32,18 @@ export const CollectionStateSwitch: React.FC<{ item: ItemsV2Json.Item; collectio
       </Button>
       <Button
         small
-        onClick={() => api.setState(CollectionState.with)}
-        active={state === CollectionState.with}
+        loading={saving}
+        onClick={() => {
+          if (state !== CollectionState.want) {
+            api.setState(CollectionState.want);
+          } else {
+            api.setState(CollectionState.none);
+          }
+        }}
+        active={state === CollectionState.want}
         icon="hand"
       >
         想摸
-      </Button>
-      <Button
-        small
-        onClick={() => api.setState(CollectionState.none)}
-        active={state === CollectionState.none}
-        icon="remove"
-      >
-        取消
       </Button>
     </ButtonGroup>
   );
