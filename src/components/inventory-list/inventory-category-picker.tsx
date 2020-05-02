@@ -8,7 +8,7 @@ export const InventoryCategoryPicker: React.FC<{
   setSheetId(sheetId: number): void;
 }> = props => {
   return (
-    <div className="sticky top-0 shadow p-2 px-4 bg-white">
+    <div className="sticky top-0 shadow p-2 px-4 bg-white z-10">
       物品种类: &nbsp;
       <select value={props.curentSheetId} onChange={ev => props.setSheetId(Number(ev.target.value))}>
         <option value={-1}>未选择</option>

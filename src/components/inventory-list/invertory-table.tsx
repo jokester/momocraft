@@ -22,7 +22,7 @@ export const InventoryDb: React.FC = () => {
     return (
       <div>
         <InventoryCategoryPicker sheets={itemsDb.value.sheets} curentSheetId={currentSheetId} setSheetId={setSheetId} />
-        <InventoryCardList key={currentSheetId} items={items} />
+        <InventoryCardList key={/* recreate/refetch on sheet switch */ currentSheetId} items={items} />
       </div>
     );
   }

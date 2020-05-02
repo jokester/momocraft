@@ -4,10 +4,16 @@ import { TypedRoutes } from '../../typed-routes';
 import { ItemColumnType, itemIdDef } from '../../model/item-id-def';
 import Link from 'next/link';
 import { FontAwesomeIcon } from '../icon/fontawesome-icon';
-import { CollectionStateSwitch } from './collection-state-switch';
 
 const tdClass = 'p-2';
 
+/**
+ * @deprecated
+ * @param {ItemsV2Json.Sheet[]} sheets
+ * @param {number} sheetIndex
+ * @returns {any}
+ * @constructor
+ */
 export const InventoryTableSheet: React.FC<{ sheets: ItemsV2Json.Sheet[]; sheetIndex: number }> = ({
   sheets,
   sheetIndex,
@@ -49,9 +55,7 @@ export const InventoryTableSheet: React.FC<{ sheets: ItemsV2Json.Sheet[]; sheetI
           </Link>
           <td className={tdClass}>TODO</td>
           <td className={tdClass}>TODO</td>
-          <td className={tdClass}>
-            <CollectionStateSwitch item={item} />
-          </td>
+          <td className={tdClass}>{/*<CollectionStateSwitch item={item} />*/}</td>
         </tr>
       );
     });

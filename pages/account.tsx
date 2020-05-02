@@ -3,12 +3,13 @@ import { Layout } from '../src/components/layout/layout';
 import { Button, H2, FormGroup, InputGroup, Label } from '@blueprintjs/core';
 import React, { useMemo, useState, ChangeEvent } from 'react';
 import { useSingletons } from '../src/internal/app-context';
-import { useLast, useObserved } from '../src/components/hooks/use-observed';
-import { ApiResponseSync, dummyAuthState } from '../src/service/all';
+import { useObserved } from '../src/components/generic-hooks/use-observed';
+import { ApiResponseSync, dummyAuthState } from '../src/service/api-convention';
 import { isLeft } from 'fp-ts/lib/Either';
 import { createLogger } from '../src/util/debug-logger';
 import { HankoUser } from '../src/api/hanko-api';
 import gravatarUrl from 'gravatar-url';
+import { useAuthState } from '../src/components/hooks/use-auth-state';
 
 const onAuthResult = (res: ApiResponseSync<HankoUser>) => {
   if (isLeft(res)) {
@@ -23,12 +24,10 @@ const logger = createLogger(__filename);
 
 const AuthState: React.FC = () => {
   const { auth } = useSingletons();
-  const authState = useMemo(() => auth.authed, [auth]);
-
-  const { user: self, pendingAuth } = useLast(authState, dummyAuthState);
-
   const [email, setEmail] = useState('');
   const [password, setPass] = useState('');
+
+  const { user: self, pendingAuth } = useAuthState();
 
   if (self) {
     return (
