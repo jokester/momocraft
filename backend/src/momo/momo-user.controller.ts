@@ -43,8 +43,8 @@ export class MomoUserController {
   ): Promise<CollectionResBody> {
     logger('UserController#putCollections', params);
 
-    const saved = await this.collectionService.updateCollection(authedUser, []);
-    return { collections: [] };
+    const saved = await this.collectionService.updateCollection(authedUser, payload.collections);
+    return { collections: saved };
   }
 
   @Put('self')
