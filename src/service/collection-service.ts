@@ -8,7 +8,7 @@ interface CollectionUpdate {
 }
 
 export interface CollectionService {
-  saveCollections(changes: CollectionItem[]): ApiResponse<void>;
+  saveCollections(changes: CollectionItem[]): ApiResponse<CollectionItem[]>;
   fetchCollections(): ApiResponse<CollectionItem[]>;
   // hard to get this performant?
   // observeCollections(itemName: string): Observable<{}>;

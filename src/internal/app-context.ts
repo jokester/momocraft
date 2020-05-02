@@ -3,7 +3,7 @@ import { createLogger } from '../util/debug-logger';
 import { buildEnv, inServer, isDevBuild } from '../config/build-env';
 import { Never } from '@jokester/ts-commonutil/concurrency/timing';
 import { ApiClient } from './service-impl/client';
-import { AuthServiceImpl } from './service-impl/user-auth';
+import { AuthServiceImpl } from './service-impl/auth-service';
 import { AuthService } from '../service/auth-service';
 
 type Singletons = ReturnType<typeof initSingletons>;

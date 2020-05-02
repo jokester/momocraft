@@ -2,13 +2,36 @@ import { CollectionService } from '../../service/collection-service';
 import { CollectionItem } from '../../model/collection';
 import { ApiResponse } from '../../service/api-convention';
 import { Observable } from 'rxjs';
+import { AuthServiceImpl } from './auth-service';
+import { ApiClient } from './client';
+import { map } from 'fp-ts/lib/Either';
+
+interface CollectionResBody {
+  collections: CollectionItem[];
+}
+
+const mappers = {
+  unResObject: map((resBody: CollectionResBody) => resBody.collections),
+} as const;
 
 export class CollectionServiceImpl implements CollectionService {
-  saveCollections(changes: CollectionItem[]): ApiResponse<void> {
-    throw '';
+  constructor(private auth: AuthServiceImpl, private readonly apiClient: ApiClient) {}
+
+  saveCollections(collections: CollectionItem[]): ApiResponse<CollectionItem[]> {
+    return this.auth
+      .withAuthedIdentity((user, authHeader) =>
+        this.apiClient.putJson<CollectionResBody>(this.apiClient.route.momo.user.collection(user.userId), authHeader, {
+          collections,
+        }),
+      )
+      .then(mappers.unResObject);
   }
   fetchCollections(): ApiResponse<CollectionItem[]> {
-    throw '';
+    return this.auth
+      .withAuthedIdentity((user, authHeader) =>
+        this.apiClient.getJson<CollectionResBody>(this.apiClient.route.momo.user.collection(user.userId), authHeader),
+      )
+      .then(mappers.unResObject);
   }
   observeCollections(itemName: string): Observable<{}> {
     throw 'todo';

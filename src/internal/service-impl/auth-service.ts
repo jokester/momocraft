@@ -1,5 +1,5 @@
 import { ApiResponse } from '../../service/api-convention';
-import { Either, fold, fromOption, left, map as mapEither, right } from 'fp-ts/lib/Either';
+import { Either, fold, isLeft, left, right } from 'fp-ts/lib/Either';
 import { BehaviorSubject, Observable } from 'rxjs';
 
 import * as HttpApi from '../../api/hanko-api';
@@ -10,7 +10,8 @@ import { map } from 'rxjs/operators';
 import { ErrorCodeEnum } from '../../model/error-code';
 import { toTypedLocalStorage } from '../../util/typed-local-storage';
 import { createLogger } from '../../util/debug-logger';
-import { ExposedAuthState, AuthService } from '../../service/auth-service';
+import { AuthService, ExposedAuthState } from '../../service/auth-service';
+import { isDevBuild } from '../../config/build-env';
 
 const logger = createLogger(__filename);
 
@@ -37,9 +38,9 @@ export class AuthServiceImpl implements AuthService {
 
   constructor(private readonly apiClient: ApiClient) {
     logger('authState.init', this._authState.value);
-    this._authState
-      .pipe(_ => _)
-      .subscribe({
+
+    if (isDevBuild) {
+      this._authState.subscribe({
         next(v) {
           logger('authState.next', v);
         },
@@ -47,6 +48,7 @@ export class AuthServiceImpl implements AuthService {
           logger('authState.error', e);
         },
       });
+    }
   }
 
   get authed(): Observable<ExposedAuthState> {
@@ -74,11 +76,22 @@ export class AuthServiceImpl implements AuthService {
     return right(0 as never);
   }
 
-  async useAuthToken<T>(
-    consumer: (authToken: string, isRetry: boolean) => Promise<Either<string, T>>,
+  async withAuthedIdentity<T>(
+    consumer: (
+      currentUser: HankoUser,
+      authHeader: Record<string, string>,
+      isRetry: boolean,
+    ) => Promise<Either<string, T>>,
     authRefresh = false,
   ): Promise<Either<string, T>> {
-    return left(ErrorCodeEnum.notImplemented);
+    const identity = this._authState.value.identity;
+
+    if (identity) {
+      // TODO: should support token refresh / retry
+      return consumer(identity.user, buildAuthHeader(identity.jwtToken), false);
+    }
+
+    return left(ErrorCodeEnum.notAuthenticated);
   }
 
   private get c() {
@@ -86,14 +99,6 @@ export class AuthServiceImpl implements AuthService {
   }
   private get r() {
     return this.apiClient.route;
-  }
-
-  private buildAuthHeader(): Either<string, Record<string, string>> {
-    const last = this._authState.value;
-
-    const token = last.identity?.jwtToken;
-
-    return token ? right({ Authorization: `Bearer ${token}` }) : left(ErrorCodeEnum.notAuthenticated);
   }
 
   private onStartAuth = () => {
@@ -118,4 +123,8 @@ export interface AuthTokenProvider {
     consumer: (authToken: string, isRetry: boolean) => Promise<Either<A, B>>,
     autoRefresh?: boolean,
   ): Promise<Either<A, B>>;
+}
+
+function buildAuthHeader(jwtToken: string): Record<string, string> {
+  return { Authorization: `Bearer ${jwtToken}` };
 }
