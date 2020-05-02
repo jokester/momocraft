@@ -1,6 +1,7 @@
-import { Column, Entity, Index, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, Index, PrimaryGeneratedColumn, Unique } from 'typeorm';
 
 @Entity()
+@Unique(['userId', 'itemId'])
 export class UserItemCollection {
   @PrimaryGeneratedColumn()
   userItemCollectionId!: number;
