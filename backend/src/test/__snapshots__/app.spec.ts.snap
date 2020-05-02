@@ -1,0 +1,23 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`AppController (e2e) AuthController POST /auth/email/signin auths user: POST /auth/email/signin 200 1`] = `
+Object {
+  "email": "a@b.com",
+  "userId": "nanoid-2",
+}
+`;
+
+exports[`AppController (e2e) AuthController POST /auth/email/signup creates user and returns 201: POST /auth/email/signup 201 1`] = `
+Object {
+  "email": "a@b.com",
+  "userId": "nanoid-2",
+}
+`;
+
+exports[`AppController (e2e) AuthController POST /auth/oauth/google return 400 on auth error: auth 400 res 1`] = `
+Object {
+  "error": "Bad Request",
+  "message": "auth failed",
+  "statusCode": 400,
+}
+`;
