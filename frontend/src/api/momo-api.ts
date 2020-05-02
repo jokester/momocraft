@@ -1,5 +1,5 @@
-import { CollectionItem } from '../model/collection';
+import { ItemCollectionEntry } from '../model/collection';
 
 export interface CollectionResBody {
-  collections: CollectionItem[];
+  collections: ItemCollectionEntry[];
 }

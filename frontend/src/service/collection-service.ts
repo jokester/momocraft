@@ -1,4 +1,4 @@
-import { CollectionItem, CollectionState } from '../model/collection';
+import { ItemCollectionEntry, CollectionState } from '../model/collection';
 import { ApiResponse } from './api-convention';
 
 interface CollectionUpdate {
@@ -8,8 +8,8 @@ interface CollectionUpdate {
 }
 
 export interface CollectionService {
-  saveCollections(changes: CollectionItem[]): ApiResponse<CollectionItem[]>;
-  fetchCollections(): ApiResponse<CollectionItem[]>;
+  saveCollections(changes: ItemCollectionEntry[]): ApiResponse<ItemCollectionEntry[]>;
+  fetchCollections(): ApiResponse<ItemCollectionEntry[]>;
   // hard to get this performant?
   // observeCollections(itemName: string): Observable<{}>;
 }
