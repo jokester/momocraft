@@ -36,7 +36,10 @@ export class MomoUserController {
   }
 
   @Put(':userId/collections')
-  async putCollections(@Param() params: { userId: string }): Promise<CollectionResBody> {
+  async putCollections(
+    @Param() params: { userId: string },
+    @AuthedUser() authedUser: UserAccount,
+  ): Promise<CollectionResBody> {
     logger('UserController#putCollections', params);
 
     return { collections: [] };
