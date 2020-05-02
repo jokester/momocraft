@@ -1,10 +1,9 @@
 import { PageType } from '../src/next-types';
 import { Layout } from '../src/components/layout/layout';
 import { Button, H2, FormGroup, InputGroup, Label } from '@blueprintjs/core';
-import React, { useMemo, useState, ChangeEvent } from 'react';
+import React, { useState, ChangeEvent } from 'react';
 import { useSingletons } from '../src/internal/app-context';
-import { useObserved } from '../src/components/generic-hooks/use-observed';
-import { ApiResponseSync, dummyAuthState } from '../src/service/api-convention';
+import { ApiResponseSync } from '../src/service/api-convention';
 import { isLeft } from 'fp-ts/lib/Either';
 import { createLogger } from '../src/util/debug-logger';
 import { HankoUser } from '../src/api/hanko-api';
@@ -51,39 +50,43 @@ const AuthState: React.FC = () => {
   return (
     <div>
       <H2>{pendingAuth ? '正在登录' : '未登录'}</H2>
-      <FormGroup>
-        <Label>
+      <form onSubmit={ev => ev.preventDefault()}>
+        <FormGroup>
+          <Label>
+            <InputGroup
+              type="text"
+              value={email}
+              name="auth-email"
+              leftIcon="envelope"
+              disabled={pendingAuth}
+              onChange={(ev: ChangeEvent<HTMLInputElement>) => setEmail(ev.target.value)}
+            />
+          </Label>
           <InputGroup
-            type="text"
-            value={email}
-            leftIcon="envelope"
+            type="password"
+            value={password}
+            name="auth-password"
+            leftIcon="lock"
             disabled={pendingAuth}
-            onChange={(ev: ChangeEvent<HTMLInputElement>) => setEmail(ev.target.value)}
+            onChange={(ev: ChangeEvent<HTMLInputElement>) => setPass(ev.target.value)}
           />
-        </Label>
-        <InputGroup
-          type="password"
-          value={password}
-          leftIcon="lock"
-          disabled={pendingAuth}
-          onChange={(ev: ChangeEvent<HTMLInputElement>) => setPass((ev.target as HTMLInputElement).value)}
-        />
-      </FormGroup>
-      <FormGroup>
-        <Button
-          onClick={() => email && password && auth.emailSignUp({ email, password }).then(onAuthResult)}
-          disabled={pendingAuth}
-        >
-          注册
-        </Button>
-        <Button
-          type="submit"
-          onClick={() => email && password && auth.emailSignIn({ email, password }).then(onAuthResult)}
-          disabled={pendingAuth}
-        >
-          登录
-        </Button>
-      </FormGroup>
+        </FormGroup>
+        <FormGroup>
+          <Button
+            onClick={() => email && password && auth.emailSignUp({ email, password }).then(onAuthResult)}
+            disabled={pendingAuth}
+          >
+            注册
+          </Button>
+          <Button
+            type="submit"
+            onClick={() => email && password && auth.emailSignIn({ email, password }).then(onAuthResult)}
+            disabled={pendingAuth}
+          >
+            登录
+          </Button>
+        </FormGroup>
+      </form>
     </div>
   );
 };
