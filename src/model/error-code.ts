@@ -9,6 +9,9 @@ export const enum ErrorCodeEnum {
 
   // app
 
+  // generic resource
+  maxConcurrencyExceeded = 'max_concurrency_exceeded',
+
   // other
   notImplemented = 'not_implemented',
 }

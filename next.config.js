@@ -23,7 +23,7 @@ const nextConf = {
   env: {
     MOMO_API_ORIGIN:
       process.env.MOMO_API_ORIGIN ||
-      // 'http://192.168.2.110:3001' || // iris-dev
+      'http://192.168.2.120:3001' || // pinkie-dev
       /* dev */ 'http://127.0.0.1:3001',
   },
 

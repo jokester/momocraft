@@ -1,11 +1,11 @@
 import { left, right } from 'fp-ts/lib/Either';
 import { ErrorCodeEnum } from '../../model/error-code';
 import { createLogger } from '../../util/debug-logger';
-import { ApiResponse } from '../../service/all';
+import { ApiResponse } from '../../service/api-convention';
 import { ErrorResponse } from '../../api/hanko-api';
 import { buildApiRoute } from '../../api/api-route';
 
-const logger = createLogger(__filename);
+const logger = createLogger(__filename, false);
 
 export class ApiClient {
   readonly route: ReturnType<typeof buildApiRoute>;
@@ -14,11 +14,24 @@ export class ApiClient {
   }
 
   getJson<T>(url: string, headers: Record<string, string>): ApiResponse<T> {
-    return this.launderJsonResponse(this._fetch(url, { headers })).then(logger.tap) as ApiResponse<T>;
+    return ApiClient.launderJsonResponse(this._fetch(url, { headers })).then(logger.tap) as ApiResponse<T>;
+  }
+
+  putJson<T>(url: string, headers: Record<string, string>, payload: object): ApiResponse<T> {
+    return ApiClient.launderJsonResponse(
+      this._fetch(url, {
+        headers: {
+          ...headers,
+          'content-type': 'application/json',
+        },
+        method: 'PUT',
+        body: JSON.stringify(payload),
+      }),
+    ).then(logger.tap) as ApiResponse<T>;
   }
 
   postJson<T>(url: string, headers: Record<string, string>, payload: object): ApiResponse<T> {
-    return this.launderJsonResponse(
+    return ApiClient.launderJsonResponse(
       this._fetch(url, {
         headers: {
           ...headers,
@@ -30,7 +43,7 @@ export class ApiClient {
     ).then(logger.tap) as ApiResponse<T>;
   }
 
-  private async launderJsonResponse<T>(resP: Promise<Response>, assumeNoErrorOnOk = true): ApiResponse<T> {
+  private static async launderJsonResponse<T>(resP: Promise<Response>, assumeNoErrorOnOk = true): ApiResponse<T> {
     try {
       const res = await resP;
 

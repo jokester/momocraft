@@ -1,5 +1,4 @@
 import React, { useMemo } from 'react';
-import { itemIdExtract } from '../../model/item-id-def';
 import { PreJson } from '../../dummy/pre-json';
 import { useItemsDB } from '../hooks/use-items-db';
 

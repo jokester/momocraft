@@ -1,16 +1,23 @@
 import React, { useState } from 'react';
 import { ItemsV2Json } from '../../json/json';
-import { PossessionState, randomPossessionState } from '../../model/item-possession';
+import { CollectionState, randomCollectionState } from '../../model/collection';
 import { Button, ButtonGroup } from '@blueprintjs/core';
+import { createLogger } from '../../util/debug-logger';
+import { CollectionStateMap, useCollectionApi } from '../hooks/use-collections-api';
 
-export const CollectionStateSwitch: React.FC<{ item: ItemsV2Json.Item }> = props => {
-  const [status, setStatus] = useState<PossessionState>(randomPossessionState);
+const logger = createLogger(__filename);
+
+export const CollectionStateSwitch: React.FC<{ item: ItemsV2Json.Item; collectionMap: null | CollectionStateMap }> = ({
+  item,
+  collectionMap,
+}) => {
+  const [state, api, saving] = useCollectionApi(item.itemName, collectionMap);
   return (
     <ButtonGroup vertical>
       <Button
         small
-        onClick={() => setStatus(PossessionState.own)}
-        active={status === PossessionState.own}
+        onClick={() => api.setState(CollectionState.own)}
+        active={state === CollectionState.own}
         className="text-xl"
         icon="tick-circle"
       >
@@ -18,16 +25,16 @@ export const CollectionStateSwitch: React.FC<{ item: ItemsV2Json.Item }> = props
       </Button>
       <Button
         small
-        onClick={() => setStatus(PossessionState.with)}
-        active={status === PossessionState.with}
+        onClick={() => api.setState(CollectionState.with)}
+        active={state === CollectionState.with}
         icon="hand"
       >
         想摸
       </Button>
       <Button
         small
-        onClick={() => setStatus(PossessionState.none)}
-        active={status === PossessionState.none}
+        onClick={() => api.setState(CollectionState.none)}
+        active={state === CollectionState.none}
         icon="remove"
       >
         取消
