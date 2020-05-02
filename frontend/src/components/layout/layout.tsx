@@ -8,7 +8,7 @@ export const Layout: React.FC = props => {
   const toasterRef = useRef<Toaster>(null!);
   return (
     <AppContextHolder toasterRef={toasterRef}>
-      <Toaster ref={toasterRef} />
+      <Toaster ref={toasterRef} position="bottom" />
       <div className="h-screen flex flex-col">
         <Header here={'HERE'} />
         <div className="flex-grow z-0 overflow-y-scroll">{/* */ props.children}</div>
