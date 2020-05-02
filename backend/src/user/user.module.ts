@@ -26,7 +26,7 @@ import { UserJwtAuthMiddleware } from './user-jwt-auth.middleware';
     }),
   ],
   controllers: [AuthController],
-  providers: [EntropyService, UserService, GoogleOAuthService],
+  providers: [UserService, GoogleOAuthService, EntropyService],
   exports: [UserService],
 })
 export class UserModule implements NestModule {

@@ -39,9 +39,11 @@ export class MomoUserController {
   async putCollections(
     @Param() params: { userId: string },
     @AuthedUser() authedUser: UserAccount,
+    @Body() payload: CollectionResBody,
   ): Promise<CollectionResBody> {
     logger('UserController#putCollections', params);
 
+    const saved = await this.collectionService.updateCollection(authedUser, []);
     return { collections: [] };
   }
 
