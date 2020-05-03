@@ -1,9 +1,10 @@
 import { left, right } from 'fp-ts/lib/Either';
-import { ErrorCodeEnum } from '../../model/error-code';
+import { deriveErrorMessage, ErrorCodeEnum } from '../../model/error-code';
 import { createLogger } from '../../util/debug-logger';
 import { ApiResponse } from '../../service/api-convention';
 import { ErrorResponse } from '../../api/hanko-api';
 import { buildApiRoute } from '../../api/api-route';
+import { getOrElse } from 'fp-ts/lib/Option';
 
 const logger = createLogger(__filename, false);
 
@@ -43,11 +44,11 @@ export class ApiClient {
     ).then(logger.tap) as ApiResponse<T>;
   }
 
-  private static async launderJsonResponse<T>(resP: Promise<Response>, assumeNoErrorOnOk = true): ApiResponse<T> {
+  private static async launderJsonResponse<T>(resP: Promise<Response>): ApiResponse<T> {
     try {
       const res = await resP;
 
-      if (res.ok && assumeNoErrorOnOk) {
+      if (res.ok) {
         return right(await res.json());
       }
 
@@ -63,14 +64,9 @@ export class ApiClient {
       // assuming non-empty resBody
       const resBody: T & Partial<ErrorResponse> = await res.json();
 
-      if (typeof resBody?.message === 'string') return left(resBody.message);
-      if (typeof resBody?.error === 'string') return left(resBody.error);
+      const derivedUserMessage = getOrElse(() => resBody?.message || 'Error')(deriveErrorMessage(resBody?.error));
 
-      if (res.ok) {
-        return right(resBody);
-      } else {
-        return left(ErrorCodeEnum.requestFail);
-      }
+      return left(derivedUserMessage);
     } catch (transportOrParseError) {
       logger('apiClient#launderJsonResponse', transportOrParseError);
 

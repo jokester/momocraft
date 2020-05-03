@@ -11,6 +11,7 @@ import { UserService } from './user.service';
 import { getDebugLogger } from '../util/get-debug-logger';
 import { getRightOrThrow } from '../util/fpts-getter';
 import { UserAccount } from '../db/entities/user-account';
+import { ErrorCodeEnum } from '../linked-frontend/model/error-code';
 
 const logger = getDebugLogger(__filename);
 
@@ -30,11 +31,11 @@ export class UserJwtAuthMiddleware implements NestMiddleware {
       const [_whatever, jwtToken] = /^Bearer ([^ ]*)$/.exec(authHeader) || [];
 
       if (!jwtToken) {
-        throw new BadRequestException('malformed Authorization header');
+        throw new BadRequestException();
       }
       const user = getRightOrThrow(
         await this.userService.findUserWithJwtToken(jwtToken),
-        l => new UnauthorizedException(l),
+        l => new UnauthorizedException('auth required', l),
       );
       (req as any).authedUser = user;
     }
@@ -46,7 +47,7 @@ export class UserJwtAuthMiddleware implements NestMiddleware {
 export const AuthedUser = createParamDecorator((data: unknown, ctx: ExecutionContext) => {
   const { authedUser } = ctx.switchToHttp().getRequest<{ authedUser?: UserAccount }>();
   if (!authedUser) {
-    throw new UnauthorizedException();
+    throw new UnauthorizedException('auth required', ErrorCodeEnum.notAuthenticated);
   }
   return authedUser;
 });

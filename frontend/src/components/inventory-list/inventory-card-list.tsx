@@ -7,7 +7,7 @@ import { CollectionStateSwitch } from './collection-state-switch';
 import { ItemUtils } from '../../items-db/item-utils';
 import { CollectionStateMap, useFetchedCollections } from '../hooks/use-collections-api';
 
-const InventoryCard: React.FunctionComponent<{ item: ItemsV3Json.Item; collectionMap: null | CollectionStateMap }> = ({
+export const InventoryCard: React.FunctionComponent<{ item: ItemsV3Json.Item; collectionMap: null | CollectionStateMap }> = ({
   item,
   collectionMap,
 }) => {
@@ -45,10 +45,14 @@ export const InventoryCardList: React.FunctionComponent<{ items: ItemsV3Json.Ite
 
   const collections = fetchedCollections.fulfilled && fetchedCollections.value;
   return (
-    <div className="flex flex-wrap mx-2 -mt-2 z-0">
+    <InventoryCartListView>
       {props.items.map((_, i) => (
         <InventoryCard item={_} key={_.itemId} collectionMap={collections} />
       ))}
-    </div>
+    </InventoryCartListView>
   );
+};
+
+export const InventoryCartListView: React.FC = props => {
+  return <div className="flex flex-wrap mx-2 -mt-2 z-0">{props.children}</div>;
 };

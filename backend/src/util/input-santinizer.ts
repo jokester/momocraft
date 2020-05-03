@@ -1,4 +1,5 @@
 import { Either, left, right } from 'fp-ts/lib/Either';
+import { ErrorCodeEnum } from '../linked-frontend/model/error-code';
 
 function sanitizeEmail(email: string): Either<string, string> {
   const trimmed = (email || '').trim().toLowerCase();
@@ -6,21 +7,21 @@ function sanitizeEmail(email: string): Either<string, string> {
   if (/[A-Z0-9a-z._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,6}/i.test(trimmed)) {
     return right(trimmed);
   }
-  return left('email malformed');
+  return left(ErrorCodeEnum.malformedEmail);
 }
 
 function sanitizePass(password: string): Either<string, string> {
   if (password && password.length > 6) {
     return right(password);
   }
-  return left('password too short');
+  return left(ErrorCodeEnum.malformedPassword);
 }
 
-function userId(orig: unknown) {
-  if (typeof orig === 'string' && / /.test(orig)) {
+function userId(orig: unknown): Either<string, string> {
+  if (typeof orig === 'string' && /^[ABCDEFGHJKLMNPRTUVWXYZ3456789]{8,12}$/.test(orig)) {
     return right(orig);
   }
-  return left('incorrect userId');
+  return left(ErrorCodeEnum.malformedUserId);
 }
 
 export const Sanitize = {

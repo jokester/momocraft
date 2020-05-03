@@ -8,19 +8,23 @@ interface FontawesomeIconProps {
    */
   iconName: string;
   large?: boolean;
+  small?: boolean;
   style?: React.CSSProperties;
+  className?: string;
 }
 
 export const FontAwesomeIcon = React.forwardRef<HTMLElement, FontawesomeIconProps>(
-  ({ large, iconName, style }, ref) => {
-    const className = classNames(
-      'fas inline-block m-2 relative',
+  ({ large, small, iconName, style, className }, ref) => {
+    const _className = classNames(
+      'fas inline-block relative',
+      className || '',
       {
         [TailwindComponents.icon.large]: large,
-        [TailwindComponents.icon.normal]: !large,
+        [TailwindComponents.icon.normal]: !(large || small),
+        [TailwindComponents.icon.small]: small,
       },
       iconName,
     );
-    return <i className={className} style={{ ...style, zIndex: 50000 }} ref={ref} />;
+    return <i className={_className} style={{ ...style, zIndex: 50000 }} ref={ref} />;
   },
 );
