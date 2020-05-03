@@ -12,9 +12,9 @@ const SectionLink: React.FC<{ text: string | React.ReactElement; linkTo: string 
 };
 
 export const Header: React.FC<{ here: string }> = props => (
-  <div className="flex flex-none justify-end md:justify-center flex-wrap px-0 bg-blue-100 shadow-lg sticky z-10 top-0">
+  <div className="flex flex-none justify-end flex-wrap px-0 bg-blue-100 shadow-lg sticky z-10 top-0">
     <SectionLink text="物品数据库" linkTo={TypedRoutes.items.index} />
-    <SectionLink text="收藏" linkTo={TypedRoutes.items.index} />
+    <SectionLink text="收藏" linkTo={TypedRoutes.collections} />
     <SectionLink text="好友" linkTo={TypedRoutes.friends} />
     <SectionLink text={<FontAwesomeIcon small iconName="fa-user" />} linkTo={TypedRoutes.account} />
   </div>

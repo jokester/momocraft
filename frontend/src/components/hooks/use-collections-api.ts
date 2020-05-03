@@ -6,6 +6,8 @@ import { fold, map } from 'fp-ts/lib/Either';
 import { useConcurrencyControl } from '../generic-hooks/use-concurrency-control';
 import { usePromised } from '@jokester/ts-commonutil/react/hook/use-promised';
 import { useDependingState } from '../generic-hooks/use-depending-state';
+import { useItemsDB } from './use-items-db';
+import { ItemsV3Json } from '../../items-db/json-schema';
 
 const builder = {
   buildCollectionMap: (fetched: ItemCollectionEntry[]) => ({
@@ -24,6 +26,26 @@ export function useFetchedCollections() {
 
   const fetched = useMemo(() => singletons.collection.fetchCollections().then(mapper.foldCollectionRes), [singletons]);
   return usePromised(fetched);
+}
+
+export function useCollectionListApi() {
+  const collections = useFetchedCollections();
+  const itemsDb = useItemsDB();
+
+  const ownedItems = useMemo(
+    () =>
+      (collections.fulfilled &&
+        collections.value &&
+        itemsDb.fulfilled &&
+        itemsDb.value &&
+        collections.value.raw
+          .filter(r => r.state !== CollectionState.none)
+          .map(r => itemsDb.value.itemsMap.get(r.itemId) as ItemsV3Json.Item)) ||
+      [],
+    [collections, itemsDb],
+  );
+
+  return [ownedItems, collections.fulfilled && collections.value] as const;
 }
 
 function initialCollectionState(
