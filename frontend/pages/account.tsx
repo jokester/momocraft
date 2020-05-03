@@ -1,5 +1,5 @@
 import { PageType } from '../src/next-types';
-import { Layout } from '../src/components/layout/layout';
+import { Layout, CenterH } from '../src/components/layout/layout';
 import { Button, H2, FormGroup, InputGroup, Label } from '@blueprintjs/core';
 import React, { useState, ChangeEvent, useCallback } from 'react';
 import { useSingletons } from '../src/internal/app-context';
@@ -28,40 +28,36 @@ const AuthState: React.FC = () => {
     return res;
   }, []);
 
-  if (self) {
-    return (
-      <div>
-        <H2>已登录</H2>
-        <p>
-          <img src={gravatarUrl(self.email || 'user@example.com', { size: 320 })} />
-          {self.email}
-        </p>
-        <p>
-          用户id: <span className="monospace">{self.userId}</span>
-        </p>
-        <br />
-        <Button onClick={() => auth.signOut()} disabled={pendingAuth}>
-          退出登录
-        </Button>
-      </div>
-    );
-  }
-
-  return (
+  const content = self ? (
     <div>
-      <H2>{pendingAuth ? '正在登录' : '未登录'}</H2>
-      <form onSubmit={ev => ev.preventDefault()}>
-        <FormGroup>
-          <Label>
-            <InputGroup
-              type="text"
-              value={email}
-              name="auth-email"
-              leftIcon="envelope"
-              disabled={pendingAuth}
-              onChange={(ev: ChangeEvent<HTMLInputElement>) => setEmail(ev.target.value)}
-            />
-          </Label>
+      <p>
+        <img className="h-64 w-64" src={gravatarUrl(self.email || 'user@example.com', { size: 320 })} />
+        {self.email}
+      </p>
+      <p>
+        用户id: <span className="monospace">{self.userId}</span>
+      </p>
+      <br />
+      <Button onClick={() => auth.signOut()} disabled={pendingAuth}>
+        退出登录
+      </Button>
+    </div>
+  ) : (
+    <form onSubmit={ev => ev.preventDefault()} className="text-sm">
+      <FormGroup>
+        <Label>
+          邮箱
+          <InputGroup
+            type="text"
+            value={email}
+            name="auth-email"
+            leftIcon="envelope"
+            disabled={pendingAuth}
+            onChange={(ev: ChangeEvent<HTMLInputElement>) => setEmail(ev.target.value)}
+          />
+        </Label>
+        <Label>
+          密码
           <InputGroup
             type="password"
             value={password}
@@ -70,25 +66,34 @@ const AuthState: React.FC = () => {
             disabled={pendingAuth}
             onChange={(ev: ChangeEvent<HTMLInputElement>) => setPass(ev.target.value)}
           />
-        </FormGroup>
-        <FormGroup>
+        </Label>
+      </FormGroup>
+      <FormGroup>
+        <div className="flex justify-center">
           <Button
-            onClick={() => email && password && auth.emailSignUp({ email, password }).then(result => {})}
+            large
+            intent="primary"
+            type="submit"
+            onClick={() => auth.emailSignUp({ email, password }).then(onAuthResult)}
             disabled={pendingAuth}
           >
             注册
           </Button>
           <Button
+            large
+            className="ml-16"
             type="submit"
-            onClick={() => email && password && auth.emailSignIn({ email, password }).then(onAuthResult)}
+            onClick={() => auth.emailSignIn({ email, password }).then(onAuthResult)}
             disabled={pendingAuth}
           >
             登录
           </Button>
-        </FormGroup>
-      </form>
-    </div>
+        </div>
+      </FormGroup>
+    </form>
   );
+
+  return <CenterH className="mt-32">{content}</CenterH>;
 };
 
 const AccountPageContent: React.FC = () => {

@@ -12,6 +12,7 @@ import { fromNullable, isNone, Option } from 'fp-ts/lib/Option';
 import { absent } from '../util/absent';
 import { Sanitize } from '../util/input-santinizer';
 import { randomAlphaNum } from '../ts-commonutil/text/random-string';
+import { ErrorCodeEnum } from '../linked-frontend/model/error-code';
 
 const logger = getDebugLogger(__filename);
 
@@ -50,12 +51,12 @@ export class UserService {
         clockTimestamp: currentTimestamp / 1e3,
       });
     } catch (e) {
-      return left('invalid token');
+      return left(ErrorCodeEnum.notAuthenticated);
     }
 
     const user = await this.conn.getRepository(UserAccount).findOne({ userId: payload.userId });
     if (!user) {
-      throw new Error('user not found');
+      throw new Error('user not found'); // should not happen
     }
     return right(user);
   }
@@ -79,7 +80,7 @@ export class UserService {
       .save(user)
       .then(right, err => {
         logger('UserService#signUpWithEmail error creating', err);
-        return left('error creating user');
+        return left(ErrorCodeEnum.userExisted);
       });
   }
 
@@ -91,12 +92,12 @@ export class UserService {
     if (isLeft(sanitizedPass)) return sanitizedPass;
 
     const user = await this.findUser({ emailId: sanitizedEmail.right });
-    if (isNone(user)) return left('user not found');
+    if (isNone(user)) return left(ErrorCodeEnum.userNotFound);
 
     const passwordMatched = await this.entropy.bcryptValidate(sanitizedPass.right, user.value.passwordHash);
 
     if (passwordMatched) return right(user.value);
-    return left('password incorrect');
+    return left(ErrorCodeEnum.passwordUnmatch);
   }
 
   async resolveUser(userAccount: UserAccount): Promise<ResolvedUser> {

@@ -18,6 +18,7 @@ import { AuthedUser } from '../user/user-jwt-auth.middleware';
 import { Sanitize } from '../util/input-santinizer';
 import { CollectionResBody } from '../linked-frontend/api/momo-api';
 import { UserCollectionService } from './user-collection.service';
+import { ErrorCodeEnum } from '../linked-frontend/model/error-code';
 
 const logger = getDebugLogger(__filename);
 
@@ -29,8 +30,15 @@ export class MomoUserController {
   async getCollections(@Param() params: { userId: string }): Promise<CollectionResBody> {
     logger('UserController#getCollections', params);
 
-    const userId = getRightOrThrow(Sanitize.pass(params?.userId), l => new BadRequestException(l));
-    const user = getSomeOrThrow(await this.userService.findUser({ userId }), () => new NotFoundException());
+    const userId = getRightOrThrow(
+      Sanitize.userId(params?.userId),
+      l => new BadRequestException('incorrect user id', l),
+    );
+
+    const user = getSomeOrThrow(
+      await this.userService.findUser({ userId }),
+      () => new BadRequestException('user not found', ErrorCodeEnum.malformedUserId),
+    );
     const found = await this.collectionService.findByUser(user);
     return { collections: found };
   }
