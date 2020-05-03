@@ -13,7 +13,7 @@ export const Layout: React.FC = props => {
       <div className="h-screen flex flex-col">
         <Header here={'HERE'} />
         <div className="flex-grow z-0 overflow-y-scroll">
-          <div className="container mx-auto">{/* real ui */ props.children}</div>
+          <MainContent>{props.children}</MainContent>
         </div>
         <Footer />
       </div>
@@ -21,4 +21,4 @@ export const Layout: React.FC = props => {
   );
 };
 
-export const MainContent: React.FC = props => <div className="h-full">{props.children}</div>;
+export const MainContent: React.FC = props => <div className="container mx-auto">{props.children}</div>;
