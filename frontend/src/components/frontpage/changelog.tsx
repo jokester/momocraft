@@ -10,9 +10,9 @@ const ChangelogEntryView: React.FC<{ entry: ChangelogEntry }> = ({ entry }) => {
   return (
     <div className="mt-3">
       <p className="font-semibold mb-2">{entry.date}</p>
-      <ul className="list-disc">
+      <ul className="list-disc list-inside">
         {entry.changes.map((_, i) => (
-          <li className="my-1 ml-6" key={i}>
+          <li className="my-1" key={i}>
             {_}
           </li>
         ))}

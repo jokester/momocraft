@@ -90,10 +90,21 @@ const AuthState: React.FC = () => {
           </Button>
         </div>
       </FormGroup>
+      <FormWarning />
     </form>
   );
 
   return <CenterH className="mt-32">{content}</CenterH>;
+};
+
+const FormWarning: React.FC = props => {
+  return (
+    <div>
+      <ul className="list-disc list-inside">
+        <li>list1</li>
+      </ul>
+    </div>
+  );
 };
 
 const AccountPageContent: React.FC = () => {
