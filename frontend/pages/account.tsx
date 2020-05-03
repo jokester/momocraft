@@ -73,7 +73,7 @@ const AuthState: React.FC = () => {
         </FormGroup>
         <FormGroup>
           <Button
-            onClick={() => email && password && auth.emailSignUp({ email, password }).then(result => {})}
+            onClick={() => email && password && auth.emailSignUp({ email, password }).then(onAuthResult)}
             disabled={pendingAuth}
           >
             注册

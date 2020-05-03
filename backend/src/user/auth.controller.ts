@@ -29,14 +29,19 @@ export class AuthController {
     if (payload && payload.code && payload.redirectUrl) {
       const oauthRes = getRightOrThrow(
         await this.googleOAuthService.auth(payload.code, payload.redirectUrl),
-        () => new BadRequestException('auth failed'),
+        l => new BadRequestException('auth failed', l),
       );
 
       logger('got google oauth response', oauthRes);
 
       const user = getRightOrThrow(
         await this.userService.findOrCreateWithGoogleOAuth(oauthRes),
-        () => new BadRequestException('auth failed'),
+        /**
+         * objectOrError: string => { message: objectOrError }
+         * objectOrError: string, error:
+         * @returns {BadRequestException}
+         */
+        l => new BadRequestException('auth failed', l),
       );
 
       logger('user authed', user);
@@ -54,7 +59,7 @@ export class AuthController {
 
     const created = getRightOrThrow(
       await this.userService.signUpWithEmail(payload.email, payload.password),
-      l => new BadRequestException(l),
+      l => new BadRequestException('error signing up', l),
     );
 
     return this.resolveAuthSuccess(created);
@@ -68,7 +73,7 @@ export class AuthController {
 
     const authedUser = getRightOrThrow(
       await this.userService.signInWithEmail(payload.email, payload.password),
-      l => new BadRequestException(l),
+      l => new BadRequestException('error logging in', l),
     );
 
     return this.resolveAuthSuccess(authedUser);
