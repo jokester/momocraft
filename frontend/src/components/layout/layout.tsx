@@ -3,6 +3,7 @@ import { Header } from './header';
 import { Footer } from './footer';
 import { AppContextHolder } from '../../internal/app-context';
 import { Toaster } from '@blueprintjs/core';
+import classNames from 'classnames';
 
 export const Layout: React.FC = props => {
   const toasterRef = useRef<Toaster>(null!);
@@ -22,3 +23,12 @@ export const Layout: React.FC = props => {
 };
 
 export const MainContent: React.FC = props => <div className="container mx-auto">{props.children}</div>;
+
+export const CenterH: React.FC<{ className?: string }> = props => {
+  const containerClass = classNames('flex', props.className || '');
+  return (
+    <div className={containerClass}>
+      <div className="mx-auto inline-flex self-center">{props.children}</div>
+    </div>
+  );
+};
