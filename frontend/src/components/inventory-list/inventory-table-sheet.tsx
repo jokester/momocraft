@@ -1,6 +1,5 @@
 import React, { useMemo } from 'react';
 import { ItemsV3Json } from '../../items-db/json-schema';
-import { TypedRoutes } from '../../typed-routes';
 import { ItemColumnType, itemIdDef } from '../../model/item-id-def';
 import Link from 'next/link';
 import { FontAwesomeIcon } from '../icon/fontawesome-icon';
@@ -32,7 +31,7 @@ export const InventoryTableSheet: React.FC<{ sheets: ItemsV3Json.Sheet[]; sheetI
 
   const tbodyRows = useMemo(() => {
     return currentSheet?.items.map((item, itemNoInSheet) => {
-      const link = TypedRoutes.items.show(itemIdDef(sheetIndex, itemNoInSheet));
+      const link = '#';
       return (
         <tr key={link} className="border-blue-200 border-b border-solid">
           <Link href={link}>

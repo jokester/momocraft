@@ -8,10 +8,10 @@ export const TypedRoutes = {
   index: '/',
   items: {
     index: '/items',
-    show: (itemId: string) => `/items/${itemId}`,
     show2: (item: ItemsV3Json.Item) => `/items/${item.itemId}`,
   },
   friends: '/friends',
+  collections: '/collections',
   about: '/about',
   account: '/account',
 
