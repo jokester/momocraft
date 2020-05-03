@@ -92,12 +92,12 @@ export class UserService {
     if (isLeft(sanitizedPass)) return sanitizedPass;
 
     const user = await this.findUser({ emailId: sanitizedEmail.right });
-    if (isNone(user)) return left('user not found');
+    if (isNone(user)) return left(ErrorCodeEnum.userNotFound);
 
     const passwordMatched = await this.entropy.bcryptValidate(sanitizedPass.right, user.value.passwordHash);
 
     if (passwordMatched) return right(user.value);
-    return left('password incorrect');
+    return left(ErrorCodeEnum.passwordUnmatch);
   }
 
   async resolveUser(userAccount: UserAccount): Promise<ResolvedUser> {

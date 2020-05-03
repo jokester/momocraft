@@ -9,6 +9,8 @@ export const enum ErrorCodeEnum {
   notAuthenticated = 'not_authenticated',
   forbidden = 'forbidden',
   userExisted = 'user_existed',
+  userNotFound = 'user_not_found',
+  passwordUnmatch = 'password_unmatch',
 
   // validation
   malformedUserId = 'malformed_user_id',
@@ -39,6 +41,8 @@ export function _deriveErrorMessage(errorCodeOrMessage: unknown) {
       return '用户id格式不正确';
     case ErrorCodeEnum.malformedPassword:
       return '密码需有7位以上';
+    case ErrorCodeEnum.passwordUnmatch:
+      return '密码不匹配';
 
     case ErrorCodeEnum.notAuthenticated:
       return '需要登录';
