@@ -43,7 +43,7 @@ const AuthState: React.FC = () => {
       </Button>
     </div>
   ) : (
-    <form onSubmit={ev => ev.preventDefault()}>
+    <form onSubmit={ev => ev.preventDefault()} className="text-sm">
       <FormGroup>
         <Label>
           邮箱
@@ -69,20 +69,26 @@ const AuthState: React.FC = () => {
         </Label>
       </FormGroup>
       <FormGroup>
-        <Button
-          type="submit"
-          onClick={() => auth.emailSignUp({ email, password }).then(onAuthResult)}
-          disabled={pendingAuth}
-        >
-          注册
-        </Button>
-        <Button
-          type="submit"
-          onClick={() => auth.emailSignIn({ email, password }).then(onAuthResult)}
-          disabled={pendingAuth}
-        >
-          登录
-        </Button>
+        <div className="flex justify-center">
+          <Button
+            large
+            intent="primary"
+            type="submit"
+            onClick={() => auth.emailSignUp({ email, password }).then(onAuthResult)}
+            disabled={pendingAuth}
+          >
+            注册
+          </Button>
+          <Button
+            large
+            className="ml-16"
+            type="submit"
+            onClick={() => auth.emailSignIn({ email, password }).then(onAuthResult)}
+            disabled={pendingAuth}
+          >
+            登录
+          </Button>
+        </div>
       </FormGroup>
     </form>
   );
