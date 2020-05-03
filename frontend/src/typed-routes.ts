@@ -19,6 +19,10 @@ export const TypedRoutes = {
     index: '/posts',
     show: ({ postId }: { postId: number | string }) => `/posts/${postId}?timestamp=${Date.now()}`,
   },
+
+  others: {
+    contactStaff: `mailto:momo.support@jokester.io`,
+  },
 } as const;
 
 /**

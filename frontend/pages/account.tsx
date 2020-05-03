@@ -90,7 +90,6 @@ const AuthState: React.FC = () => {
           </Button>
         </div>
       </FormGroup>
-      <FormWarning />
     </form>
   );
 
@@ -99,9 +98,10 @@ const AuthState: React.FC = () => {
 
 const FormWarning: React.FC = props => {
   return (
-    <div>
-      <ul className="list-disc list-inside">
-        <li>list1</li>
+    <div className="inline-block w-2/3 md:w-1/2 leading-tight">
+      <h2 className="font-semibold">注意</h2>
+      <ul className="list-disc list-inside mt-2">
+        <li>目前还没有密码找回等高级功能. 如忘记密码, 请用页面底部的邮箱联系管理员.</li>
       </ul>
     </div>
   );
@@ -119,6 +119,10 @@ const AccountPage: PageType = props => {
   return (
     <Layout>
       <AccountPageContent />
+      <hr className="my-8 " />
+      <CenterH>
+        <FormWarning />
+      </CenterH>
     </Layout>
   );
 };

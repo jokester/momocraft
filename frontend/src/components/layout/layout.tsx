@@ -25,10 +25,6 @@ export const Layout: React.FC = props => {
 export const MainContent: React.FC = props => <div className="container mx-auto">{props.children}</div>;
 
 export const CenterH: React.FC<{ className?: string }> = props => {
-  const containerClass = classNames('flex', props.className || '');
-  return (
-    <div className={containerClass}>
-      <div className="mx-auto inline-flex self-center">{props.children}</div>
-    </div>
-  );
+  const containerClass = classNames('flex justify-center', props.className || '');
+  return <div className={containerClass}>{props.children}</div>;
 };

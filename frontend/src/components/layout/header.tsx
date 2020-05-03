@@ -5,7 +5,7 @@ import { TypedRoutes } from '../../typed-routes';
 const SectionLink: React.FC<{ text: string; linkTo: string }> = props => {
   return (
     <Link href={props.linkTo}>
-      <button className="p-2 bg-gray-400 m-2 rounded-lg">{props.text}</button>
+      <button className="p-2 bg-blue-200 m-2 rounded-lg">{props.text}</button>
     </Link>
   );
 };
