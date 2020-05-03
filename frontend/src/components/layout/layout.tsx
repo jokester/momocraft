@@ -9,9 +9,12 @@ export const Layout: React.FC = props => {
   return (
     <AppContextHolder toasterRef={toasterRef}>
       <Toaster ref={toasterRef} position="bottom" />
+      {/* root of "our" dom */}
       <div className="h-screen flex flex-col">
         <Header here={'HERE'} />
-        <div className="flex-grow z-0 overflow-y-scroll">{/* */ props.children}</div>
+        <div className="flex-grow z-0 overflow-y-scroll">
+          <div className="container mx-auto">{/* real ui */ props.children}</div>
+        </div>
         <Footer />
       </div>
     </AppContextHolder>
