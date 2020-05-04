@@ -19,7 +19,7 @@ export class EntropyService {
 
   createUserStringId() {
     // https://zelark.github.io/nano-id-cc/
-    return randomString('ABCDEFGHJKLMNPRTUVWXYZ3456789', 10);
+    return randomString(/* 29 chars */ 'ABCDEFGHJKLMNPRTUVWXYZ3456789', 7);
   }
 
   bcryptHash(pass: string): Promise<string> {
