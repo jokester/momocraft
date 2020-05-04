@@ -33,7 +33,7 @@ const CollectionsPageContent: React.FC = () => {
     itemsMap && (
       <InventoryCartListView>
         {collectionItems.map((_, i) => (
-          <InventoryCard item={_} collectionMap={itemsMap} />
+          <InventoryCard item={_} collectionMap={itemsMap} key={i} />
         ))}
       </InventoryCartListView>
     )

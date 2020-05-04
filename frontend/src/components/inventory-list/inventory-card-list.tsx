@@ -6,32 +6,41 @@ import { createAspectRatioStyle } from '../../style/aspect-ratio';
 import { CollectionStateSwitch } from './collection-state-switch';
 import { ItemUtils } from '../../items-db/item-utils';
 import { CollectionStateMap, useFetchedCollections } from '../hooks/use-collections-api';
+import { createLogger } from '../../util/debug-logger';
+import { useVisible } from '../generic-hooks/use-visible';
+import { inServer } from '../../config/build-env';
 
-export const InventoryCard: React.FunctionComponent<{ item: ItemsV3Json.Item; collectionMap: null | CollectionStateMap }> = ({
-  item,
-  collectionMap,
-}) => {
+const logger = createLogger(__filename);
+
+export const InventoryCard: React.FunctionComponent<{
+  item: ItemsV3Json.Item;
+  collectionMap: null | CollectionStateMap;
+  loadOnSeen?: boolean;
+}> = ({ item, collectionMap, loadOnSeen }) => {
   const title = useMemo(() => ItemUtils.extractDisplayName(item), [item]);
 
+  const [ref, visible] = useVisible<HTMLDivElement>(!loadOnSeen, false);
+
+  logger('visible', visible, item);
+
   return (
-    <div className="inline-block my-2 w-full sm:w-1/2 md:w-1/3 lg:w-1/5 h-32">
-      <div
-        className="model-cell bg-blue-100 border border-solid border-blue-300 my-1 mx-2 h-full flex-col rounded-lg p-2"
-        style={createAspectRatioStyle(16 / 10)}
-      >
-        <div className="flex justify-between align-baseline">
-          <h3 className="text-xl inline-block">{title}</h3>
-          <Link href={TypedRoutes.items.show2(item)}>查看详细</Link>
+    <div className="inline-block my-2 w-full sm:w-1/2 md:w-1/3 lg:w-1/5 h-40" ref={ref}>
+      {visible && (
+        <div className="bg-blue-100 border border-solid border-blue-300 my-1 mx-2 h-full flex-col rounded-lg p-2">
+          <div className="flex justify-between align-baseline">
+            <h3 className="text-xl inline-block">{title}</h3>
+            <Link href={TypedRoutes.items.show2(item)}>查看详细</Link>
+          </div>
+          <div className="flex mt-2 justify-around">
+            <img
+              src="https://dummyimage.com/400x300/cff/000"
+              alt="image"
+              className="max-h-full h-20 object-cover inline-block bg-blue-200 mr-2"
+            />
+            <CollectionStateSwitch item={item} collectionMap={collectionMap} />
+          </div>
         </div>
-        <div className="flex mt-2 justify-around">
-          <img
-            src="https://dummyimage.com/400x300/cff/000"
-            alt="image"
-            className="max-h-full h-20 object-cover inline-block bg-blue-200 mr-2"
-          />
-          <CollectionStateSwitch item={item} collectionMap={collectionMap} />
-        </div>
-      </div>
+      )}
     </div>
   );
 };
@@ -47,7 +56,7 @@ export const InventoryCardList: React.FunctionComponent<{ items: ItemsV3Json.Ite
   return (
     <InventoryCartListView>
       {props.items.map((_, i) => (
-        <InventoryCard item={_} key={_.itemId} collectionMap={collections} />
+        <InventoryCard item={_} key={_.itemId} loadOnSeen={i > 20} collectionMap={collections} />
       ))}
     </InventoryCartListView>
   );
