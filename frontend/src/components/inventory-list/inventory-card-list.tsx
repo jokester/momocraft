@@ -24,11 +24,7 @@ export const InventoryCard: React.FunctionComponent<{
   logger('visible', visible, item);
 
   return (
-    <div
-      className="inline-block my-2 w-full sm:w-1/2 md:w-1/3 lg:w-1/5 h-32"
-      style={createAspectRatioStyle(16 / 10)}
-      ref={ref}
-    >
+    <div className="inline-block my-2 w-full sm:w-1/2 md:w-1/3 lg:w-1/5 h-40" ref={ref}>
       <div className="bg-blue-100 border border-solid border-blue-300 my-1 mx-2 h-full flex-col rounded-lg p-2">
         <div className="flex justify-between align-baseline">
           <h3 className="text-xl inline-block">{title}</h3>
