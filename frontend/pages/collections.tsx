@@ -21,7 +21,7 @@ const Title = () => <h2 className="text-xl font-semibold mt-4">我的收藏</h2>
 const CollectionsPageContent: React.FC = () => {
   const authed = useAuthState();
 
-  const ownCollection = useCollectionList(null);
+  const ownCollection = useCollectionList(authed.user?.userId || null);
 
   if (!authed.user) {
     return <div className="mt-24">需要登录</div>;

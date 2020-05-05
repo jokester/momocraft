@@ -28,6 +28,7 @@ export const InventoryDb: React.FC = () => {
   if (itemsDb.fulfilled) {
     return (
       <div>
+        <InventoryCategoryPicker sheets={itemsDb.value.sheets} curentSheetId={currentSheetId} setSheetId={setSheetId} />
         <RenderPromiseEither promise={collectionsP}>
           {collections => (
             <InventoryCartListView key={currentSheetId}>
