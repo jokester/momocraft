@@ -6,7 +6,7 @@ import { useAuthState } from '../src/components/hooks/use-auth-state';
 import { useCollectionList } from '../src/components/hooks/use-collections-api';
 import { InventoryCard, InventoryCartListView } from '../src/components/inventory-list/inventory-card-list';
 import { RenderPromiseEither } from '../src/components/hoc/render-promise-either';
-import { PageTitle } from "../src/components/layout/page-title";
+import { PageTitle } from '../src/components/layout/page-title';
 
 const logger = createLogger(__filename);
 
@@ -25,6 +25,14 @@ const CollectionsPageContent: React.FC = () => {
         {collections => (
           <InventoryCartListView>
             {collections.want.map((entry, i) => (
+              <InventoryCard
+                key={entry.itemId}
+                item={collections.itemsMap.get(entry.itemId)!}
+                collectionMap={collections}
+                lazyLoad={false}
+              />
+            ))}
+            {collections.owns.map((entry, i) => (
               <InventoryCard
                 key={entry.itemId}
                 item={collections.itemsMap.get(entry.itemId)!}
