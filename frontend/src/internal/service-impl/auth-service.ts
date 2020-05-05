@@ -36,7 +36,7 @@ export class AuthServiceImpl implements AuthService {
     identity: this.persist.getItem('moAur'),
   });
 
-  constructor(private readonly apiClient: ApiClient) {
+  constructor(private readonly apiClient: ApiClient, refreshSession: boolean) {
     logger('authState.init', this._authState.value);
 
     if (isDevBuild) {
@@ -48,6 +48,10 @@ export class AuthServiceImpl implements AuthService {
           logger('authState.error', e);
         },
       });
+    }
+
+    if (this._authState.value.identity && refreshSession) {
+      setTimeout(() => this.refreshSession());
     }
   }
 
@@ -64,6 +68,14 @@ export class AuthServiceImpl implements AuthService {
   async emailSignIn(param: EmailAuthPayload): ApiResponse<HankoUser> {
     this.onStartAuth();
     const res = await this.c.postJson<HttpApi.AuthResponse>(this.r.hankoAuth.emailSignIn, {}, param);
+    return this.onAuthResponse(res);
+  }
+
+  private async refreshSession() {
+    this.onStartAuth();
+    const res = await this.withAuthedIdentity((currentUser, authHeader) =>
+      this.c.postJson<HttpApi.AuthResponse>(this.r.hankoAuth.refreshToken, authHeader, {}),
+    );
     return this.onAuthResponse(res);
   }
 

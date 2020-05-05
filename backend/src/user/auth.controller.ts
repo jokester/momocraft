@@ -6,6 +6,7 @@ import { getRightOrThrow } from '../util/fpts-getter';
 import { Sanitize } from '../util/input-santinizer';
 import { UserAccount } from '../db/entities/user-account';
 import { EmailAuthPayload } from '../linked-frontend/api/hanko-api';
+import { AuthedUser } from './user-jwt-auth.middleware';
 
 const logger = getDebugLogger(__filename);
 
@@ -76,6 +77,13 @@ export class AuthController {
       l => new BadRequestException('error logging in', l),
     );
 
+    return this.resolveAuthSuccess(authedUser);
+  }
+
+  @Post('jwt/refresh')
+  @HttpCode(201)
+  @Header('Cache-Control', 'private;max-age=0;')
+  async doRefreshToken(@AuthedUser() authedUser: UserAccount): Promise<AuthSuccessRes> {
     return this.resolveAuthSuccess(authedUser);
   }
 

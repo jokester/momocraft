@@ -34,6 +34,7 @@ export const buildApiRoute = (apiOrigin: string) =>
       emailSignUp: `${apiOrigin}/auth/email/signup`,
       emailSignIn: `${apiOrigin}/auth/email/signin`,
       oauthGoogle: `${apiOrigin}/auth/oauth/google`,
+      refreshToken: `${apiOrigin}/auth/jwt/refresh`,
     },
 
     // TODO: xxx

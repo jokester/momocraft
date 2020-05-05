@@ -24,7 +24,7 @@ function initSingletons(props: { toasterRef: MutableRefObject<Toaster> }) {
   const fetchImpl = inServer ? () => Never : fetch.bind(window);
   const apiClient = new ApiClient(fetchImpl, buildEnv.MOMO_SERVER_ORIGIN);
 
-  const auth = new AuthServiceImpl(apiClient);
+  const auth = new AuthServiceImpl(apiClient, !inServer);
   const collection = new CollectionServiceImpl(auth, apiClient);
 
   return {
