@@ -24,7 +24,7 @@ export const InventoryDb: React.FC = () => {
         <InventoryCategoryPicker sheets={itemsDb.value.sheets} curentSheetId={currentSheetId} setSheetId={setSheetId} />
         <InventoryCartListView key={currentSheetId}>
           {items.map((item, i) => (
-            <InventoryCard key={item.itemId} item={item} collectionMap={null} />
+            <InventoryCard key={item.itemId} item={item} collectionMap={null} lazyLoad={i > 20} />
           ))}
         </InventoryCartListView>
       </div>

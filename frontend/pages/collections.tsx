@@ -37,6 +37,7 @@ const CollectionsPageContent: React.FC = () => {
                 key={entry.itemId}
                 item={collections.itemsMap.get(entry.itemId)!}
                 collectionMap={collections}
+                lazyLoad={false}
               />
             ))}
           </InventoryCartListView>

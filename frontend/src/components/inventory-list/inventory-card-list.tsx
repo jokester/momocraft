@@ -13,11 +13,11 @@ const logger = createLogger(__filename);
 export const InventoryCard: React.FunctionComponent<{
   item: ItemsV3Json.Item;
   collectionMap: null | CollectionStateMap;
-  loadOnSeen?: boolean;
-}> = ({ item, collectionMap, loadOnSeen }) => {
+  lazyLoad: boolean;
+}> = ({ item, collectionMap, lazyLoad }) => {
   const title = useMemo(() => ItemUtils.extractDisplayName(item), [item]);
 
-  const [ref, visible] = useVisible<HTMLDivElement>(!loadOnSeen, false);
+  const [ref, visible] = useVisible<HTMLDivElement>(!lazyLoad);
 
   logger('visible', visible, item);
 
