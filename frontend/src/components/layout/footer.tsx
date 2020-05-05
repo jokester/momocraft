@@ -1,7 +1,6 @@
 import * as React from 'react';
 import Link from 'next/link';
 import { TypedRoutes } from '../../typed-routes';
-import { FontAwesomeIcon } from '../icon/fontawesome-icon';
 
 export const Footer: React.FC = props => {
   return (

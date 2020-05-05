@@ -1,15 +1,8 @@
 import { PageType } from '../src/next-types';
-import { Layout, CenterH } from '../src/components/layout/layout';
-import { Button, H2, FormGroup, InputGroup, Label } from '@blueprintjs/core';
-import React, { useState, ChangeEvent, useCallback } from 'react';
-import { useSingletons } from '../src/internal/app-context';
-import { ApiResponseSync } from '../src/service/api-convention';
-import { isLeft } from 'fp-ts/lib/Either';
+import { Layout } from '../src/components/layout/layout';
+import React from 'react';
 import { createLogger } from '../src/util/debug-logger';
-import { HankoUser } from '../src/api/hanko-api';
-import gravatarUrl from 'gravatar-url';
 import { useAuthState } from '../src/components/hooks/use-auth-state';
-import { useItemsDB } from '../src/components/hooks/use-items-db';
 import { useCollectionList } from '../src/components/hooks/use-collections-api';
 import { InventoryCard, InventoryCartListView } from '../src/components/inventory-list/inventory-card-list';
 import { RenderPromiseEither } from '../src/components/hoc/render-promise-either';
