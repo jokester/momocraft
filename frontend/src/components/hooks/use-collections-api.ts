@@ -2,11 +2,10 @@ import { useSingletons } from '../../internal/app-context';
 import { useMemo } from 'react';
 import { CollectionState, ItemCollectionEntry } from '../../model/collection';
 import { Maps } from '@jokester/ts-commonutil/collection/maps';
-import { fold, left, map } from 'fp-ts/lib/Either';
+import { fold, left, map, right } from 'fp-ts/lib/Either';
 import { useConcurrencyControl } from '../generic-hooks/use-concurrency-control';
 import { useDependingState } from '../generic-hooks/use-depending-state';
 import { itemsDatabaseV3, ItemsDatabaseV3 } from '../../items-db/dynamic-load-db';
-import { ErrorCodeEnum } from '../../model/error-code';
 
 const builder = {
   buildCollectionMap: (itemsDb: ItemsDatabaseV3, f: ItemCollectionEntry[]) => {
@@ -23,7 +22,7 @@ const builder = {
   },
 } as const;
 
-export function useCollectionList(userId?: string) {
+export function useCollectionList(userId: null | string) {
   const singletons = useSingletons();
 
   const fetched = useMemo(async () => {
@@ -31,8 +30,11 @@ export function useCollectionList(userId?: string) {
       const [itemsDb, fetched] = await Promise.all([itemsDatabaseV3, singletons.collection.fetchCollections(userId)]);
 
       return map((f: ItemCollectionEntry[]) => builder.buildCollectionMap(itemsDb, f))(fetched);
+    } else {
+      const itemsDb = await itemsDatabaseV3;
+
+      return map((f: ItemCollectionEntry[]) => builder.buildCollectionMap(itemsDb, f))(right([]));
     }
-    return left(ErrorCodeEnum.notAuthenticated);
   }, [singletons, userId]);
   return fetched;
 }
