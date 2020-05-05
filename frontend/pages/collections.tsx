@@ -33,7 +33,11 @@ const CollectionsPageContent: React.FC = () => {
         {collections => (
           <InventoryCartListView>
             {collections.want.map((entry, i) => (
-              <InventoryCard item={collections.itemsMap.get(entry.itemId)!} collectionMap={collections} />
+              <InventoryCard
+                key={entry.itemId}
+                item={collections.itemsMap.get(entry.itemId)!}
+                collectionMap={collections}
+              />
             ))}
           </InventoryCartListView>
         )}
