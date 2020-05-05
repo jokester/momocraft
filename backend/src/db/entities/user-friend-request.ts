@@ -15,14 +15,14 @@ import { UserAccount } from './user-account';
 @Unique(['fromUser', 'toUser'])
 export class UserFriendRequest {
   @PrimaryGeneratedColumn()
-  userFriendRequestId!: boolean;
+  userFriendRequestId!: number;
 
-  @OneToOne(type => UserAccount)
+  @OneToOne(type => UserAccount, { eager: true })
   @JoinColumn()
   @Index()
   fromUser!: UserAccount;
 
-  @OneToOne(type => UserAccount)
+  @OneToOne(type => UserAccount, { eager: true })
   @JoinColumn()
   @Index()
   toUser!: UserAccount;

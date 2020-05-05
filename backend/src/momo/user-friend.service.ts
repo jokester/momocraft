@@ -24,10 +24,10 @@ export class UserFriendService {
     return [];
   }
 
-  async requestUserFriend(
+  async saveUserFriendRequest(
     requester: UserAccount,
     target: UserAccount,
-    payload: { comment: string },
+    payload: { comment: string; requestMessage: string },
   ): Promise<UserFriendRequest> {
     const newEntry = new UserFriendRequest({
       fromUser: requester,
@@ -42,12 +42,14 @@ export class UserFriendService {
       [newEntry],
       [
         `
-        ON CONSTRAINT "UQ_3ac1e0cf9e7ac33511f4c8d54bb"
+        ON CONSTRAINT "UQ_b7716dbedc42a0e559d32067259"
         DO UPDATE SET "comment" = EXCLUDED."comment", "updatedAt" = EXCLUDED."updatedAt"
     `,
       ],
     );
 
-    return saved[0];
+    return this.conn
+      .getRepository(UserFriendRequest)
+      .findOneOrFail({ userFriendRequestId: saved[0].userFriendRequestId });
   }
 }

@@ -18,7 +18,7 @@ import { getDebugLogger } from '../util/get-debug-logger';
 import { UserAccount } from '../db/entities/user-account';
 import { AuthedUser } from '../user/user-jwt-auth.middleware';
 import { Sanitize } from '../util/input-santinizer';
-import { CollectionResBody, UserFriendRequestPayload } from '../linked-frontend/api/momo-api';
+import { CollectionResBody, FriendListResBody, UserFriendRequestPayload } from '../linked-frontend/api/momo-api';
 import { UserCollectionService } from './user-collection.service';
 import { ErrorCodeEnum } from '../linked-frontend/model/error-code';
 import * as Either from 'fp-ts/lib/Either';
@@ -71,7 +71,7 @@ export class MomoUserController {
   @HttpCode(201)
   async saveUserFriendRequest(
     @AuthedUser() currentUser: UserAccount,
-    @Param() payload: UserFriendRequestPayload,
+    @Body() payload: UserFriendRequestPayload,
   ): Promise<FriendUser> {
     const findByEmail = Either.map((email: string) => ({ emailId: email }))(Sanitize.email(payload.targetUserOrEmail)),
       findByUserId = Either.map((userId: string) => ({ userId }))(Sanitize.userId(payload.targetUserOrEmail));
@@ -82,20 +82,23 @@ export class MomoUserController {
 
     const target = getSomeOrThrow(
       await this.userService.findUser(condition),
-      () => new BadRequestException('user not found'),
+      () => new NotFoundException('user not found', ErrorCodeEnum.userNotFound),
     );
 
-    const createOrUpdated = await this.friendService.requestUserFriend(currentUser, target, {
+    logger('saveUserFriendRequest', payload, findByEmail, findByUserId, target);
+
+    const createOrUpdated = await this.friendService.saveUserFriendRequest(currentUser, target, {
       comment: payload.comment,
+      requestMessage: payload.requestMessage,
     });
 
     return transform.friend(createOrUpdated);
   }
 
   @Get(':userId/friends')
-  async listFriends(@AuthedUser() currentUser: UserAccount): Promise<FriendUser[]> {
-    // const x = await this.friendService.listFriend(currentUser);
-    return [];
+  async listFriends(@AuthedUser() currentUser: UserAccount): Promise<FriendListResBody> {
+    const x = await this.friendService.listFriend(currentUser);
+    return { friends: x.map(transform.friend) };
   }
 
   @Put('self')

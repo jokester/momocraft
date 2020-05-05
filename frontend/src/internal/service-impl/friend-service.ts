@@ -3,31 +3,31 @@ import { AuthServiceImpl } from './auth-service';
 import { ApiClient } from './client';
 import { ApiResponse } from '../../service/api-convention';
 import { FriendUser, UserFriendCollection } from '../../model/friend';
-import {
-  FriendListResBody,
-  ResolvedFriendCollectionsResBody,
-  SaveFriendResBody,
-  UserFriendRequestPayload,
-} from '../../api/momo-api';
+import { FriendListResBody, ResolvedFriendCollectionsResBody, UserFriendRequestPayload } from '../../api/momo-api';
 import { map } from 'fp-ts/lib/Either';
+import { createLogger } from '../../util/debug-logger';
+
+const logger = createLogger(__filename, true);
 
 export class FriendServiceImpl implements FriendService {
   constructor(private readonly authService: AuthServiceImpl, private client: ApiClient) {}
 
   fetchFriendList(): ApiResponse<FriendUser[]> {
-    return this.authService.withAuthedIdentity((currentUser, authHeader) =>
-      this.client
-        .getJson<FriendListResBody>(this.client.route.momo.user.collection(currentUser.userId), authHeader)
-        .then(res => map((body: FriendListResBody) => body.friends)(res)),
-    );
+    return this.authService
+      .withAuthedIdentity((currentUser, authHeader) =>
+        this.client
+          .getJson<FriendListResBody>(this.client.route.momo.user.friends(currentUser.userId), authHeader)
+          .then(res => map((body: FriendListResBody) => body.friends)(res)),
+      )
+      .then(logger.tap);
   }
 
-  saveFriend(payload: UserFriendRequestPayload): ApiResponse<UserFriendCollection> {
-    return this.authService.withAuthedIdentity((currentUser, authHeader) =>
-      this.client
-        .putJson<SaveFriendResBody>(this.client.route.momo.user.friends(currentUser.userId), authHeader, payload)
-        .then(res => map((body: SaveFriendResBody) => body.friendCollections)(res)),
-    );
+  saveFriend(payload: UserFriendRequestPayload): ApiResponse<FriendUser> {
+    return this.authService
+      .withAuthedIdentity((currentUser, authHeader) =>
+        this.client.putJson<FriendUser>(this.client.route.momo.user.friends(currentUser.userId), authHeader, payload),
+      )
+      .then(logger.tap);
   }
 
   resolveFriendCollections(): ApiResponse<UserFriendCollection[]> {
@@ -38,6 +38,7 @@ export class FriendServiceImpl implements FriendService {
           authHeader,
         ),
       )
-      .then(res => map((body: ResolvedFriendCollectionsResBody) => body.friendCollections)(res));
+      .then(res => map((body: ResolvedFriendCollectionsResBody) => body.friendCollections)(res))
+      .then(logger.tap);
   }
 }
