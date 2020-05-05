@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react';
 import { ItemsV3Json } from '../../items-db/json-schema';
-import { ItemColumnType, itemIdDef } from '../../model/item-id-def';
+import { ItemColumnType } from '../../model/item-id-def';
 import Link from 'next/link';
 import { FontAwesomeIcon } from '../icon/fontawesome-icon';
 

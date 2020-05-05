@@ -73,20 +73,27 @@ export const ObserverInstanceProvider: FunctionComponent<{}> = ({ children }) =>
   return createElement(ObserverContext.Provider, { value: observer, children });
 };
 
-export function useVisible<T extends Element>(initial: boolean, stopOnFirstCallback = true) {
+export function useVisible<T extends Element>(initial: boolean) {
   const ref = useRef<T>(null);
   const observer = useContext(ObserverContext);
   const [visible, setVisible] = useState(initial || /* always true in SSR */ inServer);
 
   useEffect(() => {
-    const el = ref.current;
-    if (el) {
-      observer.startObserve(el, visible => {
-        setVisible(visible);
-        return stopOnFirstCallback;
-      });
+    if (!visible) {
+      let live = true;
+      const el = ref.current;
+      if (el) {
+        observer.startObserve(el, visible => {
+          if (live && visible) {
+            setVisible(visible);
+            return visible;
+          }
+          return false;
+        });
+      }
       return () => {
-        observer.stopObserve(el);
+        el && observer.stopObserve(el);
+        live = false;
       };
     }
     return;

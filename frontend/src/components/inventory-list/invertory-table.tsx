@@ -2,7 +2,10 @@ import React, { useMemo, useState } from 'react';
 import { useItemsDB } from '../hooks/use-items-db';
 import { createLogger } from '../../util/debug-logger';
 import { InventoryCategoryPicker } from './inventory-category-picker';
-import { InventoryCardList } from './inventory-card-list';
+import { InventoryCard, InventoryCartListView } from './inventory-card-list';
+import { useAuthState } from '../hooks/use-auth-state';
+import { useCollectionList } from '../hooks/use-collections-api';
+import { RenderPromiseEither } from '../hoc/render-promise-either';
 
 const logger = createLogger(__filename);
 
@@ -18,11 +21,23 @@ export const InventoryDb: React.FC = () => {
     currentSheetId,
   ]);
 
+  const authed = useAuthState();
+
+  const collectionsP = useCollectionList(authed.user?.userId || null);
+
   if (itemsDb.fulfilled) {
     return (
       <div>
         <InventoryCategoryPicker sheets={itemsDb.value.sheets} curentSheetId={currentSheetId} setSheetId={setSheetId} />
-        <InventoryCardList key={/* recreate/refetch on sheet switch */ currentSheetId} items={items} />
+        <RenderPromiseEither promise={collectionsP}>
+          {collections => (
+            <InventoryCartListView key={currentSheetId}>
+              {items.map((item, i) => (
+                <InventoryCard key={item.itemId} item={item} collectionMap={collections} lazyLoad={i > 20} />
+              ))}
+            </InventoryCartListView>
+          )}
+        </RenderPromiseEither>
       </div>
     );
   }

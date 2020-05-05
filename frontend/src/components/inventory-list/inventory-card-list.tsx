@@ -2,24 +2,22 @@ import React, { useMemo } from 'react';
 import Link from 'next/link';
 import { TypedRoutes } from '../../typed-routes';
 import { ItemsV3Json } from '../../items-db/json-schema';
-import { createAspectRatioStyle } from '../../style/aspect-ratio';
 import { CollectionStateSwitch } from './collection-state-switch';
 import { ItemUtils } from '../../items-db/item-utils';
-import { CollectionStateMap, useFetchedCollections } from '../hooks/use-collections-api';
+import { CollectionStateMap } from '../hooks/use-collections-api';
 import { createLogger } from '../../util/debug-logger';
 import { useVisible } from '../generic-hooks/use-visible';
-import { inServer } from '../../config/build-env';
 
 const logger = createLogger(__filename);
 
 export const InventoryCard: React.FunctionComponent<{
   item: ItemsV3Json.Item;
   collectionMap: null | CollectionStateMap;
-  loadOnSeen?: boolean;
-}> = ({ item, collectionMap, loadOnSeen }) => {
+  lazyLoad: boolean;
+}> = ({ item, collectionMap, lazyLoad }) => {
   const title = useMemo(() => ItemUtils.extractDisplayName(item), [item]);
 
-  const [ref, visible] = useVisible<HTMLDivElement>(!loadOnSeen, false);
+  const [ref, visible] = useVisible<HTMLDivElement>(!lazyLoad);
 
   logger('visible', visible, item);
 
@@ -48,19 +46,6 @@ export const InventoryCard: React.FunctionComponent<{
 export const DummyModelListHeader: React.FunctionComponent<{ title: string }> = ({ title }) => (
   <h3 className="px-2 my-1 font-bold ">{title}</h3>
 );
-
-export const InventoryCardList: React.FunctionComponent<{ items: ItemsV3Json.Item[] }> = props => {
-  const fetchedCollections = useFetchedCollections();
-
-  const collections = fetchedCollections.fulfilled && fetchedCollections.value;
-  return (
-    <InventoryCartListView>
-      {props.items.map((_, i) => (
-        <InventoryCard item={_} key={_.itemId} loadOnSeen={i > 20} collectionMap={collections} />
-      ))}
-    </InventoryCartListView>
-  );
-};
 
 export const InventoryCartListView: React.FC = props => {
   return <div className="flex flex-wrap mx-2 -mt-2 z-0">{props.children}</div>;
