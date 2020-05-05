@@ -1,16 +1,11 @@
-import { FriendEntry, FriendInventory } from '../model/friend';
 import { ApiResponse } from './api-convention';
+import { UserFriendRequestPayload } from '../api/momo-api';
+import { FriendUser, UserFriendCollection } from '../model/friend';
 
 export interface FriendService {
-  fetchFriendList(): ApiResponse<FriendEntry[]>;
+  fetchFriendList(): ApiResponse<FriendUser[]>;
 
-  fetchFriend(userId: string): ApiResponse<FriendEntry>;
+  saveFriend(payload: UserFriendRequestPayload): ApiResponse<FriendUser>;
 
-  requestFriend(friendUserIdOrEmail: string): ApiResponse<FriendEntry>;
-
-  fetchFriendPossessions(): ApiResponse<FriendInventory[]>;
-
-  resolveOwnWish(): ApiResponse<FriendInventory[]>;
-
-  resolveFriendWish(): ApiResponse<FriendInventory[]>;
+  resolveFriendCollections(): ApiResponse<UserFriendCollection[]>;
 }

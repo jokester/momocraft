@@ -33,6 +33,7 @@
     "fp-ts": "^2",
     "google-auth-library": "^5.10.1",
     "googleapis": "^47.0.0",
+    "gravatar-url": "^3.1.0",
     "nanoid": "^2.1.11",
     "pg": "^7.18.2",
     "reflect-metadata": "^0.1.13",

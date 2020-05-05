@@ -14,12 +14,19 @@ export const buildApiRoute = (apiOrigin: string) =>
         collection: (userId: string) => `${apiOrigin}/momo/user/${userId}/collections`,
 
         /**
-         * GET:
-         * PUT:
+         * GET: get own friends
+         * PUT: send / approve user request
          * @param {string} userId
          * @returns {string}
          */
         friends: (userId: string) => `${apiOrigin}/momo/user/${userId}/friends`,
+
+        /**
+         * GET: get mutual friends / collections
+         * @param {string} userId
+         * @returns {string}
+         */
+        friendCollections: (userId: string) => `${apiOrigin}/momo/user/${userId}/friendCollections`,
 
         /**
          * TODO
@@ -27,6 +34,9 @@ export const buildApiRoute = (apiOrigin: string) =>
          * @returns {string}
          */
         profile: (userId: string) => `${apiOrigin}/momo/user/${userId}/profile`,
+      },
+      resolve: {
+        friendCollections: (userId: string) => `${apiOrigin}/resolve/user/${userId}/friendCollections`,
       },
     },
 

@@ -1,18 +1,31 @@
-import { Column, CreateDateColumn, Entity, Index, PrimaryGeneratedColumn, Unique, UpdateDateColumn } from 'typeorm';
+import {
+  Column,
+  CreateDateColumn,
+  Entity,
+  Index,
+  PrimaryGeneratedColumn,
+  Unique,
+  UpdateDateColumn,
+  OneToOne,
+  JoinColumn,
+} from 'typeorm';
+import { UserAccount } from './user-account';
 
 @Entity()
-@Unique(['fromInternalUserId', 'toInternalUserId'])
+@Unique(['fromUser', 'toUser'])
 export class UserFriendRequest {
   @PrimaryGeneratedColumn()
   userFriendRequestId!: boolean;
 
-  @Column()
+  @OneToOne(type => UserAccount)
+  @JoinColumn()
   @Index()
-  fromInternalUserId!: number;
+  fromUser!: UserAccount;
 
-  @Column()
+  @OneToOne(type => UserAccount)
+  @JoinColumn()
   @Index()
-  toInternalUserId!: number;
+  toUser!: UserAccount;
 
   @Column()
   approved!: boolean;
@@ -26,10 +39,10 @@ export class UserFriendRequest {
   @UpdateDateColumn()
   readonly updatedAt!: Date;
 
-  constructor(init?: Exclude<UserFriendRequest, 'userFriendRequestId'>) {
+  constructor(init?: Omit<UserFriendRequest, 'userFriendRequestId' | 'createdAt' | 'updatedAt'>) {
     if (init) {
-      this.fromInternalUserId = init.fromInternalUserId;
-      this.toInternalUserId = init.toInternalUserId;
+      this.fromUser = init.fromUser;
+      this.toUser = init.toUser;
       this.approved = init.approved;
       this.comment = init.comment;
     }
