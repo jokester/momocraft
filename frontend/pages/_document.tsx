@@ -17,8 +17,8 @@ export default class CustomDocument extends Document {
           />
           <link
             rel="stylesheet"
-            href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/1.3.5/tailwind.css"
-            integrity="sha256-SRNuJFvxpvNe8ECgkgQlcrxElNwUe1vZ+DKqwcxw6Dc="
+            href="https://cdn.jsdelivr.net/npm/tailwindcss@1.4.4/dist/tailwind.min.css"
+            integrity="sha256-CAI/7ThhltsmP2L2zKBYa7FknB3ZwFbD0nqL8FCdxdc="
             crossOrigin="anonymous"
           />
           <link

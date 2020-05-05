@@ -18,7 +18,7 @@ function sanitizePass(password: string): Either<string, string> {
 }
 
 function userId(orig: unknown): Either<string, string> {
-  if (typeof orig === 'string' && /^[ABCDEFGHJKLMNPRTUVWXYZ3456789]{8,12}$/.test(orig)) {
+  if (typeof orig === 'string' && /^[ABCDEFGHJKLMNPRTUVWXYZ3456789]{5,9}$/.test(orig)) {
     return right(orig);
   }
   return left(ErrorCodeEnum.malformedUserId);

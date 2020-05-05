@@ -1,7 +1,7 @@
 import { PageType } from '../src/next-types';
-import { Layout, CenterH } from '../src/components/layout/layout';
-import { Button, H2, FormGroup, InputGroup, Label } from '@blueprintjs/core';
-import React, { useState, ChangeEvent, useCallback } from 'react';
+import { CenterH, Layout } from '../src/components/layout/layout';
+import { Button, FormGroup, InputGroup, Label } from '@blueprintjs/core';
+import React, { ChangeEvent, useCallback, useState } from 'react';
 import { useSingletons } from '../src/internal/app-context';
 import { ApiResponseSync } from '../src/service/api-convention';
 import { isLeft } from 'fp-ts/lib/Either';
