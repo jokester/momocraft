@@ -10,10 +10,10 @@ export interface ResolvedFriendCollectionsResBody {
 }
 
 export interface FriendListResBody {
-  friends: FriendUser[]
+  friends: FriendUser[];
 }
 export interface SaveFriendResBody {
-  friend: FriendUser
+  friendCollections: UserFriendCollection[];
 }
 
 export interface UserFriendRequestPayload {
