@@ -1,4 +1,4 @@
-import { Column, Entity, Index, PrimaryGeneratedColumn, Unique } from 'typeorm';
+import { Column, CreateDateColumn, Entity, Index, PrimaryGeneratedColumn, Unique, UpdateDateColumn } from 'typeorm';
 
 @Entity()
 @Unique(['userId', 'itemId'])
@@ -18,7 +18,13 @@ export class UserItemCollection {
   @Index()
   itemState!: string;
 
-  constructor(init?: Omit<UserItemCollection, 'userItemCollectionId'>) {
+  @CreateDateColumn({})
+  createdAt!: Date;
+
+  @UpdateDateColumn({})
+  updatedAt!: Date;
+
+  constructor(init?: Exclude<UserItemCollection, 'userItemCollectionId'>) {
     if (init) {
       this.itemId = init.itemId;
       this.userId = init.userId;
