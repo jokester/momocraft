@@ -6,10 +6,9 @@ import { useAuthState } from '../src/components/hooks/use-auth-state';
 import { useCollectionList } from '../src/components/hooks/use-collections-api';
 import { InventoryCard, InventoryCartListView } from '../src/components/inventory-list/inventory-card-list';
 import { RenderPromiseEither } from '../src/components/hoc/render-promise-either';
+import { PageTitle } from "../src/components/layout/page-title";
 
 const logger = createLogger(__filename);
-
-const Title = () => <h2 className="text-xl font-semibold mt-4">我的收藏</h2>;
 
 const CollectionsPageContent: React.FC = () => {
   const authed = useAuthState();
@@ -43,7 +42,7 @@ const CollectionsPageContent: React.FC = () => {
 const CollectionsPage: PageType = props => {
   return (
     <Layout>
-      <Title />
+      <PageTitle text="我的收藏" />
       <hr className="my-2 " />
       <CollectionsPageContent />
     </Layout>

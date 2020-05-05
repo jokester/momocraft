@@ -49,7 +49,7 @@ export class MomoUserController {
 
     const user = getSomeOrThrow(
       await this.userService.findUser({ userId }),
-      () => new BadRequestException('user not found', ErrorCodeEnum.malformedUserId),
+      () => new BadRequestException('user not found', ErrorCodeEnum.userNotFound),
     );
     const found = await this.collectionService.findByUser(user);
     return { collections: found };

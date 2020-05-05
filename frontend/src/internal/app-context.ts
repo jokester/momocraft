@@ -9,6 +9,8 @@ import { CollectionServiceImpl } from './service-impl/collection-service';
 import { CollectionService } from '../service/collection-service';
 import { Toaster } from '@blueprintjs/core';
 import { ObserverInstanceProvider } from '../components/generic-hooks/use-visible';
+import { FriendServiceImpl } from './service-impl/friend-service';
+import { FriendService } from '../service/friend-service';
 
 type Singletons = ReturnType<typeof initSingletons>;
 
@@ -26,10 +28,12 @@ function initSingletons(props: { toasterRef: MutableRefObject<Toaster> }) {
 
   const auth = new AuthServiceImpl(apiClient, !inServer);
   const collection = new CollectionServiceImpl(auth, apiClient);
+  const friends = new FriendServiceImpl(auth, apiClient);
 
   return {
     auth: auth as AuthService,
     collection: collection as CollectionService,
+    friends: friends as FriendService,
     toaster: props.toasterRef as { readonly current: Toaster },
   } as const;
 }

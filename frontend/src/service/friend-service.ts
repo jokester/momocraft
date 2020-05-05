@@ -5,7 +5,7 @@ import { FriendUser, UserFriendCollection } from '../model/friend';
 export interface FriendService {
   fetchFriendList(): ApiResponse<FriendUser[]>;
 
-  saveFriend(payload: UserFriendRequestPayload): ApiResponse<FriendUser>;
+  saveFriend(payload: UserFriendRequestPayload): ApiResponse<UserFriendCollection>;
 
   resolveFriendCollections(): ApiResponse<UserFriendCollection[]>;
 }

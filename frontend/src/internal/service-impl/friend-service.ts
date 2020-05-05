@@ -22,11 +22,11 @@ export class FriendServiceImpl implements FriendService {
     );
   }
 
-  saveFriend(payload: UserFriendRequestPayload): ApiResponse<FriendUser> {
+  saveFriend(payload: UserFriendRequestPayload): ApiResponse<UserFriendCollection> {
     return this.authService.withAuthedIdentity((currentUser, authHeader) =>
       this.client
         .putJson<SaveFriendResBody>(this.client.route.momo.user.friends(currentUser.userId), authHeader, payload)
-        .then(res => map((body: SaveFriendResBody) => body.friend)(res)),
+        .then(res => map((body: SaveFriendResBody) => body.friendCollections)(res)),
     );
   }
 

@@ -13,7 +13,7 @@ export interface FriendListResBody {
   friends: FriendUser[];
 }
 export interface SaveFriendResBody {
-  friendCollections: UserFriendCollection[];
+  friendCollections: UserFriendCollection;
 }
 
 export interface UserFriendRequestPayload {
