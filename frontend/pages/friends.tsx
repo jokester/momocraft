@@ -86,19 +86,23 @@ const FriendListSection: React.FC = () => {
         />
       </FormGroup>
       <RenderPromiseEither promise={friendsP}>
-        {friends =>
-          <PreJson value={friends} /> && (
-            <ul>
-              {friends.map((f, i) => (
-                <li>
-                  <div>
-                    {f.userId} / {f.comment}
-                  </div>
-                </li>
-              ))}
-            </ul>
-          )
-        }
+        {friends => (
+          <ul className="px-8 py-2 space-y-4">
+            {friends.map((f, i) => (
+              <li
+                key={f.userId}
+                className="flex justify-center items-center border border-solid border-blue-200 bg-blue-100 rounded-lg"
+              >
+                <img className="float-left w-32 h-32 inline-block" src={f.avatarUrl} />
+                <div className="align-baseline w-64">
+                  <p className="text-sm">
+                    用户名: {f.userId} <span className="text-gray-600">({f.comment})</span>
+                  </p>
+                </div>
+              </li>
+            ))}
+          </ul>
+        )}
       </RenderPromiseEither>
     </div>
   );
