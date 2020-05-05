@@ -5,7 +5,7 @@ import { Maps } from '@jokester/ts-commonutil/collection/maps';
 import { fold, left, map } from 'fp-ts/lib/Either';
 import { useConcurrencyControl } from '../generic-hooks/use-concurrency-control';
 import { useDependingState } from '../generic-hooks/use-depending-state';
-import { dynamicItemsV2, ItemsDatabaseV3 } from '../../items-db/dynamic-load-db';
+import { itemsDatabaseV3, ItemsDatabaseV3 } from '../../items-db/dynamic-load-db';
 import { ErrorCodeEnum } from '../../model/error-code';
 
 const builder = {
@@ -28,7 +28,7 @@ export function useCollectionList(userId?: string) {
 
   const fetched = useMemo(async () => {
     if (userId) {
-      const [itemsDb, fetched] = await Promise.all([dynamicItemsV2(), singletons.collection.fetchCollections(userId)]);
+      const [itemsDb, fetched] = await Promise.all([itemsDatabaseV3, singletons.collection.fetchCollections(userId)]);
 
       return map((f: ItemCollectionEntry[]) => builder.buildCollectionMap(itemsDb, f))(fetched);
     }
