@@ -24,7 +24,7 @@ export class UserItemCollection {
   @UpdateDateColumn({})
   updatedAt!: Date;
 
-  constructor(init?: Exclude<UserItemCollection, 'userItemCollectionId'>) {
+  constructor(init?: Omit<UserItemCollection, 'userItemCollectionId' | 'createdAt' | 'updatedAt'>) {
     if (init) {
       this.itemId = init.itemId;
       this.userId = init.userId;

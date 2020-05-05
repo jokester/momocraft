@@ -5,6 +5,7 @@ import { UserAccount } from '../db/entities/user-account';
 import { CollectionState, ItemCollectionEntry } from '../linked-frontend/model/collection';
 import { UserItemCollection } from '../db/entities/user-item-collection';
 import { getDebugLogger } from '../util/get-debug-logger';
+import { TypeORMUtils } from '../util/typeorm-upsert';
 
 const logger = getDebugLogger(__filename);
 
@@ -22,23 +23,14 @@ export class UserCollectionService {
         }),
     );
 
-    const saved = await this.conn
-      .createQueryBuilder()
-      .insert()
-      .into(UserItemCollection)
-      .values(toSave)
-      .onConflict(
-        `
+    const saved = await TypeORMUtils.upsert(this.conn, UserItemCollection, toSave, [
+      `
         ON CONSTRAINT "UQ_bcffa3a3eb49bdb2b4440fee92c"
-        DO UPDATE SET "itemState" = EXCLUDED."itemState"
-      `,
-      )
-      .returning('*')
-      .execute();
+        DO UPDATE SET "itemState" = EXCLUDED."itemState", "updatedAt" = EXCLUDED."updatedAt"
+    `,
+    ]);
 
-    logger('UserConnectionService#updateCollection', saved);
-
-    return (saved.raw as UserItemCollection[]).map(_ => ({ state: _.itemState as CollectionState, itemId: _.itemId }));
+    return saved.map(_ => ({ state: _.itemState as CollectionState, itemId: _.itemId }));
   }
 
   async findByUser(user: UserAccount): Promise<ItemCollectionEntry[]> {
