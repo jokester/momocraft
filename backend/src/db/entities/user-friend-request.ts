@@ -8,6 +8,7 @@ import {
   UpdateDateColumn,
   OneToOne,
   JoinColumn,
+  ManyToOne,
 } from 'typeorm';
 import { UserAccount } from './user-account';
 
@@ -17,12 +18,12 @@ export class UserFriendRequest {
   @PrimaryGeneratedColumn()
   userFriendRequestId!: number;
 
-  @OneToOne(type => UserAccount, { eager: true })
+  @ManyToOne(type => UserAccount, { eager: true })
   @JoinColumn()
   @Index()
   fromUser!: UserAccount;
 
-  @OneToOne(type => UserAccount, { eager: true })
+  @ManyToOne(type => UserAccount, { eager: true })
   @JoinColumn()
   @Index()
   toUser!: UserAccount;
