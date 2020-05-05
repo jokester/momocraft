@@ -16,7 +16,3 @@ type PageGetInitialProps<UrlParam = {}, PageProps = {}> = (
 export type PageType<UrlParam = {}, PageProps = {}> = ComponentType<FullPageProps<UrlParam, PageProps>> & {
   getInitialProps?: PageGetInitialProps<UrlParam, PageProps>;
 };
-
-// no need to distinguish
-// export type FunctionalPageType<UrlParam, P = {}, IP = P> = PageType<UrlParam, P | IP> & FunctionComponent<P | IP>;
-// export type ClassicPageType<UrlParam, P = {}, IP = P> = PageType<UrlParam, P | IP> & ClassicComponent<P | IP>;
