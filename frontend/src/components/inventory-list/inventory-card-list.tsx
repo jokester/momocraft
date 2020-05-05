@@ -17,7 +17,7 @@ export const InventoryCard: React.FunctionComponent<{
 }> = ({ item, collectionMap, loadOnSeen }) => {
   const title = useMemo(() => ItemUtils.extractDisplayName(item), [item]);
 
-  const [ref, visible] = useVisible<HTMLDivElement>(!loadOnSeen, false);
+  const [ref, visible] = useVisible<HTMLDivElement>(!loadOnSeen, true);
 
   logger('visible', visible, item);
 

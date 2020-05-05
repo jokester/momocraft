@@ -79,17 +79,18 @@ export function useVisible<T extends Element>(initial: boolean, stopOnFirstCallb
   const [visible, setVisible] = useState(initial || /* always true in SSR */ inServer);
 
   useEffect(() => {
+    let live = true;
     const el = ref.current;
     if (el) {
       observer.startObserve(el, visible => {
-        setVisible(visible);
+        live && setVisible(visible);
         return stopOnFirstCallback;
       });
-      return () => {
-        observer.stopObserve(el);
-      };
     }
-    return;
+    return () => {
+      el && observer.stopObserve(el);
+      live = false;
+    };
   }, [/* not really helpful */ ref.current]);
 
   return [ref, visible] as const;
