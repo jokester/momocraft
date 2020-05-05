@@ -8,12 +8,13 @@ import { useDependingState } from '../generic-hooks/use-depending-state';
 import { itemsDatabaseV3, ItemsDatabaseV3 } from '../../items-db/dynamic-load-db';
 
 const builder = {
-  buildCollectionMap: (itemsDb: ItemsDatabaseV3, f: ItemCollectionEntry[]) => {
+  buildCollectionMap: (itemsDb: ItemsDatabaseV3, userId: null | string, f: ItemCollectionEntry[]) => {
     const want = f.filter(_ => _.state === CollectionState.want && itemsDb.itemsMap.has(_.itemId));
 
     const owns = f.filter(_ => _.state === CollectionState.own && itemsDb.itemsMap.has(_.itemId));
 
     return {
+      userId,
       itemsMap: itemsDb.itemsMap,
       collectionsMap: Maps.buildMap(f, _ => _.itemId),
       want,
@@ -29,11 +30,11 @@ export function useCollectionList(userId: null | string) {
     if (userId) {
       const [itemsDb, fetched] = await Promise.all([itemsDatabaseV3, singletons.collection.fetchCollections(userId)]);
 
-      return map((f: ItemCollectionEntry[]) => builder.buildCollectionMap(itemsDb, f))(fetched);
+      return map((f: ItemCollectionEntry[]) => builder.buildCollectionMap(itemsDb, userId, f))(fetched);
     } else {
       const itemsDb = await itemsDatabaseV3;
 
-      return map((f: ItemCollectionEntry[]) => builder.buildCollectionMap(itemsDb, f))(right([]));
+      return map((f: ItemCollectionEntry[]) => builder.buildCollectionMap(itemsDb, userId, f))(right([]));
     }
   }, [singletons, userId]);
   return fetched;
