@@ -10,7 +10,12 @@ function* iterateItems(root: ItemsV3Json.Root): Generator<ItemsV3Json.Item> {
   }
 }
 
-export const dynamicItemsV2 = () =>
+export interface ItemsDatabaseV3 {
+  readonly sheets: ItemsV3Json.Sheet[];
+  readonly itemsMap: ReadonlyMap<string, ItemsV3Json.Item>;
+}
+
+export const dynamicItemsV2: () => Promise<ItemsDatabaseV3> = () =>
   import('./sheet01-schema03.json')
     .then((_: any) => {
       logger('dynamicLoaded', _);

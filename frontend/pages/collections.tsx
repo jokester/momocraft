@@ -10,12 +10,9 @@ import { HankoUser } from '../src/api/hanko-api';
 import gravatarUrl from 'gravatar-url';
 import { useAuthState } from '../src/components/hooks/use-auth-state';
 import { useItemsDB } from '../src/components/hooks/use-items-db';
-import {
-  useCollectionApi,
-  useFetchedCollections,
-  useCollectionListApi,
-} from '../src/components/hooks/use-collections-api';
+import { useCollectionList } from '../src/components/hooks/use-collections-api';
 import { InventoryCard, InventoryCartListView } from '../src/components/inventory-list/inventory-card-list';
+import { RenderPromiseEither } from '../src/components/hoc/render-promise-either';
 
 const logger = createLogger(__filename);
 
@@ -24,19 +21,24 @@ const Title = () => <h2 className="text-xl font-semibold mt-4">我的收藏</h2>
 const CollectionsPageContent: React.FC = () => {
   const authed = useAuthState();
 
-  const [collectionItems, itemsMap] = useCollectionListApi();
+  const ownCollection = useCollectionList(authed?.user?.userId);
 
   if (!authed.user) {
     return <div className="mt-24">需要登录</div>;
   }
+
   return (
-    itemsMap && (
-      <InventoryCartListView>
-        {collectionItems.map((_, i) => (
-          <InventoryCard item={_} collectionMap={itemsMap} key={i} />
-        ))}
-      </InventoryCartListView>
-    )
+    <div>
+      <RenderPromiseEither promise={ownCollection}>
+        {collections => (
+          <InventoryCartListView>
+            {collections.want.map((entry, i) => (
+              <InventoryCard item={collections.itemsMap.get(entry.itemId)!} collectionMap={collections} />
+            ))}
+          </InventoryCartListView>
+        )}
+      </RenderPromiseEither>
+    </div>
   );
 };
 

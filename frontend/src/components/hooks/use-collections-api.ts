@@ -2,57 +2,39 @@ import { useSingletons } from '../../internal/app-context';
 import { useMemo } from 'react';
 import { CollectionState, ItemCollectionEntry } from '../../model/collection';
 import { Maps } from '@jokester/ts-commonutil/collection/maps';
-import { fold, map } from 'fp-ts/lib/Either';
+import { fold, left, map } from 'fp-ts/lib/Either';
 import { useConcurrencyControl } from '../generic-hooks/use-concurrency-control';
-import { usePromised } from '@jokester/ts-commonutil/react/hook/use-promised';
 import { useDependingState } from '../generic-hooks/use-depending-state';
-import { useItemsDB } from './use-items-db';
-import { ItemsV3Json } from '../../items-db/json-schema';
+import { dynamicItemsV2, ItemsDatabaseV3 } from '../../items-db/dynamic-load-db';
+import { ErrorCodeEnum } from '../../model/error-code';
 
 const builder = {
-  buildCollectionMap: (fetched: ItemCollectionEntry[]) => ({
-    raw: fetched,
-    map: Maps.buildMap(fetched, item => item.itemId),
-  }),
+  buildCollectionMap: (itemsDb: ItemsDatabaseV3, f: ItemCollectionEntry[]) => {
+    const want = f.filter(_ => _.state === CollectionState.want && itemsDb.itemsMap.has(_.itemId));
+
+    const owns = f.filter(_ => _.state === CollectionState.own && itemsDb.itemsMap.has(_.itemId));
+
+    return {
+      itemsMap: itemsDb.itemsMap,
+      collectionsMap: Maps.buildMap(f, _ => _.itemId),
+      want,
+      owns,
+    } as const;
+  },
 } as const;
 
-const mapper = {
-  buildCollectionMapEither: map(builder.buildCollectionMap),
-  foldCollectionRes: fold(l => null, builder.buildCollectionMap),
-} as const;
-
-export function useFetchedCollections() {
+export function useCollectionList(userId?: string) {
   const singletons = useSingletons();
 
-  const fetched = useMemo(() => singletons.collection.fetchCollections().then(mapper.foldCollectionRes), [singletons]);
-  return usePromised(fetched);
-}
+  const fetched = useMemo(async () => {
+    if (userId) {
+      const [itemsDb, fetched] = await Promise.all([dynamicItemsV2(), singletons.collection.fetchCollections(userId)]);
 
-export function useCollectionListApi() {
-  const collections = useFetchedCollections();
-  const itemsDb = useItemsDB();
-
-  const ownedItems = useMemo(
-    () =>
-      (collections.fulfilled &&
-        collections.value &&
-        itemsDb.fulfilled &&
-        itemsDb.value &&
-        collections.value.raw
-          .filter(r => r.state !== CollectionState.none)
-          .map(r => itemsDb.value.itemsMap.get(r.itemId) as ItemsV3Json.Item)) ||
-      [],
-    [collections, itemsDb],
-  );
-
-  return [ownedItems, collections.fulfilled && collections.value] as const;
-}
-
-function initialCollectionState(
-  itemName: string,
-  initial: ReturnType<typeof builder.buildCollectionMap>,
-): CollectionState {
-  return initial.map.get(itemName)?.state || CollectionState.none;
+      return map((f: ItemCollectionEntry[]) => builder.buildCollectionMap(itemsDb, f))(fetched);
+    }
+    return left(ErrorCodeEnum.notAuthenticated);
+  }, [singletons, userId]);
+  return fetched;
 }
 
 export type CollectionStateMap = ReturnType<typeof builder.buildCollectionMap>;
@@ -60,7 +42,10 @@ export type CollectionStateMap = ReturnType<typeof builder.buildCollectionMap>;
 export function useCollectionApi(itemId: string, initialMap: null | CollectionStateMap) {
   const singletons = useSingletons();
 
-  const serverState = useMemo(() => initialMap?.map.get(itemId)?.state || CollectionState.none, [itemId, initialMap]);
+  const serverState = useMemo(() => initialMap?.collectionsMap?.get(itemId)?.state || CollectionState.none, [
+    itemId,
+    initialMap,
+  ]);
 
   const [localState, setLocalState] = useDependingState<null | CollectionState>(() => null, [serverState]);
 

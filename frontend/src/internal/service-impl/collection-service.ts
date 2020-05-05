@@ -23,10 +23,17 @@ export class CollectionServiceImpl implements CollectionService {
       )
       .then(mappers.unResObject);
   }
-  fetchCollections(): ApiResponse<ItemCollectionEntry[]> {
+  fetchOwnCollections(): ApiResponse<ItemCollectionEntry[]> {
     return this.auth
       .withAuthedIdentity((user, authHeader) =>
         this.apiClient.getJson<CollectionResBody>(this.apiClient.route.momo.user.collection(user.userId), authHeader),
+      )
+      .then(mappers.unResObject);
+  }
+  fetchCollections(userId: string): ApiResponse<ItemCollectionEntry[]> {
+    return this.auth
+      .withAuthedIdentity((user, authHeader) =>
+        this.apiClient.getJson<CollectionResBody>(this.apiClient.route.momo.user.collection(userId), authHeader),
       )
       .then(mappers.unResObject);
   }
