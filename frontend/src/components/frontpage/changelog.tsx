@@ -4,7 +4,10 @@ interface ChangelogEntry {
   date: string;
   changes: string[];
 }
-const changelogContent: ChangelogEntry[] = [{ date: '2020-05-03', changes: ['新的登录页', '新的首页'] }];
+const changelogContent: ChangelogEntry[] = [
+  { date: '2020-05-06', changes: ['好友和好友匹配'] },
+  { date: '2020-05-03', changes: ['新的登录页', '新的首页'] },
+];
 
 const ChangelogEntryView: React.FC<{ entry: ChangelogEntry }> = ({ entry }) => {
   return (
