@@ -44,6 +44,11 @@ export class UserCollectionService {
   }
 
   async listFriendCollections(friendUsers: UserFriendRequest[]): Promise<UserFriendCollection[]> {
+    if (!friendUsers.length)
+      return [
+        /* to prevent SQL syntax error: `IN ()` */
+      ];
+
     const collectionsList = await this.conn
       .getRepository(UserItemCollection)
       .find({ where: { userId: In(friendUsers.map(f => f.toUser.userId)) } });
