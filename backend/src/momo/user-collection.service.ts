@@ -6,6 +6,10 @@ import { CollectionState, ItemCollectionEntry } from '../linked-frontend/model/c
 import { UserItemCollection } from '../db/entities/user-item-collection';
 import { getDebugLogger } from '../util/get-debug-logger';
 import { TypeORMUtils } from '../util/typeorm-upsert';
+import { UserFriendCollection } from '../linked-frontend/model/friend';
+import { DefaultMap } from '../ts-commonutil/collection/default-map';
+import { UserFriendRequest } from '../db/entities/user-friend-request';
+import { transform } from './user-friend.service';
 
 const logger = getDebugLogger(__filename);
 
@@ -37,5 +41,22 @@ export class UserCollectionService {
     const found = await this.conn.getRepository(UserItemCollection).find({ userId: user.userId });
 
     return found.map(_ => ({ state: _.itemState as CollectionState, itemId: _.itemId }));
+  }
+
+  async listFriendCollections(friendUsers: UserFriendRequest[]): Promise<UserFriendCollection[]> {
+    const collectionsList = await this.conn
+      .getRepository(UserItemCollection)
+      .find({ where: { userId: [friendUsers.map(f => f.toUser.userId)] } });
+
+    const collectionsMap = new DefaultMap<string, ItemCollectionEntry[]>(_ => []);
+
+    for (const c of collectionsList) {
+      collectionsMap.getOrCreate(c.userId).push({ itemId: c.itemId, state: c.itemState as CollectionState });
+    }
+
+    return friendUsers.map(friend => ({
+      friend: transform.friend(friend),
+      friendCollections: collectionsMap.getOrCreate(friend.toUser.userId),
+    }));
   }
 }

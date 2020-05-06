@@ -3,8 +3,6 @@ import {
   Body,
   Controller,
   Get,
-  Header,
-  Headers,
   HttpCode,
   NotFoundException,
   Param,
@@ -18,14 +16,17 @@ import { getDebugLogger } from '../util/get-debug-logger';
 import { UserAccount } from '../db/entities/user-account';
 import { AuthedUser } from '../user/user-jwt-auth.middleware';
 import { Sanitize } from '../util/input-santinizer';
-import { CollectionResBody, FriendListResBody, UserFriendRequestPayload } from '../linked-frontend/api/momo-api';
+import {
+  CollectionResBody,
+  FriendCollectionsResBody,
+  FriendListResBody,
+  UserFriendRequestPayload,
+} from '../linked-frontend/api/momo-api';
 import { UserCollectionService } from './user-collection.service';
 import { ErrorCodeEnum } from '../linked-frontend/model/error-code';
 import * as Either from 'fp-ts/lib/Either';
 import { getOrElse } from 'fp-ts/lib/Either';
-import { UserFriendService } from './user-friend.service';
-import gravatarUrl from 'gravatar-url';
-import { UserFriendRequest } from '../db/entities/user-friend-request';
+import { transform, UserFriendService } from './user-friend.service';
 import { FriendUser } from '../linked-frontend/model/friend';
 
 const logger = getDebugLogger(__filename);
@@ -63,6 +64,10 @@ export class MomoUserController {
   ): Promise<CollectionResBody> {
     logger('UserController#putCollections', params);
 
+    if (params.userId !== authedUser.userId) {
+      throw new UnauthorizedException('userid mismatch', ErrorCodeEnum.notAuthenticated);
+    }
+
     const saved = await this.collectionService.updateCollection(authedUser, payload.collections);
     return { collections: saved };
   }
@@ -70,9 +75,14 @@ export class MomoUserController {
   @Put(':userId/friends')
   @HttpCode(201)
   async saveUserFriendRequest(
-    @AuthedUser() currentUser: UserAccount,
+    @Param() params: { userId: string },
+    @AuthedUser() authedUser: UserAccount,
     @Body() payload: UserFriendRequestPayload,
   ): Promise<FriendUser> {
+    if (params.userId !== authedUser.userId) {
+      throw new UnauthorizedException('not authenticated', ErrorCodeEnum.notAuthenticated);
+    }
+
     const findByEmail = Either.map((email: string) => ({ emailId: email }))(Sanitize.email(payload.targetUserOrEmail)),
       findByUserId = Either.map((userId: string) => ({ userId }))(Sanitize.userId(payload.targetUserOrEmail));
 
@@ -87,12 +97,24 @@ export class MomoUserController {
 
     logger('saveUserFriendRequest', payload, findByEmail, findByUserId, target);
 
-    const createOrUpdated = await this.friendService.saveUserFriendRequest(currentUser, target, {
+    const createOrUpdated = await this.friendService.saveUserFriendRequest(authedUser, target, {
       comment: payload.comment,
       requestMessage: payload.requestMessage,
     });
 
     return transform.friend(createOrUpdated);
+  }
+
+  @Get(':userId/friendCollections')
+  async listFriendCollections(@Param() params: { userId: string }): Promise<FriendCollectionsResBody> {
+    const user = getSomeOrThrow(
+      await this.userService.findUser({ userId: params.userId }),
+      () => new NotFoundException('user not found', ErrorCodeEnum.userNotFound),
+    );
+
+    const friends = await this.friendService.listFriend(user);
+
+    return { friendCollections: await this.collectionService.listFriendCollections(friends) };
   }
 
   @Get(':userId/friends')
@@ -110,14 +132,3 @@ export class MomoUserController {
     return this.userService.resolveUser(updated);
   }
 }
-
-const transform = {
-  friend(request: UserFriendRequest): FriendUser {
-    return {
-      userId: request.toUser.userId,
-      comment: request.comment,
-      avatarUrl: gravatarUrl(request.toUser.emailId, { size: 200 }),
-      approvedAt: request.updatedAt.getTime(),
-    };
-  },
-} as const;

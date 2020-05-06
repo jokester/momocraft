@@ -1,9 +1,11 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { TypeORMConnection } from '../db/typeorm-connection.provider';
-import { Connection, getRepository } from 'typeorm';
+import { Connection } from 'typeorm';
 import { UserAccount } from '../db/entities/user-account';
 import { UserFriendRequest } from '../db/entities/user-friend-request';
 import { TypeORMUtils } from '../util/typeorm-upsert';
+import { FriendUser } from "../linked-frontend/model/friend";
+import gravatarUrl from "gravatar-url";
 
 @Injectable()
 export class UserFriendService {
@@ -53,3 +55,14 @@ export class UserFriendService {
       .findOneOrFail({ userFriendRequestId: saved[0].userFriendRequestId });
   }
 }
+
+export const transform = {
+  friend(request: UserFriendRequest): FriendUser {
+    return {
+      userId: request.toUser.userId,
+      comment: request.comment,
+      avatarUrl: gravatarUrl(request.toUser.emailId, { size: 200 }),
+      approvedAt: request.updatedAt.getTime(),
+    };
+  },
+} as const;
