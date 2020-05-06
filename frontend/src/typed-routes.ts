@@ -8,7 +8,8 @@ export const TypedRoutes = {
   index: '/',
   items: {
     index: '/items',
-    show2: (item: ItemsV3Json.Item) => `/items/${item.itemId}`,
+    show: (item: ItemsV3Json.Item) => `/items/${item.itemId}`,
+    showTemplate: `/items/[itemId]`,
   },
   friends: '/friends',
   collections: '/collections',

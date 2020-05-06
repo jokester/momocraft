@@ -34,6 +34,10 @@ export class UserService {
     private entropy: EntropyService,
   ) {}
 
+  async findBatch(condition: { userId: string[] }): Promise<UserAccount[]> {
+    return this.conn.getRepository(UserAccount).find({ where: condition });
+  }
+
   async findUser(
     condition: { userId: string } | { emailId: string } | { internalUserId: number },
   ): Promise<Option<UserAccount>> {

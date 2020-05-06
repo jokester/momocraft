@@ -4,11 +4,12 @@ import { UserModule } from '../user/user.module';
 import { MomoUserController } from './momo-user.controller';
 import { UserJwtAuthMiddleware } from '../user/user-jwt-auth.middleware';
 import { UserCollectionService } from './user-collection.service';
+import { UserFriendService } from './user-friend.service';
 
 @Module({
   imports: [DatabaseModule, UserModule],
   controllers: [MomoUserController],
-  providers: [UserCollectionService],
+  providers: [UserCollectionService, UserFriendService],
 })
 export class MomoModule implements NestModule {
   configure(consumer: MiddlewareConsumer): void {

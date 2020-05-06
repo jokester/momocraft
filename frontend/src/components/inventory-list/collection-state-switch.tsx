@@ -15,7 +15,6 @@ export const CollectionStateSwitch: React.FC<{ item: ItemsV3Json.Item; collectio
   return (
     <ButtonGroup vertical>
       <Button
-        small
         onClick={() => {
           if (state !== CollectionState.own) {
             api.setState(CollectionState.own);
@@ -25,13 +24,11 @@ export const CollectionStateSwitch: React.FC<{ item: ItemsV3Json.Item; collectio
         }}
         active={state === CollectionState.own}
         loading={saving}
-        className="text-xl"
         icon="tick-circle"
       >
         拥有
       </Button>
       <Button
-        small
         loading={saving}
         onClick={() => {
           if (state !== CollectionState.want) {
