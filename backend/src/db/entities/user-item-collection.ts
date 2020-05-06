@@ -16,7 +16,7 @@ export class UserItemCollection {
 
   @Column()
   @Index()
-  itemState!: string;
+  itemState!: number;
 
   @CreateDateColumn({})
   createdAt!: Date;
