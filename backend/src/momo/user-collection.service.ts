@@ -1,6 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { TypeORMConnection } from '../db/typeorm-connection.provider';
-import { Connection } from 'typeorm';
+import { Connection, In } from 'typeorm';
 import { UserAccount } from '../db/entities/user-account';
 import { CollectionState, ItemCollectionEntry } from '../linked-frontend/model/collection';
 import { UserItemCollection } from '../db/entities/user-item-collection';
@@ -46,7 +46,7 @@ export class UserCollectionService {
   async listFriendCollections(friendUsers: UserFriendRequest[]): Promise<UserFriendCollection[]> {
     const collectionsList = await this.conn
       .getRepository(UserItemCollection)
-      .find({ where: { userId: [friendUsers.map(f => f.toUser.userId)] } });
+      .find({ where: { userId: In(friendUsers.map(f => f.toUser.userId)) } });
 
     const collectionsMap = new DefaultMap<string, ItemCollectionEntry[]>(_ => []);
 
