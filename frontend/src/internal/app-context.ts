@@ -28,7 +28,7 @@ function initSingletons(props: { toasterRef: MutableRefObject<Toaster> }) {
 
   const auth = new AuthServiceImpl(apiClient, !inServer);
   const collection = new CollectionServiceImpl(auth, apiClient);
-  const friends = new FriendServiceImpl(auth, apiClient);
+  const friends = new FriendServiceImpl(auth, collection, apiClient);
 
   return {
     auth: auth as AuthService,

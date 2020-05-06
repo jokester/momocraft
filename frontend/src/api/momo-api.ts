@@ -5,15 +5,12 @@ export interface CollectionResBody {
   collections: ItemCollectionEntry[];
 }
 
-export interface ResolvedFriendCollectionsResBody {
+export interface FriendCollectionsResBody {
   friendCollections: UserFriendCollection[];
 }
 
 export interface FriendListResBody {
   friends: FriendUser[];
-}
-export interface SaveFriendResBody {
-  friendCollections: UserFriendCollection;
 }
 
 export interface UserFriendRequestPayload {
