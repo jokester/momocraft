@@ -1,10 +1,10 @@
 export const enum CollectionState {
-  want = 'want',
-  own = 'own',
-  none = 'none',
+  want = 1,
+  own = 2,
+  canBuild = 4,
+  none = 0,
 
   // internal
-  unknown = 'unknown',
 
   // unset = 'unset', (just use null)
 }

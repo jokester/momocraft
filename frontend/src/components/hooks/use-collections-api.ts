@@ -66,7 +66,7 @@ export function useCollectionApi(itemId: string, initialMap: null | CollectionSt
             },
             (r: ItemCollectionEntry[]) => {
               mounted.current && setLocalState(newState);
-              singletons.toaster.current.show({ intent: 'success', message: `保存成功`, timeout: 1e3 });
+              singletons.toaster.current.show({ intent: 'success', message: `保存成功`, timeout: 1e3 }, 'saved');
             },
           )(x);
         });

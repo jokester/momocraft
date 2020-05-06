@@ -130,6 +130,9 @@ export class AuthServiceImpl implements AuthService {
   );
 }
 
+/**
+ * TODO: sync with AuthServiceImpl
+ */
 export interface AuthTokenProvider {
   useAuthToken<A, B>(
     consumer: (authToken: string, isRetry: boolean) => Promise<Either<A, B>>,

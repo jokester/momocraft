@@ -1,12 +1,13 @@
-import { CollectionState } from './collection';
+import { ItemCollectionEntry } from './collection';
 
-export interface FriendEntry {
+export interface FriendUser {
   userId: string;
-  approvedByMe: boolean;
-  approvedByOther: boolean;
+  comment: string;
+  avatarUrl?: string;
+  approvedAt: number;
 }
 
-export interface FriendInventory {
-  userId: string;
-  possession: CollectionState;
+export interface UserFriendCollection {
+  friend: FriendUser;
+  friendCollections: ItemCollectionEntry[];
 }
