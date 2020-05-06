@@ -14,7 +14,7 @@ export class UserItemCollection {
   @Index()
   itemId!: string;
 
-  @Column()
+  @Column({ default: 0 })
   @Index()
   itemState!: number;
 
