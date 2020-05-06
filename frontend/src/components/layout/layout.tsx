@@ -9,9 +9,9 @@ export const Layout: React.FC = props => {
   const toasterRef = useRef<Toaster>(null!);
   return (
     <AppContextHolder toasterRef={toasterRef}>
-      <Toaster ref={toasterRef} position="bottom" />
       {/* root of "our" dom */}
       <div className="h-screen flex flex-col">
+        <Toaster ref={toasterRef} position="bottom" />
         <Header here={'HERE'} />
         <div className="flex-grow z-0 overflow-y-scroll">
           <MainContent>{props.children}</MainContent>

@@ -18,7 +18,7 @@ const FriendsPageSectionSelector: React.FC<{ current: 0 | 1 | 2; onChange(x: 0 |
 }) => {
   return (
     <CenterH>
-      <ButtonGroup className="flex justify-around w-full sm:w-1/2">
+      <ButtonGroup className="flex justify-center space-x-2 w-full sm:w-1/2">
         <Button active={current === 0} text="好友列表" onClick={() => onChange(0)} />
         <Button active={current === 1} text="我想要的" onClick={() => onChange(1)} />
         <Button active={current === 2} text="好友想要的" onClick={() => onChange(2)} />
@@ -39,7 +39,7 @@ const FriendListSection: React.FC = () => {
 
   return (
     <div>
-      <FormGroup className="text-sm p-2 px-8 sm:w-1/2">
+      <FormGroup className="p-2 px-8 sm:w-1/2">
         <Label>
           用户名或邮箱
           <InputGroup
@@ -95,7 +95,7 @@ const FriendListSection: React.FC = () => {
               >
                 <img className="float-left w-32 h-32 inline-block" src={f.avatarUrl} />
                 <div className="align-baseline w-64">
-                  <p className="text-sm">
+                  <p className="">
                     用户名: {f.userId} <span className="text-gray-600">({f.comment})</span>
                   </p>
                 </div>
