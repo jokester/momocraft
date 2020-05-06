@@ -17,5 +17,6 @@ export const typeORMConnectionProvider: FactoryProvider<Promise<Connection>> = {
       type: configService.get('TYPEORM_CONNECTION'),
       url: configService.get('TYPEORM_URL'),
       entities: [UserAccount, OAuthAccount, UserItemCollection, UserFriendRequest],
+      logger: 'debug',
     }),
 };
