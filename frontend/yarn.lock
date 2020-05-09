@@ -1198,8 +1198,9 @@
     "@types/yargs" "^15.0.0"
     chalk "^3.0.0"
 
-"@jokester/ts-commonutil@file:../submodules/ts-commonutil":
+"@jokester/ts-commonutil@github:jokester/ts-commonutil#dafd40":
   version "0.1.0"
+  resolved "https://codeload.github.com/jokester/ts-commonutil/tar.gz/dafd408fe280bb30767c792061b2edbfa98b14b2"
 
 "@mrmlnc/readdir-enhanced@^2.2.1":
   version "2.2.1"
