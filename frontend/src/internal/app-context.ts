@@ -8,7 +8,6 @@ import { AuthService } from '../service/auth-service';
 import { CollectionServiceImpl } from './service-impl/collection-service';
 import { CollectionService } from '../service/collection-service';
 import { Toaster } from '@blueprintjs/core';
-import { ObserverInstanceProvider } from '../components/generic-hooks/use-visible';
 import { FriendServiceImpl } from './service-impl/friend-service';
 import { FriendService } from '../service/friend-service';
 
@@ -43,13 +42,10 @@ export const AppContextHolder: React.FC<{ toasterRef: MutableRefObject<Toaster> 
 
   useEffect(() => () => console.error('unexpected: AppContextHolder unmounted'), []);
 
-  return createElement(
-    AppContext.Provider,
-    {
-      value: singletons,
-    },
-    createElement(ObserverInstanceProvider, { children } as any),
-  );
+  return createElement(AppContext.Provider, {
+    value: singletons,
+    children,
+  });
 };
 
 export const useSingletons = () => useContext(AppContext);

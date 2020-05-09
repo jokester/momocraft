@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useContext, useMemo } from 'react';
 import Link from 'next/link';
 import { TypedRoutes } from '../../typed-routes';
 import { ItemsV3Json } from '../../items-db/json-schema';
@@ -6,7 +6,7 @@ import { CollectionStateSwitch } from './collection-state-switch';
 import { ItemUtils } from '../../items-db/item-utils';
 import { CollectionStateMap } from '../hooks/use-collections-api';
 import { createLogger } from '../../util/debug-logger';
-import { useVisible } from '../generic-hooks/use-visible';
+import { useInView } from 'react-intersection-observer';
 
 const logger = createLogger(__filename);
 
@@ -17,7 +17,7 @@ export const InventoryCard: React.FunctionComponent<{
 }> = ({ item, collectionMap, lazyLoad }) => {
   const title = useMemo(() => ItemUtils.extractDisplayName(item), [item]);
 
-  const [ref, visible] = useVisible<HTMLDivElement>(!lazyLoad);
+  const [ref, visible] = useInView({ rootMargin: '500px' });
 
   logger('visible', visible, item);
 
