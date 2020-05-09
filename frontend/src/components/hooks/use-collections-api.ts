@@ -3,8 +3,8 @@ import { useMemo } from 'react';
 import { CollectionState, ItemCollectionEntry } from '../../model/collection';
 import { Maps } from '@jokester/ts-commonutil/collection/maps';
 import { fold, map, right } from 'fp-ts/lib/Either';
-import { useConcurrencyControl } from '../generic-hooks/use-concurrency-control';
-import { useDependingState } from '../generic-hooks/use-depending-state';
+import { useConcurrencyControl } from '@jokester/ts-commonutil/react/hook/use-concurrency-control';
+import { useDependingState } from '@jokester/ts-commonutil/react/hook/use-depending-state';
 import { itemsDatabaseV3, ItemsDatabaseV3 } from '../../items-db/dynamic-load-db';
 
 const builder = {
