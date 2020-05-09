@@ -15,32 +15,39 @@ type Singletons = ReturnType<typeof initSingletons>;
 
 const AppContext = createContext<Singletons>(null!);
 
+let singletonObjects: null | {
+  auth: AuthService;
+  collection: CollectionService;
+  friends: FriendService;
+} = null;
+
 function initSingletons(props: { toasterRef: MutableRefObject<Toaster> }) {
-  if (1) {
+  if (!singletonObjects) {
     const logger = createLogger(__filename);
     logger('build env', isDevBuild, buildEnv);
+
+    const fetchImpl = inServer ? () => Never : fetch.bind(window);
+    const apiClient = new ApiClient(fetchImpl, buildEnv.MOMO_SERVER_ORIGIN);
+
+    const auth = new AuthServiceImpl(apiClient, !inServer);
+    const collection = new CollectionServiceImpl(auth, apiClient);
+    const friends = new FriendServiceImpl(auth, collection, apiClient);
+
+    singletonObjects = {
+      auth,
+      collection,
+      friends,
+    };
   }
 
-  // FIXME: Never may cause memory leak in server (if any)
-  const fetchImpl = inServer ? () => Never : fetch.bind(window);
-  const apiClient = new ApiClient(fetchImpl, buildEnv.MOMO_SERVER_ORIGIN);
-
-  const auth = new AuthServiceImpl(apiClient, !inServer);
-  const collection = new CollectionServiceImpl(auth, apiClient);
-  const friends = new FriendServiceImpl(auth, collection, apiClient);
-
   return {
-    auth: auth as AuthService,
-    collection: collection as CollectionService,
-    friends: friends as FriendService,
+    ...singletonObjects,
     toaster: props.toasterRef as { readonly current: Toaster },
   } as const;
 }
 
 export const AppContextHolder: React.FC<{ toasterRef: MutableRefObject<Toaster> }> = ({ toasterRef, children }) => {
   const singletons = useMemo(() => initSingletons({ toasterRef }), []);
-
-  useEffect(() => () => console.error('unexpected: AppContextHolder unmounted'), []);
 
   return createElement(AppContext.Provider, {
     value: singletons,
