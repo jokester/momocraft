@@ -1,8 +1,8 @@
 import React, { ChangeEvent, useState } from 'react';
 import { useAuthState } from '../hooks/use-auth-state';
 import { useSingletons } from '../../internal/app-context';
-import { useVersionedMemo } from '../generic-hooks/use-versioned-memo';
-import { useConcurrencyControl } from '../generic-hooks/use-concurrency-control';
+import { useVersionedMemo } from '@jokester/ts-commonutil/react/hook/use-versioned-memo';
+import { useConcurrencyControl } from '@jokester/ts-commonutil/react/hook/use-concurrency-control';
 import { Button, FormGroup, InputGroup, Label } from '@blueprintjs/core';
 import { fold } from 'fp-ts/lib/Either';
 import { FriendUser } from '../../model/friend';

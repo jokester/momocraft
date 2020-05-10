@@ -6,7 +6,7 @@ import { FriendsPageSectionSelector } from '../src/components/friends/friends-pa
 import { useResolvedFriendCollections } from '../src/components/hooks/use-friends-api';
 import { RenderPromiseEither } from '../src/components/hoc/render-promise-either';
 import { ItemsDatabaseV3, itemsDatabaseV3 } from '../src/items-db/dynamic-load-db';
-import { RenderPromise } from '../src/components/hoc/render-promise';
+import { RenderPromise } from '@jokester/ts-commonutil/react/hoc/render-promise';
 import { ItemColumnType } from '../src/model/item-id-def';
 import { UserFriendCollection } from '../src/model/friend';
 
