@@ -30,7 +30,7 @@ export class AuthController {
     if (payload && payload.code && payload.redirectUrl) {
       const oauthRes = getRightOrThrow(
         await this.googleOAuthService.auth(payload.code, payload.redirectUrl),
-        l => new BadRequestException('auth failed', l),
+        (l) => new BadRequestException('auth failed', l),
       );
 
       logger('got google oauth response', oauthRes);
@@ -42,7 +42,7 @@ export class AuthController {
          * objectOrError: string, error:
          * @returns {BadRequestException}
          */
-        l => new BadRequestException('auth failed', l),
+        (l) => new BadRequestException('auth failed', l),
       );
 
       logger('user authed', user);
@@ -60,7 +60,7 @@ export class AuthController {
 
     const created = getRightOrThrow(
       await this.userService.signUpWithEmail(payload.email, payload.password),
-      l => new BadRequestException('error signing up', l),
+      (l) => new BadRequestException('error signing up', l),
     );
 
     return this.resolveAuthSuccess(created);
@@ -74,7 +74,7 @@ export class AuthController {
 
     const authedUser = getRightOrThrow(
       await this.userService.signInWithEmail(payload.email, payload.password),
-      l => new BadRequestException('error logging in', l),
+      (l) => new BadRequestException('error logging in', l),
     );
 
     return this.resolveAuthSuccess(authedUser);

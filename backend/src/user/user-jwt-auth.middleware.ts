@@ -35,7 +35,7 @@ export class UserJwtAuthMiddleware implements NestMiddleware {
       }
       const user = getRightOrThrow(
         await this.userService.findUserWithJwtToken(jwtToken),
-        l => new UnauthorizedException('auth required', l),
+        (l) => new UnauthorizedException('auth required', l),
       );
       (req as any).authedUser = user;
     }

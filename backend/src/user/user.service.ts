@@ -82,7 +82,7 @@ export class UserService {
     return this.conn
       .getRepository(UserAccount)
       .save(user)
-      .then(right, err => {
+      .then(right, (err) => {
         logger('UserService#signUpWithEmail error creating', err);
         return left(ErrorCodeEnum.userExisted);
       });
@@ -168,7 +168,7 @@ export class UserService {
     const randomHash = await this.entropy.bcryptHash(randomAlphaNum(16));
 
     // try create
-    const res = await this.conn.transaction(async entityManager => {
+    const res = await this.conn.transaction(async (entityManager) => {
       const userAccount = await entityManager.save(
         new UserAccount({
           userId: this.entropy.createUserStringId(),
