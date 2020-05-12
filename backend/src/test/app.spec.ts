@@ -74,10 +74,7 @@ describe('AppController (e2e)', () => {
     });
 
     it('POST /auth/oauth/google return 400 on malformed request', async () => {
-      await request(app.getHttpServer())
-        .post('/auth/oauth/google')
-        .send({ code: '123', redirectUrl: '' })
-        .expect(400);
+      await request(app.getHttpServer()).post('/auth/oauth/google').send({ code: '123', redirectUrl: '' }).expect(400);
     });
 
     it('POST /auth/oauth/google return 400 on auth error', async () => {
@@ -146,22 +143,15 @@ describe('AppController (e2e)', () => {
 
   describe.skip(MomoUserController, () => {
     it('GET /user/:userId returns 404', async () => {
-      await request(app.getHttpServer())
-        .get('/user/__s')
-        .expect(404);
+      await request(app.getHttpServer()).get('/user/__s').expect(404);
     });
 
     it('GET /user/self with improper auth header returns 400', async () => {
-      await request(app.getHttpServer())
-        .get('/user/self')
-        .set('Authorization', `Bear`)
-        .expect(400);
+      await request(app.getHttpServer()).get('/user/self').set('Authorization', `Bear`).expect(400);
     });
 
     it('GET /user/self without auth return 401', async () => {
-      await request(app.getHttpServer())
-        .get('/user/self')
-        .expect(401);
+      await request(app.getHttpServer()).get('/user/self').expect(401);
     });
 
     it('GET /user/self with proper auth returns resolved user', async () => {
@@ -171,15 +161,9 @@ describe('AppController (e2e)', () => {
 
       const jwtToken = await userService.createJwtTokenForUser(userAccount1);
 
-      await request(app.getHttpServer())
-        .get('/user/self')
-        .set('Authorization', `Bearer ${jwtToken}`)
-        .expect(200);
+      await request(app.getHttpServer()).get('/user/self').set('Authorization', `Bearer ${jwtToken}`).expect(200);
 
-      await request(app.getHttpServer())
-        .get('/momo/user/self')
-        .set('Authorization', `Bearer ${jwtToken}`)
-        .expect(200);
+      await request(app.getHttpServer()).get('/momo/user/self').set('Authorization', `Bearer ${jwtToken}`).expect(200);
     });
 
     it('PUT /user/self updated resolved user', async () => {

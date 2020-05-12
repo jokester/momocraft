@@ -4,8 +4,8 @@ import { Connection } from 'typeorm';
 import { UserAccount } from '../db/entities/user-account';
 import { UserFriendRequest } from '../db/entities/user-friend-request';
 import { TypeORMUtils } from '../util/typeorm-upsert';
-import { FriendUser } from "../linked-frontend/model/friend";
-import gravatarUrl from "gravatar-url";
+import { FriendUser } from '../linked-frontend/model/friend';
+import gravatarUrl from 'gravatar-url';
 
 @Injectable()
 export class UserFriendService {

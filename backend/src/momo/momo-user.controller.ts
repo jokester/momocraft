@@ -45,7 +45,7 @@ export class MomoUserController {
 
     const userId = getRightOrThrow(
       Sanitize.userId(params?.userId),
-      l => new BadRequestException('incorrect user id', l),
+      (l) => new BadRequestException('incorrect user id', l),
     );
 
     const user = getSomeOrThrow(

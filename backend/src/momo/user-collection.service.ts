@@ -19,7 +19,7 @@ export class UserCollectionService {
 
   async updateCollection(user: UserAccount, entries: ItemCollectionEntry[]): Promise<ItemCollectionEntry[]> {
     const toSave = entries.map(
-      _ =>
+      (_) =>
         new UserItemCollection({
           userId: user.userId,
           itemId: _.itemId,
@@ -34,13 +34,13 @@ export class UserCollectionService {
     `,
     ]);
 
-    return saved.map(_ => ({ state: _.itemState as CollectionState, itemId: _.itemId }));
+    return saved.map((_) => ({ state: _.itemState as CollectionState, itemId: _.itemId }));
   }
 
   async findByUser(user: UserAccount): Promise<ItemCollectionEntry[]> {
     const found = await this.conn.getRepository(UserItemCollection).find({ userId: user.userId });
 
-    return found.map(_ => ({ state: _.itemState as CollectionState, itemId: _.itemId }));
+    return found.map((_) => ({ state: _.itemState as CollectionState, itemId: _.itemId }));
   }
 
   async listFriendCollections(friendUsers: UserFriendRequest[]): Promise<UserFriendCollection[]> {
@@ -51,15 +51,15 @@ export class UserCollectionService {
 
     const collectionsList = await this.conn
       .getRepository(UserItemCollection)
-      .find({ where: { userId: In(friendUsers.map(f => f.toUser.userId)) } });
+      .find({ where: { userId: In(friendUsers.map((f) => f.toUser.userId)) } });
 
-    const collectionsMap = new DefaultMap<string, ItemCollectionEntry[]>(_ => []);
+    const collectionsMap = new DefaultMap<string, ItemCollectionEntry[]>((_) => []);
 
     for (const c of collectionsList) {
       collectionsMap.getOrCreate(c.userId).push({ itemId: c.itemId, state: c.itemState as CollectionState });
     }
 
-    return friendUsers.map(friend => ({
+    return friendUsers.map((friend) => ({
       friend: transform.friend(friend),
       friendCollections: collectionsMap.getOrCreate(friend.toUser.userId),
     }));
