@@ -6,11 +6,11 @@ export const InventoryCategoryPicker: React.FC<{
   sheets: ItemsV3Json.Sheet[];
   curentSheetId: number;
   setSheetId(sheetId: number): void;
-}> = props => {
+}> = (props) => {
   return (
     <div className="sticky top-0 shadow p-2 px-4 bg-white z-10">
       物品种类: &nbsp;
-      <select value={props.curentSheetId} onChange={ev => props.setSheetId(Number(ev.target.value))}>
+      <select value={props.curentSheetId} onChange={(ev) => props.setSheetId(Number(ev.target.value))}>
         <option value={-1}>未选择</option>
         <RenderArray items={props.sheets}>
           {(item, index) => (

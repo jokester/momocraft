@@ -43,7 +43,7 @@ const AuthState: React.FC = () => {
       </Button>
     </div>
   ) : (
-    <form onSubmit={ev => ev.preventDefault()} className="text-sm">
+    <form onSubmit={(ev) => ev.preventDefault()} className="text-sm">
       <FormGroup>
         <Label>
           邮箱
@@ -96,7 +96,7 @@ const AuthState: React.FC = () => {
   return <CenterH className="mt-32">{content}</CenterH>;
 };
 
-const FormWarning: React.FC = props => {
+const FormWarning: React.FC = (props) => {
   return (
     <div className="inline-block w-2/3 md:w-1/2 leading-tight">
       <h2 className="font-semibold">注意</h2>
@@ -115,7 +115,7 @@ const AccountPageContent: React.FC = () => {
   );
 };
 
-const AccountPage: PageType = props => {
+const AccountPage: PageType = (props) => {
   return (
     <Layout>
       <AccountPageContent />

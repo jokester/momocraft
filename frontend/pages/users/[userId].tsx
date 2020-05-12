@@ -10,7 +10,7 @@ interface UrlParam {
   userId: string;
 }
 
-const UserShowPage: PageType<UrlParam> = props => {
+const UserShowPage: PageType<UrlParam> = (props) => {
   const {
     route: {
       query: { itemId = 'NULL' },

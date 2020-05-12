@@ -35,9 +35,9 @@ export const FriendCollections: React.FC<{
       </p>
       <ul className="text-sm pl-2">
         {friendCollections.friendCollections
-          .map(_ => itemsDb.itemsMap.get(_.itemId)!)
+          .map((_) => itemsDb.itemsMap.get(_.itemId)!)
           .filter(Boolean)
-          .map(item => (
+          .map((item) => (
             <li>
               {item.base[ItemColumnType.nameZhS]} / {item.base[ItemColumnType.nameJa]}
             </li>
@@ -48,15 +48,15 @@ export const FriendCollections: React.FC<{
   );
 };
 
-export const FriendsPageIWantSection: React.FC = props => {
+export const FriendsPageIWantSection: React.FC = (props) => {
   const x = useResolvedFriendCollections();
   return (
     <RenderPromiseEither promise={x}>
-      {resolved => (
+      {(resolved) => (
         <RenderPromise promise={itemsDatabaseV3}>
-          {itemsDb => (
+          {(itemsDb) => (
             <div>
-              {resolved.friendsOwns.map(friendCollections => (
+              {resolved.friendsOwns.map((friendCollections) => (
                 <FriendCollections itemsDb={itemsDb} friendCollections={friendCollections} friendSuffix="拥有:" />
               ))}
             </div>
@@ -67,15 +67,15 @@ export const FriendsPageIWantSection: React.FC = props => {
   );
 };
 
-export const FriendsPageFriendsWantSection: React.FC = props => {
+export const FriendsPageFriendsWantSection: React.FC = (props) => {
   const x = useResolvedFriendCollections();
   return (
     <RenderPromiseEither promise={x}>
-      {resolved => (
+      {(resolved) => (
         <RenderPromise promise={itemsDatabaseV3}>
-          {itemsDb => (
+          {(itemsDb) => (
             <div>
-              {resolved.friendWants.map(friendCollections => (
+              {resolved.friendWants.map((friendCollections) => (
                 <FriendCollections itemsDb={itemsDb} friendCollections={friendCollections} friendSuffix="想要:" />
               ))}
             </div>
@@ -86,7 +86,7 @@ export const FriendsPageFriendsWantSection: React.FC = props => {
   );
 };
 
-const FriendsPageResolved: React.FC<{ resolved: unknown[] }> = props => null;
+const FriendsPageResolved: React.FC<{ resolved: unknown[] }> = (props) => null;
 
 const FriendsPage: React.FC = () => {
   return (

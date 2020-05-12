@@ -4,7 +4,7 @@ import { Layout } from '../src/components/layout/layout';
 import { FrontpageIntro } from '../src/components/frontpage/intro';
 import { ChangelogList } from '../src/components/frontpage/changelog';
 
-const IndexPage: PageType = props => {
+const IndexPage: PageType = (props) => {
   return (
     <Layout>
       <FrontpageIntro />

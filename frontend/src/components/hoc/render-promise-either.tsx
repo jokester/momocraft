@@ -17,7 +17,7 @@ export function RenderPromiseEither<L, R>(props: RenderPromiseEitherProps<L, R>)
     (e: Either<L, R>) =>
       fold<L, R, React.ReactElement>(
         props.onLeft || renderNull,
-        r => (props.children(r) || null) as React.ReactElement,
+        (r) => (props.children(r) || null) as React.ReactElement,
       )(e),
     [props.onLeft, props.children],
   );

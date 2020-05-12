@@ -1,3 +1,4 @@
+/* eslint @typescript-eslint/no-var-requires: 0 */
 const withPlugins = require('next-compose-plugins');
 
 const webpack = require('webpack');
@@ -44,11 +45,12 @@ const nextConf = {
       }),
     );
 
-    config.plugins = config.plugins.map(p => {
+    config.plugins = config.plugins.map((p) => {
       return p;
     });
 
     config.node = {
+      // allow use of __file / __dirname
       ...config.node,
       __filename: true,
     };
