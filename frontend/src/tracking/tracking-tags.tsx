@@ -1,3 +1,4 @@
+/* eslint @typescript-eslint/camelcase: 0 */
 import React, { useEffect } from 'react';
 import Router from 'next/router';
 import { buildEnv } from '../config/build-env';
@@ -14,7 +15,7 @@ export const GoogleAnalyticsTag: React.FC = () => {
 
   useEffect(() => {
     if (GA_TRACKING_ID) {
-      Router.events.on('routeChangeComplete', url => {
+      Router.events.on('routeChangeComplete', (url) => {
         setTimeout(() => {
           typeof gtag === 'function' &&
             gtag('config', GA_TRACKING_ID, {

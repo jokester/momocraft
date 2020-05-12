@@ -30,7 +30,7 @@ export const InventoryDb: React.FC = () => {
       <div>
         <InventoryCategoryPicker sheets={itemsDb.value.sheets} curentSheetId={currentSheetId} setSheetId={setSheetId} />
         <RenderPromiseEither promise={collectionsP}>
-          {collections => (
+          {(collections) => (
             <InventoryCartListView key={currentSheetId}>
               {items.map((item, i) => (
                 <InventoryCard key={item.itemId} item={item} collectionMap={collections} lazyLoad={i > 20} />

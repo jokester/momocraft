@@ -9,14 +9,14 @@ import { itemsDatabaseV3, ItemsDatabaseV3 } from '../../items-db/dynamic-load-db
 
 const builder = {
   buildCollectionMap: (itemsDb: ItemsDatabaseV3, userId: null | string, f: ItemCollectionEntry[]) => {
-    const want = f.filter(_ => _.state === CollectionState.want && itemsDb.itemsMap.has(_.itemId));
+    const want = f.filter((_) => _.state === CollectionState.want && itemsDb.itemsMap.has(_.itemId));
 
-    const owns = f.filter(_ => _.state === CollectionState.own && itemsDb.itemsMap.has(_.itemId));
+    const owns = f.filter((_) => _.state === CollectionState.own && itemsDb.itemsMap.has(_.itemId));
 
     return {
       userId,
       itemsMap: itemsDb.itemsMap,
-      collectionsMap: Maps.buildMap(f, _ => _.itemId),
+      collectionsMap: Maps.buildMap(f, (_) => _.itemId),
       want,
       owns,
     } as const;
@@ -57,7 +57,7 @@ export function useCollectionApi(itemId: string, initialMap: null | CollectionSt
   const api = useMemo(() => {
     return {
       setState: (newState: CollectionState) => {
-        withLock(async mounted => {
+        withLock(async (mounted) => {
           const x = await singletons.collection.saveCollections([{ itemId: itemId, state: newState }]);
 
           fold(

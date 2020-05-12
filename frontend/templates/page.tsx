@@ -16,7 +16,7 @@ interface PageProps {
   renderedBy: string;
 }
 
-const UnnamedPage: PageType<UrlParam, PageProps> = props => {
+const UnnamedPage: PageType<UrlParam, PageProps> = (props) => {
   return (
     <>
       <h2>UnnamedPage in {__filename}</h2>
@@ -25,7 +25,7 @@ const UnnamedPage: PageType<UrlParam, PageProps> = props => {
   );
 };
 
-UnnamedPage.getInitialProps = async ctx => ({
+UnnamedPage.getInitialProps = async (ctx) => ({
   renderedAt: Date.now(),
   renderedBy: ctx.req ? 'server' : 'browser',
 });

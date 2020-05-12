@@ -43,7 +43,7 @@ export const FriendListSection: React.FC = () => {
           loading={concurrency > 1}
           disabled={concurrency > 1}
           onClick={() =>
-            withLock(async mounted => {
+            withLock(async (mounted) => {
               const added = await singletons.friends.saveFriend({
                 targetUserOrEmail: friendEmailO,
                 comment: comment,
@@ -67,7 +67,7 @@ export const FriendListSection: React.FC = () => {
         />
       </FormGroup>
       <RenderPromiseEither promise={friendsP}>
-        {friends => (
+        {(friends) => (
           <ul className="px-8 py-2 space-y-4">
             {friends.map((f, i) => (
               <li

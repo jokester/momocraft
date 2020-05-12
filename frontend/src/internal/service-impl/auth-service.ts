@@ -118,11 +118,11 @@ export class AuthServiceImpl implements AuthService {
   };
 
   private onAuthResponse = fold<string, HttpApi.AuthResponse, Either<string, HankoUser>>(
-    l => {
+    (l) => {
       this._authState.next({ identity: null, pendingAuth: false });
       return left(l);
     },
-    r => {
+    (r) => {
       this.persist.setItem('moAur', r);
       this._authState.next({ identity: r, pendingAuth: false });
       return right(r.user);

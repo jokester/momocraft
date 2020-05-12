@@ -24,7 +24,7 @@ export class FriendServiceImpl implements FriendService {
       .withAuthedIdentity((currentUser, authHeader) =>
         this.client
           .getJson<FriendListResBody>(this.client.route.momo.user.friends(currentUser.userId), authHeader)
-          .then(res => map((body: FriendListResBody) => body.friends)(res)),
+          .then((res) => map((body: FriendListResBody) => body.friends)(res)),
       )
       .then(logger.tap);
   }
@@ -56,11 +56,11 @@ export class FriendServiceImpl implements FriendService {
             friendWants: [],
           };
 
-          const myMap = MapsExtra.fromArray(myCollection, _ => _.itemId);
+          const myMap = MapsExtra.fromArray(myCollection, (_) => _.itemId);
 
-          friendCollections.friendCollections.forEach(fc => {
+          friendCollections.friendCollections.forEach((fc) => {
             const friendOwnsAndIWant = fc.friendCollections.filter(
-              _ => _.state === CollectionState.own && myMap.get(_.itemId)?.state === CollectionState.want,
+              (_) => _.state === CollectionState.own && myMap.get(_.itemId)?.state === CollectionState.want,
             );
 
             if (friendOwnsAndIWant.length) {
@@ -68,7 +68,7 @@ export class FriendServiceImpl implements FriendService {
             }
 
             const friendWantsAndIOwn = fc.friendCollections.filter(
-              _ => _.state === CollectionState.want && myMap.get(_.itemId)?.state === CollectionState.own,
+              (_) => _.state === CollectionState.want && myMap.get(_.itemId)?.state === CollectionState.own,
             );
 
             if (friendWantsAndIOwn.length) {

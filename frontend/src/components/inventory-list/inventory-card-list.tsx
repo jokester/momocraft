@@ -49,6 +49,6 @@ export const DummyModelListHeader: React.FunctionComponent<{ title: string }> = 
   <h3 className="px-2 my-1 font-bold ">{title}</h3>
 );
 
-export const InventoryCartListView: React.FC = props => {
+export const InventoryCartListView: React.FC = (props) => {
   return <div className="flex flex-wrap mx-2 -mt-2 z-0">{props.children}</div>;
 };

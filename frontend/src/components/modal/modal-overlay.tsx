@@ -13,13 +13,13 @@ const inline = {
   } as React.CSSProperties,
 } as const;
 
-export const ModalOverlay: React.FC<{ children?: React.ReactElement; onOverlayClick?(): void }> = props => {
+export const ModalOverlay: React.FC<{ children?: React.ReactElement; onOverlayClick?(): void }> = (props) => {
   const overlayRef = React.createRef<HTMLDivElement>();
   return (
     (props.children && (
       <div
         ref={overlayRef}
-        onClick={ev => {
+        onClick={(ev) => {
           if (ev.target === overlayRef.current && props.onOverlayClick) props.onOverlayClick();
         }}
         className={classes.overlay}
@@ -31,7 +31,7 @@ export const ModalOverlay: React.FC<{ children?: React.ReactElement; onOverlayCl
   );
 };
 
-export const ModalFrame: React.FC = props => {
+export const ModalFrame: React.FC = (props) => {
   return (
     <div className={classes.frame} style={inline.frame}>
       {props.children}

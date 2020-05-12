@@ -13,7 +13,7 @@ interface UrlParam {}
  */
 interface PageProps {}
 
-const ItemsIndexPage: PageType<UrlParam, PageProps> = props => {
+const ItemsIndexPage: PageType<UrlParam, PageProps> = (props) => {
   return (
     <Layout>
       <InventoryDb />
