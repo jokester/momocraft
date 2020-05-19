@@ -1,0 +1,8 @@
+version: '3'
+
+services:
+  momocraft-backend:
+    build:
+      dockerfile: ./Dockerfile
+      context: ./backend
+
