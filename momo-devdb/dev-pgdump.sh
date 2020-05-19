@@ -12,8 +12,9 @@ if [[ $# -gt 0 ]]; then
   DB_NAME="$1"
   shift
   set -x
-  exec psql "$DB_NAME" "$@"
+  NOW=$(date '+%Y%m%d-%H%M%S-%N')
+  pg_dump "$DB_NAME" | gzip -9 > "$DB_NAME-$NOW.sql.gz"
 else
-  set -x
-  exec psql postgres "$@"
+  echo "USAGE: $0 DB_NAME"
+  exit 1
 fi
