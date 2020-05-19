@@ -7,8 +7,8 @@ RUN \
     && chown -v appuser:appuser /app
 
 USER appuser
-COPY * /app/
+COPY . /app/
 WORKDIR /app
-RUN yarn --production && rm -rf ~/.cache
+RUN find && yarn --production && rm -rf ~/.cache
 
 CMD yarn start
