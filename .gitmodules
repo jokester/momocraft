@@ -1,3 +1,3 @@
 [submodule "backend/submodules/ts-commonutil"]
-	path = backend/submodules/ts-commonutil
+	path = submodules/ts-commonutil
 	url = https://github.com/jokester/ts-commonutil

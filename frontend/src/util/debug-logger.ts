@@ -15,10 +15,7 @@ const getDebugNamespace = (rootDir: string, prefix: string, stripCodeExt = true)
   appendee?: string,
 ) => {
   const namespace = srcFile.startsWith(rootDir)
-    ? srcFile
-        .slice(rootDir.length, srcFile.length)
-        .replace(/^\//, '')
-        .replace(/\//g, ':')
+    ? srcFile.slice(rootDir.length, srcFile.length).replace(/^\//, '').replace(/\//g, ':')
     : srcFile.replace(/^\//, '').replace(/\//g, ':');
 
   const striped = stripCodeExt ? namespace.replace(/\.(ts|js)x?$/i, '') : namespace;

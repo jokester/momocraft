@@ -22,7 +22,7 @@ const CollectionsPageContent: React.FC = () => {
   return (
     <div>
       <RenderPromiseEither promise={ownCollection}>
-        {collections => (
+        {(collections) => (
           <InventoryCartListView>
             {collections.want.map((entry, i) => (
               <InventoryCard
@@ -47,7 +47,7 @@ const CollectionsPageContent: React.FC = () => {
   );
 };
 
-const CollectionsPage: PageType = props => {
+const CollectionsPage: PageType = (props) => {
   return (
     <Layout>
       <PageTitle text="我的收藏" />

@@ -6,9 +6,9 @@ import { FriendsPageSectionSelector } from '../src/components/friends/friends-pa
 import { useResolvedFriendCollections } from '../src/components/hooks/use-friends-api';
 import { RenderPromiseEither } from '../src/components/hoc/render-promise-either';
 import { ItemsDatabaseV3, itemsDatabaseV3 } from '../src/items-db/dynamic-load-db';
-import { RenderPromise } from '../src/components/hoc/render-promise';
+import { RenderPromise } from '@jokester/ts-commonutil/react/hoc/render-promise';
 import { ItemColumnType } from '../src/model/item-id-def';
-import { UserFriendCollection } from '../src/model/friend';
+import { UserFriendCollectionDto } from '../src/api-generated/models';
 
 const FriendsPageContent: React.FC = () => {
   const [section, setSection] = useState(1 as 0 | 1 | 2);
@@ -25,7 +25,7 @@ const FriendsPageContent: React.FC = () => {
 
 export const FriendCollections: React.FC<{
   itemsDb: ItemsDatabaseV3;
-  friendCollections: UserFriendCollection;
+  friendCollections: UserFriendCollectionDto;
   friendSuffix: string;
 }> = ({ friendCollections, itemsDb, friendSuffix }) => {
   return (
@@ -35,9 +35,9 @@ export const FriendCollections: React.FC<{
       </p>
       <ul className="text-sm pl-2">
         {friendCollections.friendCollections
-          .map(_ => itemsDb.itemsMap.get(_.itemId)!)
+          .map((_) => itemsDb.itemsMap.get(_.itemId)!)
           .filter(Boolean)
-          .map(item => (
+          .map((item) => (
             <li>
               {item.base[ItemColumnType.nameZhS]} / {item.base[ItemColumnType.nameJa]}
             </li>
@@ -48,15 +48,15 @@ export const FriendCollections: React.FC<{
   );
 };
 
-export const FriendsPageIWantSection: React.FC = props => {
+export const FriendsPageIWantSection: React.FC = (props) => {
   const x = useResolvedFriendCollections();
   return (
     <RenderPromiseEither promise={x}>
-      {resolved => (
+      {(resolved) => (
         <RenderPromise promise={itemsDatabaseV3}>
-          {itemsDb => (
+          {(itemsDb) => (
             <div>
-              {resolved.friendsOwns.map(friendCollections => (
+              {resolved.friendsOwns.map((friendCollections) => (
                 <FriendCollections itemsDb={itemsDb} friendCollections={friendCollections} friendSuffix="拥有:" />
               ))}
             </div>
@@ -67,15 +67,15 @@ export const FriendsPageIWantSection: React.FC = props => {
   );
 };
 
-export const FriendsPageFriendsWantSection: React.FC = props => {
+export const FriendsPageFriendsWantSection: React.FC = (props) => {
   const x = useResolvedFriendCollections();
   return (
     <RenderPromiseEither promise={x}>
-      {resolved => (
+      {(resolved) => (
         <RenderPromise promise={itemsDatabaseV3}>
-          {itemsDb => (
+          {(itemsDb) => (
             <div>
-              {resolved.friendWants.map(friendCollections => (
+              {resolved.friendWants.map((friendCollections) => (
                 <FriendCollections itemsDb={itemsDb} friendCollections={friendCollections} friendSuffix="想要:" />
               ))}
             </div>
@@ -86,7 +86,7 @@ export const FriendsPageFriendsWantSection: React.FC = props => {
   );
 };
 
-const FriendsPageResolved: React.FC<{ resolved: unknown[] }> = props => null;
+const FriendsPageResolved: React.FC<{ resolved: unknown[] }> = (props) => null;
 
 const FriendsPage: React.FC = () => {
   return (

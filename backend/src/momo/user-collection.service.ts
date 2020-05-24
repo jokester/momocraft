@@ -2,14 +2,15 @@ import { Inject, Injectable } from '@nestjs/common';
 import { TypeORMConnection } from '../db/typeorm-connection.provider';
 import { Connection, In } from 'typeorm';
 import { UserAccount } from '../db/entities/user-account';
-import { CollectionState, ItemCollectionEntry } from '../linked-frontend/model/collection';
 import { UserItemCollection } from '../db/entities/user-item-collection';
 import { getDebugLogger } from '../util/get-debug-logger';
 import { TypeORMUtils } from '../util/typeorm-upsert';
-import { UserFriendCollection } from '../linked-frontend/model/friend';
 import { DefaultMap } from '../ts-commonutil/collection/default-map';
 import { UserFriendRequest } from '../db/entities/user-friend-request';
 import { transform } from './user-friend.service';
+import { ItemCollectionDto } from '../model/collections.dto';
+import { CollectionState } from '../const/collection';
+import { UserFriendCollectionDto } from '../model/friends.dto';
 
 const logger = getDebugLogger(__filename);
 
@@ -17,9 +18,9 @@ const logger = getDebugLogger(__filename);
 export class UserCollectionService {
   constructor(@Inject(TypeORMConnection) private conn: Connection) {}
 
-  async updateCollection(user: UserAccount, entries: ItemCollectionEntry[]): Promise<ItemCollectionEntry[]> {
+  async updateCollection(user: UserAccount, entries: ItemCollectionDto[]): Promise<ItemCollectionDto[]> {
     const toSave = entries.map(
-      _ =>
+      (_) =>
         new UserItemCollection({
           userId: user.userId,
           itemId: _.itemId,
@@ -34,16 +35,16 @@ export class UserCollectionService {
     `,
     ]);
 
-    return saved.map(_ => ({ state: _.itemState as CollectionState, itemId: _.itemId }));
+    return saved.map((_) => ({ state: _.itemState as CollectionState, itemId: _.itemId }));
   }
 
-  async findByUser(user: UserAccount): Promise<ItemCollectionEntry[]> {
+  async findByUser(user: UserAccount): Promise<ItemCollectionDto[]> {
     const found = await this.conn.getRepository(UserItemCollection).find({ userId: user.userId });
 
-    return found.map(_ => ({ state: _.itemState as CollectionState, itemId: _.itemId }));
+    return found.map((_) => ({ state: _.itemState as CollectionState, itemId: _.itemId }));
   }
 
-  async listFriendCollections(friendUsers: UserFriendRequest[]): Promise<UserFriendCollection[]> {
+  async listFriendCollections(friendUsers: UserFriendRequest[]): Promise<UserFriendCollectionDto[]> {
     if (!friendUsers.length)
       return [
         /* to prevent SQL syntax error: `IN ()` */
@@ -51,15 +52,15 @@ export class UserCollectionService {
 
     const collectionsList = await this.conn
       .getRepository(UserItemCollection)
-      .find({ where: { userId: In(friendUsers.map(f => f.toUser.userId)) } });
+      .find({ where: { userId: In(friendUsers.map((f) => f.toUser.userId)) } });
 
-    const collectionsMap = new DefaultMap<string, ItemCollectionEntry[]>(_ => []);
+    const collectionsMap = new DefaultMap<string, ItemCollectionDto[]>((_) => []);
 
     for (const c of collectionsList) {
       collectionsMap.getOrCreate(c.userId).push({ itemId: c.itemId, state: c.itemState as CollectionState });
     }
 
-    return friendUsers.map(friend => ({
+    return friendUsers.map((friend) => ({
       friend: transform.friend(friend),
       friendCollections: collectionsMap.getOrCreate(friend.toUser.userId),
     }));

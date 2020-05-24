@@ -17,8 +17,8 @@ describe(UserService, () => {
   });
 
   const foldUser = fold<string, UserAccount, Partial<UserAccount & { _error?: string }>>(
-    l => ({ _error: l }),
-    r => r,
+    (l) => ({ _error: l }),
+    (r) => r,
   );
 
   describe('create user with google outh', () => {

@@ -18,12 +18,12 @@ export class UserFriendRequest {
   @PrimaryGeneratedColumn()
   userFriendRequestId!: number;
 
-  @ManyToOne(type => UserAccount, { eager: true })
+  @ManyToOne((type) => UserAccount, { eager: true })
   @JoinColumn()
   @Index()
   fromUser!: UserAccount;
 
-  @ManyToOne(type => UserAccount, { eager: true })
+  @ManyToOne((type) => UserAccount, { eager: true })
   @JoinColumn()
   @Index()
   toUser!: UserAccount;

@@ -3,12 +3,12 @@ import { CenterH, Layout } from '../src/components/layout/layout';
 import { Button, FormGroup, InputGroup, Label } from '@blueprintjs/core';
 import React, { ChangeEvent, useCallback, useState } from 'react';
 import { useSingletons } from '../src/internal/app-context';
-import { ApiResponseSync } from '../src/service/api-convention';
+import { ApiResponseSync } from '../src/api/api-convention';
 import { isLeft } from 'fp-ts/lib/Either';
 import { createLogger } from '../src/util/debug-logger';
-import { HankoUser } from '../src/api/hanko-api';
 import gravatarUrl from 'gravatar-url';
 import { useAuthState } from '../src/components/hooks/use-auth-state';
+import { UserProfileDto } from '../src/api-generated/models';
 
 const logger = createLogger(__filename);
 
@@ -19,7 +19,7 @@ const AuthState: React.FC = () => {
 
   const { user: self, pendingAuth } = useAuthState();
 
-  const onAuthResult = useCallback((res: ApiResponseSync<HankoUser>) => {
+  const onAuthResult = useCallback((res: ApiResponseSync<UserProfileDto>) => {
     if (isLeft(res)) {
       toaster.current.show({ intent: 'warning', message: `登录失败: ${res.left}` });
     } else {
@@ -43,7 +43,7 @@ const AuthState: React.FC = () => {
       </Button>
     </div>
   ) : (
-    <form onSubmit={ev => ev.preventDefault()} className="text-sm">
+    <form onSubmit={(ev) => ev.preventDefault()} className="text-sm">
       <FormGroup>
         <Label>
           邮箱
@@ -96,7 +96,7 @@ const AuthState: React.FC = () => {
   return <CenterH className="mt-32">{content}</CenterH>;
 };
 
-const FormWarning: React.FC = props => {
+const FormWarning: React.FC = (props) => {
   return (
     <div className="inline-block w-2/3 md:w-1/2 leading-tight">
       <h2 className="font-semibold">注意</h2>
@@ -115,7 +115,7 @@ const AccountPageContent: React.FC = () => {
   );
 };
 
-const AccountPage: PageType = props => {
+const AccountPage: PageType = (props) => {
   return (
     <Layout>
       <AccountPageContent />

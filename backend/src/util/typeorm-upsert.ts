@@ -8,11 +8,7 @@ async function upsert<E>(
   values: E[],
   onConflict: string[],
 ): Promise<E[]> {
-  let q = conn
-    .createQueryBuilder()
-    .insert()
-    .into(entityTarget)
-    .values(values);
+  let q = conn.createQueryBuilder().insert().into(entityTarget).values(values);
 
   for (let i = 0; i < onConflict.length; i++) {
     q = q.onConflict(onConflict[i]);

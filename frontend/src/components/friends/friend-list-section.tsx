@@ -1,12 +1,13 @@
 import React, { ChangeEvent, useState } from 'react';
 import { useAuthState } from '../hooks/use-auth-state';
 import { useSingletons } from '../../internal/app-context';
-import { useVersionedMemo } from '../generic-hooks/use-versioned-memo';
-import { useConcurrencyControl } from '../generic-hooks/use-concurrency-control';
+import { useVersionedMemo } from '@jokester/ts-commonutil/react/hook/use-versioned-memo';
+import { useConcurrencyControl } from '@jokester/ts-commonutil/react/hook/use-concurrency-control';
 import { Button, FormGroup, InputGroup, Label } from '@blueprintjs/core';
 import { fold } from 'fp-ts/lib/Either';
-import { FriendUser } from '../../model/friend';
 import { RenderPromiseEither } from '../hoc/render-promise-either';
+import { FriendUserDto } from '../../api-generated/models';
+import { ApiError } from '../../api/api-convention';
 
 export const FriendListSection: React.FC = () => {
   const authedUser = useAuthState();
@@ -43,7 +44,7 @@ export const FriendListSection: React.FC = () => {
           loading={concurrency > 1}
           disabled={concurrency > 1}
           onClick={() =>
-            withLock(async mounted => {
+            withLock(async (mounted) => {
               const added = await singletons.friends.saveFriend({
                 targetUserOrEmail: friendEmailO,
                 comment: comment,
@@ -53,11 +54,11 @@ export const FriendListSection: React.FC = () => {
               if (!mounted.current) return;
 
               fold(
-                (l: string) => {
+                (l: ApiError) => {
                   singletons.toaster.current.show({ intent: 'warning', message: `添加好友失败: ${l}` });
                 },
 
-                (r: FriendUser) => {
+                (r: FriendUserDto) => {
                   refreshFriendList();
                   singletons.toaster.current.show({ intent: 'success', message: `添加好友成功` });
                 },
@@ -67,7 +68,7 @@ export const FriendListSection: React.FC = () => {
         />
       </FormGroup>
       <RenderPromiseEither promise={friendsP}>
-        {friends => (
+        {(friends) => (
           <ul className="px-8 py-2 space-y-4">
             {friends.map((f, i) => (
               <li

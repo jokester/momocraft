@@ -12,18 +12,13 @@ import { fromNullable, isNone, Option } from 'fp-ts/lib/Option';
 import { absent } from '../util/absent';
 import { Sanitize } from '../util/input-santinizer';
 import { randomAlphaNum } from '../ts-commonutil/text/random-string';
-import { ErrorCodeEnum } from '../linked-frontend/model/error-code';
+import { ErrorCodeEnum } from '../const/error-code';
+import { UserProfileDto } from '../model/user-profile.dto';
 
 const logger = getDebugLogger(__filename);
 
 interface JwtTokenPayload {
   userId: string;
-}
-
-export interface ResolvedUser {
-  userId: string;
-  email: string;
-  avatarUrl?: string;
 }
 
 @Injectable()
@@ -82,7 +77,7 @@ export class UserService {
     return this.conn
       .getRepository(UserAccount)
       .save(user)
-      .then(right, err => {
+      .then(right, (err) => {
         logger('UserService#signUpWithEmail error creating', err);
         return left(ErrorCodeEnum.userExisted);
       });
@@ -104,9 +99,9 @@ export class UserService {
     return left(ErrorCodeEnum.passwordUnmatch);
   }
 
-  async resolveUser(userAccount: UserAccount): Promise<ResolvedUser> {
+  async resolveUser(userAccount: UserAccount): Promise<UserProfileDto> {
     const oauthAccounts = await this.conn.getRepository(OAuthAccount).find({ userId: userAccount.internalUserId });
-    const resolved: ResolvedUser = {
+    const resolved: UserProfileDto = {
       userId: userAccount.userId,
       email: userAccount.emailId,
       avatarUrl: undefined,
@@ -168,7 +163,7 @@ export class UserService {
     const randomHash = await this.entropy.bcryptHash(randomAlphaNum(16));
 
     // try create
-    const res = await this.conn.transaction(async entityManager => {
+    const res = await this.conn.transaction(async (entityManager) => {
       const userAccount = await entityManager.save(
         new UserAccount({
           userId: this.entropy.createUserStringId(),

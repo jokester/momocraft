@@ -1,5 +1,5 @@
 import { Either, left, right } from 'fp-ts/lib/Either';
-import { ErrorCodeEnum } from '../linked-frontend/model/error-code';
+import { ErrorCodeEnum } from '../const/error-code';
 
 function sanitizeEmail(email: string): Either<string, string> {
   const trimmed = (email || '').trim().toLowerCase();
