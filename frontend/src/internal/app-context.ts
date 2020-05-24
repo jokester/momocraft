@@ -1,43 +1,36 @@
 import React, { createContext, createElement, MutableRefObject, useContext, useEffect, useMemo } from 'react';
 import { createLogger } from '../util/debug-logger';
 import { buildEnv, inServer, isDevBuild } from '../config/build-env';
-import { Never } from '@jokester/ts-commonutil/concurrency/timing';
-import { ApiClient } from './service-impl/client';
-import { AuthServiceImpl } from './service-impl/auth-service';
-import { AuthService } from '../service/auth-service';
-import { CollectionServiceImpl } from './service-impl/collection-service';
-import { CollectionService } from '../service/collection-service';
+import { AuthServiceImpl } from './auth-service';
+import { CollectionServiceImpl } from './collection-service';
 import { Toaster } from '@blueprintjs/core';
-import { FriendServiceImpl } from './service-impl/friend-service';
-import { FriendService } from '../service/friend-service';
+import { FriendServiceImpl } from './friend-service';
+import { bindApi } from '../api/bind-api';
 
 type Singletons = ReturnType<typeof initSingletons>;
 
 const AppContext = createContext<Singletons>(null!);
 
-let singletonObjects: null | {
-  auth: AuthService;
-  collection: CollectionService;
-  friends: FriendService;
-} = null;
+let singletonObjects: null | ReturnType<typeof createSingletons> = null;
+
+function createSingletons() {
+  const logger = createLogger(__filename);
+  logger('build env', isDevBuild, buildEnv);
+
+  const auth = new AuthServiceImpl(bindApi, !inServer);
+  const collection = new CollectionServiceImpl(bindApi, auth);
+  const friends = new FriendServiceImpl(bindApi, auth, collection);
+
+  return {
+    auth,
+    collection,
+    friends,
+  } as const;
+}
 
 function initSingletons(props: { toasterRef: MutableRefObject<Toaster> }) {
   if (!singletonObjects) {
-    const logger = createLogger(__filename);
-    logger('build env', isDevBuild, buildEnv);
-
-    const fetchImpl = inServer ? () => Never : fetch.bind(window);
-    const apiClient = new ApiClient(fetchImpl, buildEnv.MOMO_SERVER_ORIGIN);
-
-    const auth = new AuthServiceImpl(apiClient, !inServer);
-    const collection = new CollectionServiceImpl(auth, apiClient);
-    const friends = new FriendServiceImpl(auth, collection, apiClient);
-
-    singletonObjects = {
-      auth,
-      collection,
-      friends,
-    };
+    singletonObjects = createSingletons();
   }
 
   return {

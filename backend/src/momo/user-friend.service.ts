@@ -4,8 +4,8 @@ import { Connection } from 'typeorm';
 import { UserAccount } from '../db/entities/user-account';
 import { UserFriendRequest } from '../db/entities/user-friend-request';
 import { TypeORMUtils } from '../util/typeorm-upsert';
-import { FriendUser } from '../linked-frontend/model/friend';
 import gravatarUrl from 'gravatar-url';
+import { FriendUserDto } from '../model/friends.dto';
 
 @Injectable()
 export class UserFriendService {
@@ -57,7 +57,7 @@ export class UserFriendService {
 }
 
 export const transform = {
-  friend(request: UserFriendRequest): FriendUser {
+  friend(request: UserFriendRequest): FriendUserDto {
     return {
       userId: request.toUser.userId,
       comment: request.comment,

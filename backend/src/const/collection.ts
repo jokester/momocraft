@@ -8,8 +8,3 @@ export const enum CollectionState {
 
   // unset = 'unset', (just use null)
 }
-
-export interface ItemCollectionEntry {
-  itemId: string;
-  state: CollectionState;
-}

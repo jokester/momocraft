@@ -3,31 +3,27 @@ import {
   Body,
   Controller,
   Get,
-  HttpCode,
   NotFoundException,
   Param,
   Put,
   UnauthorizedException,
 } from '@nestjs/common';
 
-import { ResolvedUser, UserService } from '../user/user.service';
+import { UserService } from '../user/user.service';
 import { getRightOrThrow, getSomeOrThrow } from '../util/fpts-getter';
 import { getDebugLogger } from '../util/get-debug-logger';
 import { UserAccount } from '../db/entities/user-account';
 import { AuthedUser } from '../user/user-jwt-auth.middleware';
 import { Sanitize } from '../util/input-santinizer';
-import {
-  CollectionResBody,
-  FriendCollectionsResBody,
-  FriendListResBody,
-  UserFriendRequestPayload,
-} from '../linked-frontend/api/momo-api';
 import { UserCollectionService } from './user-collection.service';
-import { ErrorCodeEnum } from '../linked-frontend/model/error-code';
+import { ErrorCodeEnum } from '../const/error-code';
 import * as Either from 'fp-ts/lib/Either';
 import { getOrElse } from 'fp-ts/lib/Either';
 import { transform, UserFriendService } from './user-friend.service';
-import { FriendUser } from '../linked-frontend/model/friend';
+import { UserProfileDto } from '../model/user-profile.dto';
+import { ApiCreatedResponse, ApiOkResponse, ApiParam } from '@nestjs/swagger';
+import { UserCollectionListDto } from '../model/collections.dto';
+import { FriendCollectionsDto, FriendListDto, FriendUserDto, UserFriendRequestDto } from '../model/friends.dto';
 
 const logger = getDebugLogger(__filename);
 
@@ -40,7 +36,9 @@ export class MomoUserController {
   ) {}
 
   @Get(':userId/collections')
-  async getCollections(@Param() params: { userId: string }): Promise<CollectionResBody> {
+  @ApiParam({ name: 'userId', type: String })
+  @ApiOkResponse({ type: UserCollectionListDto })
+  async getCollections(@Param() params: { userId: string }): Promise<UserCollectionListDto> {
     logger('UserController#getCollections', params);
 
     const userId = getRightOrThrow(
@@ -57,11 +55,13 @@ export class MomoUserController {
   }
 
   @Put(':userId/collections')
+  @ApiParam({ name: 'userId', type: String })
+  @ApiCreatedResponse({ type: UserCollectionListDto })
   async putCollections(
     @Param() params: { userId: string },
     @AuthedUser() authedUser: UserAccount,
-    @Body() payload: CollectionResBody,
-  ): Promise<CollectionResBody> {
+    @Body() payload: UserCollectionListDto,
+  ): Promise<UserCollectionListDto> {
     logger('UserController#putCollections', params);
 
     if (params.userId !== authedUser.userId) {
@@ -73,12 +73,13 @@ export class MomoUserController {
   }
 
   @Put(':userId/friends')
-  @HttpCode(201)
+  @ApiParam({ name: 'userId', type: String })
+  @ApiCreatedResponse({ type: FriendUserDto })
   async saveUserFriendRequest(
     @Param() params: { userId: string },
     @AuthedUser() authedUser: UserAccount,
-    @Body() payload: UserFriendRequestPayload,
-  ): Promise<FriendUser> {
+    @Body() payload: UserFriendRequestDto,
+  ): Promise<FriendUserDto> {
     if (params.userId !== authedUser.userId) {
       throw new UnauthorizedException('not authenticated', ErrorCodeEnum.notAuthenticated);
     }
@@ -106,7 +107,9 @@ export class MomoUserController {
   }
 
   @Get(':userId/friendCollections')
-  async listFriendCollections(@Param() params: { userId: string }): Promise<FriendCollectionsResBody> {
+  @ApiParam({ name: 'userId', type: String })
+  @ApiOkResponse({ type: FriendCollectionsDto })
+  async listFriendCollections(@Param() params: { userId: string }): Promise<FriendCollectionsDto> {
     const user = getSomeOrThrow(
       await this.userService.findUser({ userId: params.userId }),
       () => new NotFoundException('user not found', ErrorCodeEnum.userNotFound),
@@ -118,13 +121,21 @@ export class MomoUserController {
   }
 
   @Get(':userId/friends')
-  async listFriends(@AuthedUser() currentUser: UserAccount): Promise<FriendListResBody> {
+  @ApiParam({ name: 'userId', type: String })
+  @ApiOkResponse({ type: FriendListDto })
+  async listFriends(@AuthedUser() currentUser: UserAccount): Promise<FriendListDto> {
     const x = await this.friendService.listFriend(currentUser);
     return { friends: x.map(transform.friend) };
   }
 
+  /**
+   * TODO:
+   * @param {UserAccount} authedUser
+   * @param {{}} params
+   * @returns {Promise<UserProfileDto>}
+   */
   @Put('self')
-  async putSelfMeta(@AuthedUser() authedUser: UserAccount, @Body() params: {}): Promise<ResolvedUser> {
+  async putSelfMeta(@AuthedUser() authedUser: UserAccount, @Body() params: {}): Promise<UserProfileDto> {
     logger('UserController#putSelfMeta', authedUser, params);
 
     const updated = await this.userService.updateUserMeta(authedUser, params);

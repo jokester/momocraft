@@ -14,7 +14,7 @@ import { MomoUserController } from '../momo/momo-user.controller';
 import { EntropyService } from '../deps/entropy.service';
 import { getSomeOrThrow } from '../util/fpts-getter';
 import { absent } from '../util/absent';
-import { EmailAuthPayload } from '../linked-frontend/api/hanko-api';
+import { EmailAuthRequestDto } from '../model/auth.dto';
 
 const logger = getDebugLogger(__filename);
 
@@ -62,7 +62,7 @@ describe('AppController (e2e)', () => {
       const res = await request(app.getHttpServer())
         .post('/auth/oauth/google')
         .send({ code: '123', redirectUrl: '456' })
-        .expect(200);
+        .expect(201);
 
       const jwtToken = JSON.parse(res.text).jwtToken;
       expect(jwtToken).toBeTruthy();
@@ -107,7 +107,7 @@ describe('AppController (e2e)', () => {
         // signup fail: email must be unique
         await request(app.getHttpServer())
           .post('/auth/email/signup')
-          .send({ email: 'a@B.com', password: '1234567' } as EmailAuthPayload)
+          .send({ email: 'a@B.com', password: '1234567' } as EmailAuthRequestDto)
           .expect(400);
       }
     });

@@ -5,8 +5,9 @@ import { useVersionedMemo } from '@jokester/ts-commonutil/react/hook/use-version
 import { useConcurrencyControl } from '@jokester/ts-commonutil/react/hook/use-concurrency-control';
 import { Button, FormGroup, InputGroup, Label } from '@blueprintjs/core';
 import { fold } from 'fp-ts/lib/Either';
-import { FriendUser } from '../../model/friend';
 import { RenderPromiseEither } from '../hoc/render-promise-either';
+import { FriendUserDto } from '../../api-generated/models';
+import { ApiError } from '../../api/api-convention';
 
 export const FriendListSection: React.FC = () => {
   const authedUser = useAuthState();
@@ -53,11 +54,11 @@ export const FriendListSection: React.FC = () => {
               if (!mounted.current) return;
 
               fold(
-                (l: string) => {
+                (l: ApiError) => {
                   singletons.toaster.current.show({ intent: 'warning', message: `添加好友失败: ${l}` });
                 },
 
-                (r: FriendUser) => {
+                (r: FriendUserDto) => {
                   refreshFriendList();
                   singletons.toaster.current.show({ intent: 'success', message: `添加好友成功` });
                 },
