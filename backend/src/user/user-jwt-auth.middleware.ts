@@ -11,7 +11,7 @@ import { UserService } from './user.service';
 import { getDebugLogger } from '../util/get-debug-logger';
 import { getRightOrThrow } from '../util/fpts-getter';
 import { UserAccount } from '../db/entities/user-account';
-import { ErrorCodeEnum } from '../linked-frontend/model/error-code';
+import { ErrorCodeEnum } from '../const/error-code';
 
 const logger = getDebugLogger(__filename);
 
