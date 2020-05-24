@@ -1,4 +1,4 @@
-FROM alpine:3.11
+FROM node:12.16-alpine3.11
 
 RUN \
     apk add --no-cache --update yarn nodejs-lts && yarn --production \
