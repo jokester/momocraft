@@ -1,8 +1,8 @@
 FROM node:12.16-buster-slim
 
 RUN \
-    adduser -s /bin/bash -D appuser \
-    && mkdir -pv /app               \
+    adduser --shell /bin/bash appuser \
+    && mkdir -pv /app                 \
     && chown -v appuser:appuser /app
 
 USER appuser
