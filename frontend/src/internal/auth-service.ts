@@ -1,22 +1,27 @@
-import { ApiResponse } from '../../service/api-convention';
+import { ApiResponse, ApiError } from '../api/api-convention';
 import { Either, fold, left, right } from 'fp-ts/lib/Either';
 import { BehaviorSubject, Observable } from 'rxjs';
 
-import * as HttpApi from '../../api/hanko-api';
-import { AuthResponse, EmailAuthPayload, HankoUser } from '../../api/hanko-api';
-
-import { ApiClient } from './client';
 import { map } from 'rxjs/operators';
-import { ErrorCodeEnum } from '../../model/error-code';
-import { toTypedLocalStorage } from '../../util/typed-local-storage';
-import { createLogger } from '../../util/debug-logger';
-import { AuthService, ExposedAuthState } from '../../service/auth-service';
-import { isDevBuild } from '../../config/build-env';
+import { ErrorCodeEnum } from '../const/error-code';
+import { toTypedLocalStorage } from '../util/typed-local-storage';
+import { createLogger } from '../util/debug-logger';
+import { isDevBuild } from '../config/build-env';
+import { AuthedSessionDto } from '../api-generated/models';
+import { ApiProvider } from '../api/bind-api';
+import { EmailAuthRequestDto, UserProfileDto } from '../api-generated';
+import { launderResponse } from '../api/launder-api-response';
 
 const logger = createLogger(__filename);
 
+export interface ExposedAuthState {
+  user?: UserProfileDto;
+  profile: null;
+  pendingAuth: boolean;
+}
+
 interface InternalAuthState {
-  identity: null | AuthResponse;
+  identity: null | AuthedSessionDto;
   pendingAuth: boolean;
 }
 
@@ -26,9 +31,9 @@ const exposeAuthState = map<InternalAuthState, ExposedAuthState>((_: InternalAut
   profile: null,
 }));
 
-export class AuthServiceImpl implements AuthService {
+export class AuthServiceImpl {
   private readonly persist = toTypedLocalStorage<{
-    moAur: AuthResponse;
+    moAur: AuthedSessionDto;
   }>();
 
   private readonly _authState = new BehaviorSubject<InternalAuthState>({
@@ -36,7 +41,11 @@ export class AuthServiceImpl implements AuthService {
     identity: this.persist.getItem('moAur'),
   });
 
-  constructor(private readonly apiClient: ApiClient, refreshSession: boolean) {
+  constructor(
+    private readonly useApi: ApiProvider,
+
+    refreshSession: boolean,
+  ) {
     logger('authState.init', this._authState.value);
 
     if (isDevBuild) {
@@ -59,23 +68,24 @@ export class AuthServiceImpl implements AuthService {
     return this._authState.pipe(exposeAuthState);
   }
 
-  async emailSignUp(param: EmailAuthPayload): ApiResponse<HankoUser> {
+  async emailSignUp(param: EmailAuthRequestDto): ApiResponse<UserProfileDto> {
+    if (this.hasPendingAuth) return left(ErrorCodeEnum.maxConcurrencyExceeded);
     this.onStartAuth();
-    const res = await this.c.postJson<HttpApi.AuthResponse>(this.r.hankoAuth.emailSignUp, {}, param);
+    const res = await launderResponse(this.useApi().authControllerDoEmailSignUpRaw({ emailAuthRequestDto: param }));
     return this.onAuthResponse(res);
   }
 
-  async emailSignIn(param: EmailAuthPayload): ApiResponse<HankoUser> {
+  async emailSignIn(param: EmailAuthRequestDto): ApiResponse<UserProfileDto> {
+    if (this.hasPendingAuth) return left(ErrorCodeEnum.maxConcurrencyExceeded);
     this.onStartAuth();
-    const res = await this.c.postJson<HttpApi.AuthResponse>(this.r.hankoAuth.emailSignIn, {}, param);
+    const res = await launderResponse(this.useApi().authControllerDoEmailSignInRaw({ emailAuthRequestDto: param }));
     return this.onAuthResponse(res);
   }
 
   private async refreshSession() {
+    if (this.hasPendingAuth) return left(ErrorCodeEnum.maxConcurrencyExceeded);
     this.onStartAuth();
-    const res = await this.withAuthedIdentity((currentUser, authHeader) =>
-      this.c.postJson<HttpApi.AuthResponse>(this.r.hankoAuth.refreshToken, authHeader, {}),
-    );
+    const res = await launderResponse(this.useApi().authControllerDoRefreshTokenRaw());
     return this.onAuthResponse(res);
   }
 
@@ -90,12 +100,12 @@ export class AuthServiceImpl implements AuthService {
 
   async withAuthedIdentity<T>(
     consumer: (
-      currentUser: HankoUser,
+      currentUser: UserProfileDto,
       authHeader: Record<string, string>,
       isRetry: boolean,
-    ) => Promise<Either<string, T>>,
+    ) => Promise<Either<ApiError, T>>,
     authRefresh = false,
-  ): Promise<Either<string, T>> {
+  ): Promise<Either<ApiError, T>> {
     const identity = this._authState.value.identity;
 
     if (identity) {
@@ -106,18 +116,15 @@ export class AuthServiceImpl implements AuthService {
     return left(ErrorCodeEnum.notAuthenticated);
   }
 
-  private get c() {
-    return this.apiClient;
-  }
-  private get r() {
-    return this.apiClient.route;
+  private get hasPendingAuth() {
+    return !!this._authState.value.identity;
   }
 
   private onStartAuth = () => {
     this._authState.next({ ...this._authState.value, pendingAuth: true });
   };
 
-  private onAuthResponse = fold<string, HttpApi.AuthResponse, Either<string, HankoUser>>(
+  private onAuthResponse = fold<ApiError, AuthedSessionDto, Either<ApiError, UserProfileDto>>(
     (l) => {
       this._authState.next({ identity: null, pendingAuth: false });
       return left(l);

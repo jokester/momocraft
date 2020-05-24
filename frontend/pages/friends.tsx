@@ -8,7 +8,7 @@ import { RenderPromiseEither } from '../src/components/hoc/render-promise-either
 import { ItemsDatabaseV3, itemsDatabaseV3 } from '../src/items-db/dynamic-load-db';
 import { RenderPromise } from '@jokester/ts-commonutil/react/hoc/render-promise';
 import { ItemColumnType } from '../src/model/item-id-def';
-import { UserFriendCollection } from '../src/model/friend';
+import { UserFriendCollectionDto } from '../src/api-generated/models';
 
 const FriendsPageContent: React.FC = () => {
   const [section, setSection] = useState(1 as 0 | 1 | 2);
@@ -25,7 +25,7 @@ const FriendsPageContent: React.FC = () => {
 
 export const FriendCollections: React.FC<{
   itemsDb: ItemsDatabaseV3;
-  friendCollections: UserFriendCollection;
+  friendCollections: UserFriendCollectionDto;
   friendSuffix: string;
 }> = ({ friendCollections, itemsDb, friendSuffix }) => {
   return (

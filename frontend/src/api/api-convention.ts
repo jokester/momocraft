@@ -1,7 +1,14 @@
 import { Either, flatten, map } from 'fp-ts/lib/Either';
+import { ErrorCodeEnum } from '../const/error-code';
 
 export type ApiResponse<T> = Promise<ApiResponseSync<T>>;
-export type ApiResponseSync<T> = Either</* error code / error message */ string, T>;
+export type ApiResponseSync<T> = Either<ApiError, T>;
+
+export type ApiError = ErrorCodeEnum | ComplicatedErrorMessage;
+
+export interface ComplicatedErrorMessage {
+  message: string;
+}
 
 export const dummyAuthState = {
   user: undefined,

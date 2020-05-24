@@ -1,14 +1,16 @@
 import { useSingletons } from '../../internal/app-context';
 import { useMemo } from 'react';
-import { CollectionState, ItemCollectionEntry } from '../../model/collection';
+import { CollectionState } from '../../const/collection';
 import { Maps } from '@jokester/ts-commonutil/collection/maps';
 import { fold, map, right } from 'fp-ts/lib/Either';
 import { useConcurrencyControl } from '@jokester/ts-commonutil/react/hook/use-concurrency-control';
 import { useDependingState } from '@jokester/ts-commonutil/react/hook/use-depending-state';
 import { itemsDatabaseV3, ItemsDatabaseV3 } from '../../items-db/dynamic-load-db';
+import { ItemCollectionDto } from '../../api-generated/models';
+import { ApiError } from '../../api/api-convention';
 
 const builder = {
-  buildCollectionMap: (itemsDb: ItemsDatabaseV3, userId: null | string, f: ItemCollectionEntry[]) => {
+  buildCollectionMap: (itemsDb: ItemsDatabaseV3, userId: null | string, f: ItemCollectionDto[]) => {
     const want = f.filter((_) => _.state === CollectionState.want && itemsDb.itemsMap.has(_.itemId));
 
     const owns = f.filter((_) => _.state === CollectionState.own && itemsDb.itemsMap.has(_.itemId));
@@ -30,11 +32,11 @@ export function useCollectionList(userId: null | string) {
     if (userId) {
       const [itemsDb, fetched] = await Promise.all([itemsDatabaseV3, singletons.collection.fetchCollections(userId)]);
 
-      return map((f: ItemCollectionEntry[]) => builder.buildCollectionMap(itemsDb, userId, f))(fetched);
+      return map((f: ItemCollectionDto[]) => builder.buildCollectionMap(itemsDb, userId, f))(fetched);
     } else {
       const itemsDb = await itemsDatabaseV3;
 
-      return map((f: ItemCollectionEntry[]) => builder.buildCollectionMap(itemsDb, userId, f))(right([]));
+      return map((f: ItemCollectionDto[]) => builder.buildCollectionMap(itemsDb, userId, f))(right([]));
     }
   }, [singletons, userId]);
   return fetched;
@@ -61,10 +63,10 @@ export function useCollectionApi(itemId: string, initialMap: null | CollectionSt
           const x = await singletons.collection.saveCollections([{ itemId: itemId, state: newState }]);
 
           fold(
-            (l: string) => {
+            (l: ApiError) => {
               singletons.toaster.current.show({ intent: 'warning', message: `保存失败: ${l}` });
             },
-            (r: ItemCollectionEntry[]) => {
+            (r: ItemCollectionDto[]) => {
               mounted.current && setLocalState(newState);
               singletons.toaster.current.show({ intent: 'success', message: `保存成功`, timeout: 1e3 }, 'saved');
             },
