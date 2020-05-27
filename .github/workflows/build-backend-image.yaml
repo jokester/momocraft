@@ -1,0 +1,36 @@
+on:
+  push:
+    branches: [ master ]
+
+jobs:
+  build_docker_images:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Log in to registry
+        uses: azure/docker-login@v1
+        with:
+          login-server: docker.pkg.github.com
+          username: jokester
+          password: ${{ secrets.GH_ACCESS_TOKEN }}
+
+      - name: Set up Docker Buildx
+        id: buildx
+        uses: crazy-max/ghaction-docker-buildx@v1
+        with:
+          buildx-version: v0.4.1
+          qemu-version: 4.2.0-7
+
+      - name: Echo Available platforms
+        run: echo ${{ steps.buildx.outputs.platforms }}
+
+      - name: Run Buildx
+        run: |
+          docker buildx build \
+            --platform linux/amd64,linux/arm64    \
+            --output "type=image,push=true"       \
+            --file ./backend/Dockerfile ./backend \
+            --tag docker.pkg.github.com/jokester/momocraft/backend:latest
+
