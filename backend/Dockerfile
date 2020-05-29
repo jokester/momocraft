@@ -9,7 +9,7 @@ RUN                                             \
 USER appuser
 COPY . /app/
 WORKDIR /app
-RUN find && yarn --production && rm -rf ~/.cache
+RUN yarn && yarn build && yarn --production && rm -rf ~/.cache
 
 # -----
 
