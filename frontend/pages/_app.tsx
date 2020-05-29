@@ -1,6 +1,6 @@
 import React from 'react';
 import App from 'next/app';
-import '../src/app.scss';
+import '../src/app.css';
 
 export default class extends App {
   static getInitialProps = App.getInitialProps;

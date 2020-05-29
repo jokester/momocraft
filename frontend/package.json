@@ -32,6 +32,7 @@
     "react-intersection-observer": "^8.26.2",
     "reset-css": "^5.0.1",
     "rxjs": "^6.5.5",
+    "tailwindcss": "^1.4.6",
     "tslib": "^1.11.2",
     "viewport-observer": "^2.3.0"
   },

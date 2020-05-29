@@ -7,6 +7,8 @@ const optimizedImages = require('next-optimized-images');
 const withBundleAnalyzer = require('@zeit/next-bundle-analyzer');
 const withTM = require('next-transpile-modules');
 
+const tailwindcss = require('tailwindcss');
+
 const nextConf = {
   analyzeServer: ['server', 'both'].includes(process.env.BUNDLE_ANALYZE),
   analyzeBrowser: ['browser', 'both'].includes(process.env.BUNDLE_ANALYZE),
