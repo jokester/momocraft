@@ -8,6 +8,10 @@ export default class CustomDocument extends Document {
       <html lang="zh-CN">
         <Head>
           <GoogleAnalyticsTag />
+
+          <meta charSet="utf-8" />
+          <title>Momocraft</title>
+
           <link
             key="font-awesome"
             rel="stylesheet"
