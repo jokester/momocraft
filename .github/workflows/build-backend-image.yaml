@@ -1,6 +1,6 @@
 on:
   push:
-    branches: [ master ]
+    branches: []
 
 jobs:
   build_docker_images:
