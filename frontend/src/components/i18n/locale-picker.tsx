@@ -19,7 +19,7 @@ export const LocalePicker: React.FC = () => {
       }}
     >
       {LangMap.map(([_, langCode, langName]) => (
-        <option key={langCode} value={langCode}>
+        <option key={langCode} selected={langCode === i18n.language} value={langCode}>
           {langName}
         </option>
       ))}
