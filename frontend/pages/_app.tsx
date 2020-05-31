@@ -11,6 +11,8 @@ const logger = createLogger(__filename);
 const RealApp: React.FC<CommonPageProps> = (props) => {
   const toasterRef = useRef<Toaster>(null!);
 
+  logger('initialLang', props.langCode);
+
   return (
     <AppContextHolder toasterRef={toasterRef} initialLang={props.langCode}>
       {props.children}>

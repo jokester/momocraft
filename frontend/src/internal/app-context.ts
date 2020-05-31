@@ -8,7 +8,8 @@ import { FriendServiceImpl } from './friend-service';
 import { bindApi } from '../api/bind-api';
 import '../i18n/init-i18n';
 import { useLifeCycle } from '../components/generic-hooks/use-life-cycle';
-import { initI18n, LangCode } from '../i18n/init-i18n';
+import { LangCode } from '../i18n/init-i18n';
+import { useI18nProvider, I18NextReactContext } from '../i18n/i18next-react';
 
 type Singletons = ReturnType<typeof initSingletons>;
 
@@ -18,10 +19,8 @@ let singletonObjects: null | ReturnType<typeof createSingletons> = null;
 
 const logger = createLogger(__filename);
 
-function createSingletons(langCode: LangCode) {
+function createSingletons() {
   logger('build env', isDevBuild, buildEnv);
-
-  initI18n(langCode);
 
   const auth = new AuthServiceImpl(bindApi, !inServer);
   const collection = new CollectionServiceImpl(bindApi, auth);
@@ -36,7 +35,7 @@ function createSingletons(langCode: LangCode) {
 
 function initSingletons(props: { toasterRef: MutableRefObject<Toaster>; langCode: LangCode }) {
   if (!singletonObjects) {
-    singletonObjects = createSingletons(props.langCode);
+    singletonObjects = createSingletons();
   }
 
   return {
@@ -50,6 +49,8 @@ export const AppContextHolder: React.FC<{ initialLang?: LangCode; toasterRef: Mu
   initialLang,
   children,
 }) => {
+  const i18nProvider = useI18nProvider(initialLang || LangCode.en);
+
   const singletons = useMemo(() => initSingletons({ toasterRef, langCode: initialLang || LangCode.en }), []);
 
   const lifeCycle = useLifeCycle(
@@ -59,7 +60,7 @@ export const AppContextHolder: React.FC<{ initialLang?: LangCode; toasterRef: Mu
 
   return createElement(AppContext.Provider, {
     value: singletons,
-    children,
+    children: createElement(I18NextReactContext.Provider, { value: i18nProvider }, children),
   });
 };
 

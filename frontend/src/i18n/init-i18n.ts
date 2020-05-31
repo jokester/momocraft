@@ -1,12 +1,11 @@
-import i18n, { InitOptions } from 'i18next';
+import i18n, { InitOptions, ThirdPartyModule } from 'i18next';
 
 import * as en from './json/en.json';
 import * as ja from './json/ja.json';
 import * as zhS from './json/zh-hans.json';
 import * as zhT from './json/zh-hant.json';
-import { inBrowser, isDevBuild } from '../config/build-env';
+import { inBrowser, inServer, isDevBuild } from '../config/build-env';
 import { createLogger } from '../util/debug-logger';
-import { initReactI18next, setDefaults } from 'react-i18next';
 
 const logger = createLogger(__filename);
 
@@ -18,8 +17,7 @@ export const enum LangCode {
 }
 
 export const LangMap = [
-  /* [browser-language, our-language, label] */
-  [/^en/i, LangCode.en, 'English'],
+  /* [browser-language, our-language, label] */ [/^en/i, LangCode.en, 'English'],
   [/^zh-(cn|sg)/i, LangCode.zhHanS, '简体中文'],
   [/^zh/i, LangCode.zhHanT, '繁體中文'],
   [/^ja/i, LangCode.ja, '日本語'],
@@ -39,16 +37,9 @@ function pickFallbackLanguages(wanted: LangCode) {
   }
 }
 
-/**
- * no need to useSuspense: nextjs dont support it && we dont have async resource
- */
-setDefaults({ useSuspense: false });
-
 const defaultI18nOptions: InitOptions = {
-  debug: true,
   defaultNS: 'all',
   ns: ['all'],
-  initImmediate: false,
   resources: {
     /* eslint-disable @typescript-eslint/ban-ts-ignore */
     // @ts-ignore
@@ -63,20 +54,22 @@ const defaultI18nOptions: InitOptions = {
   },
 };
 
-export function initI18n(lng: LangCode) {
-  const boundInstance = i18n
-    .createInstance({ ...defaultI18nOptions, lng, fallbackLng: pickFallbackLanguages(lng) })
-    .use(initReactI18next);
+export function createI18nInstance(lng: LangCode, forSsr: boolean, modules?: ThirdPartyModule[]) {
+  const fallbackLangs = pickFallbackLanguages(lng);
 
-  logger('inited', lng, boundInstance);
+  let boundInstance = i18n.createInstance({
+    ...defaultI18nOptions,
+    initImmediate: !forSsr,
+    lng,
+    fallbackLng: fallbackLangs,
+  });
 
-  if (inBrowser && isDevBuild) {
-    for (const event of ['initialized', 'loaded', 'failedLoading', 'missingKey', 'languageChanged'] as const) {
-      i18n.on(event, (ev: unknown) => {
-        logger('i18n', event, ev);
-      });
-    }
-  }
+  modules?.forEach((m) => (boundInstance = boundInstance.use(m)));
 
   boundInstance.init();
+
+  if (inBrowser && isDevBuild) {
+    logger('inited i18n', boundInstance);
+  }
+  return boundInstance;
 }

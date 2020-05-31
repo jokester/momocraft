@@ -35,7 +35,6 @@
     "next": "^9.4.0",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
-    "react-i18next": "^11.5.0",
     "react-intersection-observer": "^8.26.2",
     "reset-css": "^5.0.1",
     "rxjs": "^6.5.5",
