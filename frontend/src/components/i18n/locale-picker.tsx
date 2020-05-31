@@ -15,7 +15,6 @@ export const LocalePicker: React.FC = () => {
         JsCookie.set(CookieConsts.langPref, ev.target.value, {
           expires: CookieConsts.endOfKnownWorld,
           sameSite: 'strict',
-          secure: true,
         });
       }}
     >
