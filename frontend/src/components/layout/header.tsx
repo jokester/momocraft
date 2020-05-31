@@ -4,6 +4,7 @@ import { TypedRoutes } from '../../typed-routes';
 import { FontAwesomeIcon } from '../icon/fontawesome-icon';
 import { useRouter } from 'next/router';
 import classNames from 'classnames';
+import { LocalePicker } from '../i18n/locale-picker';
 
 const SectionLink: React.FC<{ text: string | React.ReactElement; linkTo: string }> = (props) => {
   const here = useRouter().pathname;
@@ -24,5 +25,6 @@ export const Header: React.FC<{ here: string }> = (props) => (
     <SectionLink text="收藏" linkTo={TypedRoutes.collections} />
     <SectionLink text="好友" linkTo={TypedRoutes.friends} />
     <SectionLink text={<FontAwesomeIcon small iconName="fa-user" />} linkTo={TypedRoutes.account} />
+    <LocalePicker />
   </div>
 );
