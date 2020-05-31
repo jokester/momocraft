@@ -1,10 +1,10 @@
-import i18n, { InitOptions, ThirdPartyModule } from 'i18next';
+import i18n, { InitOptions } from 'i18next';
 
 import * as en from './json/en.json';
 import * as ja from './json/ja.json';
 import * as zhS from './json/zh-hans.json';
 import * as zhT from './json/zh-hant.json';
-import { inBrowser, inServer, isDevBuild } from '../config/build-env';
+import { isDevBuild } from '../config/build-env';
 import { createLogger } from '../util/debug-logger';
 
 const logger = createLogger(__filename);
@@ -54,21 +54,19 @@ const defaultI18nOptions: InitOptions = {
   },
 };
 
-export function createI18nInstance(lng: LangCode, forSsr: boolean, modules?: ThirdPartyModule[]) {
+export function createI18nInstance(forSSR: boolean, lng: LangCode) {
   const fallbackLangs = pickFallbackLanguages(lng);
 
   let boundInstance = i18n.createInstance({
     ...defaultI18nOptions,
-    initImmediate: !forSsr,
+    initImmediate: !forSSR,
     lng,
     fallbackLng: fallbackLangs,
   });
 
-  modules?.forEach((m) => (boundInstance = boundInstance.use(m)));
-
   boundInstance.init();
 
-  if (inBrowser && isDevBuild) {
+  if (isDevBuild) {
     logger('inited i18n', boundInstance);
   }
   return boundInstance;

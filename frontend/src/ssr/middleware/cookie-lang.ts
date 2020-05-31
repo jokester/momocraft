@@ -1,5 +1,5 @@
 import { GetServerSidePropsContext } from 'next';
-import { LangCode, LangMap } from '../../i18n/init-i18n';
+import { LangCode, LangMap } from '../../i18n/i18next-factory';
 import * as cookie from 'cookie';
 import { parse as parseHttpAcceptLang } from 'accept-language-parser';
 import { CookieConsts } from './cookie-consts';

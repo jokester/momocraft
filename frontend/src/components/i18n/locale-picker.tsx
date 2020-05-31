@@ -1,4 +1,4 @@
-import { LangMap } from '../../i18n/init-i18n';
+import { LangMap } from '../../i18n/i18next-factory';
 import React from 'react';
 import JsCookie from 'js-cookie';
 import { CookieConsts } from '../../ssr/middleware/cookie-consts';

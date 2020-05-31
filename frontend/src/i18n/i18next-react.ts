@@ -4,40 +4,68 @@
  *
  * - required
  */
-import { createContext, useContext, useEffect, useState } from 'react';
+import { createContext, useContext, useEffect, useState, FunctionComponent, createElement, useRef } from 'react';
 import { i18n } from 'i18next';
-import { createI18nInstance, LangCode } from './init-i18n';
-import { inServer } from '../config/build-env';
 
-export const I18NextReactContext = createContext<InternalI18nState>(null!);
+const I18NextReactContext = createContext<InternalI18nState>(null!);
 
 interface InternalI18nState {
-  // a phantom field to propagate changes
-  readonly lng: string;
-  readonly instance: i18n;
+  /**
+   * a phantom field invisible
+   */
+  lng: string;
+  /**
+   *
+   */
+  instance: i18n;
 }
 
-export function useI18nProvider(propsLang: LangCode) {
-  const [internal, setInternal] = useState<InternalI18nState>(() => {
-    const instance = createI18nInstance(propsLang, inServer);
-    instance.on('languageChanged', (lang) => {
-      setInternal((prevInstance: InternalI18nState) => ({ ...prevInstance, lang }));
-    });
+interface I18NFactory {
+  /**
+   * @param {boolean} inServer
+   * @param {string} lang
+   * @returns {i18n} configured (and possibly loaded) i18n instance
+   */
+  (inServer: boolean, lang?: string): i18n;
+}
 
-    return {
+const inServer = typeof window === 'undefined';
+
+export const I18NextReactProvider: FunctionComponent<{ lang?: string; factory: I18NFactory }> = (props) => {
+  const mounted = useRef(false);
+
+  const [internal, setInternal] = useState<InternalI18nState>(() => {
+    const instance = props.factory(inServer, props.lang);
+
+    const ret = {
       instance,
-      lng: propsLang,
+      lng: instance.language,
     };
+
+    if (!inServer) {
+      instance.on('languageChanged', (lang) => {
+        mounted.current && setInternal((prevInstance: InternalI18nState) => ({ ...prevInstance, lang }));
+      });
+    }
+
+    return ret;
   });
 
   useEffect(() => {
-    if (internal.instance.language !== propsLang) {
-      internal.instance.changeLanguage(propsLang);
-    }
-  }, [propsLang]);
+    mounted.current = true;
+    return () => {
+      mounted.current = false;
+    };
+  }, []);
 
-  return internal;
-}
+  useEffect(() => {
+    if (props.lang && props.lang !== internal.instance.language) {
+      internal.instance.changeLanguage(props.lang); // and continue in languageChanged event handler
+    }
+  }, [props.lang]);
+
+  return createElement(I18NextReactContext.Provider, { value: internal }, props.children);
+};
 
 export function useI18n() {
   return useContext(I18NextReactContext).instance;
