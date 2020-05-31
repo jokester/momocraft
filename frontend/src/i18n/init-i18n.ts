@@ -4,7 +4,7 @@ import * as en from './json/en.json';
 import * as ja from './json/ja.json';
 import * as zhS from './json/zh-hans.json';
 import * as zhT from './json/zh-hant.json';
-import { inBrowser, inServer } from '../config/build-env';
+import { inBrowser, inServer, isDevBuild } from '../config/build-env';
 import { createLogger } from '../util/debug-logger';
 import { initReactI18next, setDefaults } from 'react-i18next';
 
@@ -25,6 +25,22 @@ export const LangMap = [
   [/^ja/i, LangCode.ja, '日本語'],
 ] as const;
 
+function pickFallbackLanguages(wanted: LangCode) {
+  switch (wanted) {
+    case LangCode.ja:
+      return [LangCode.zhHanT, LangCode.zhHanS, LangCode.en];
+    case LangCode.zhHanT:
+      return [LangCode.zhHanS, LangCode.ja, LangCode.en];
+    case LangCode.zhHanS:
+      return [LangCode.zhHanT, LangCode.ja, LangCode.en];
+    case LangCode.en:
+      return [LangCode.ja, LangCode.zhHanS, LangCode.zhHanT];
+  }
+}
+
+/**
+ * no need to useSuspense: nextjs dont support it && we dont have async resource
+ */
 setDefaults({ useSuspense: false });
 
 const defaultI18nOptions = {
@@ -45,12 +61,14 @@ const defaultI18nOptions = {
   },
 };
 
-export function initI18n(lang: LangCode) {
-  const boundInstance = i18n.createInstance({ ...defaultI18nOptions, lng: lang }).use(initReactI18next);
+export function initI18n(lng: LangCode) {
+  const boundInstance = i18n
+    .createInstance({ ...defaultI18nOptions, lng, fallbackLng: pickFallbackLanguages(lng) })
+    .use(initReactI18next);
 
-  logger('inited', lang, boundInstance);
+  logger('inited', lng, boundInstance);
 
-  if (inBrowser) {
+  if (inBrowser && isDevBuild) {
     for (const event of ['initialized', 'loaded', 'failedLoading', 'missingKey', 'languageChanged'] as const) {
       i18n.on(event, (ev: unknown) => {
         logger('i18n', event, ev);
@@ -59,5 +77,4 @@ export function initI18n(lang: LangCode) {
   }
 
   boundInstance.init();
-  return boundInstance;
 }
