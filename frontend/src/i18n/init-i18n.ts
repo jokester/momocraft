@@ -1,4 +1,4 @@
-import i18n from 'i18next';
+import i18n, { InitOptions } from 'i18next';
 
 import * as en from './json/en.json';
 import * as ja from './json/ja.json';
@@ -44,10 +44,11 @@ function pickFallbackLanguages(wanted: LangCode) {
  */
 setDefaults({ useSuspense: false });
 
-const defaultI18nOptions = {
+const defaultI18nOptions: InitOptions = {
   debug: true,
   defaultNS: 'all',
   ns: ['all'],
+  initImmediate: false,
   resources: {
     /* eslint-disable @typescript-eslint/ban-ts-ignore */
     // @ts-ignore
