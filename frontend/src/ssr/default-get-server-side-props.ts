@@ -1,6 +1,6 @@
 import { GetServerSideProps } from 'next';
 import { createLogger } from '../util/debug-logger';
-import { handleLangCookieAndReturnLanguage } from './middleware/cookie-lang';
+import { inferLangForCookie } from './middleware/cookie-lang';
 
 const logger = createLogger(__filename);
 
@@ -9,7 +9,7 @@ export const defaultGetServerSideProps: GetServerSideProps = async (ctx) => {
 
   return {
     props: {
-      ...handleLangCookieAndReturnLanguage(ctx),
+      ...inferLangForCookie(ctx),
     },
   } as const;
 };
