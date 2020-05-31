@@ -1,6 +1,7 @@
 import React from 'react';
 import App from 'next/app';
 import '../src/app.scss';
+import { defaultGetServerSideProps } from '../src/ssr/detect-accept-lang';
 
 export default class extends App {
   static getInitialProps = App.getInitialProps;

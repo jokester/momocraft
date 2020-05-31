@@ -19,7 +19,7 @@ export const enum LangCode {
 
 const defaultLang = LangCode.en;
 
-export const langMap = [
+export const LangMap = [
   /* [browser-language, our-language] */
   [/^en/i, LangCode.en, 'English'],
   [/^zh-(cn|sg)/i, LangCode.zhHanS, '简体中文'],
@@ -31,7 +31,7 @@ export function detectClientLang(): LangCode {
   if (typeof navigator === 'undefined') return defaultLang;
 
   for (const possibleLang of [navigator.language, ...(navigator.languages ?? [])]) {
-    for (const [pattern, lang] of langMap) {
+    for (const [pattern, lang] of LangMap) {
       if (pattern.test(possibleLang)) return lang;
     }
   }
@@ -61,7 +61,7 @@ async function initI18n(lang: LangCode) {
   };
 
   logger('initOptions', initOptions);
-  const inited = await i18n.use(initReactI18next).init(initOptions);
+  const inited = await i18n.cloneInstance().use(initReactI18next).init(initOptions);
 
   logger('inited', inited);
   logger('inited', inited('siteName'));
@@ -78,4 +78,4 @@ async function initI18n(lang: LangCode) {
   return inited;
 }
 
-initI18n(LangCode.en);
+// initI18n(LangCode.en);

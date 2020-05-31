@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next';
-import { langMap } from '../../i18n/init-i18n';
+import { LangMap } from '../../i18n/init-i18n';
 import React from 'react';
 
 export const LocalePicker: React.FC = () => {
@@ -12,7 +12,7 @@ export const LocalePicker: React.FC = () => {
         i18n.changeLanguage(ev.target.value);
       }}
     >
-      {langMap.map(([_, langCode, langName]) => (
+      {LangMap.map(([_, langCode, langName]) => (
         <option key={langCode} value={langCode}>
           {langName}
         </option>
