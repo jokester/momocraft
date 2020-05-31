@@ -18,10 +18,10 @@ let singletonObjects: null | ReturnType<typeof createSingletons> = null;
 
 const logger = createLogger(__filename);
 
-function createSingletons(langCode?: LangCode) {
+function createSingletons(langCode: LangCode) {
   logger('build env', isDevBuild, buildEnv);
 
-  initI18n(langCode || LangCode.en);
+  initI18n(langCode);
 
   const auth = new AuthServiceImpl(bindApi, !inServer);
   const collection = new CollectionServiceImpl(bindApi, auth);
@@ -34,7 +34,7 @@ function createSingletons(langCode?: LangCode) {
   } as const;
 }
 
-function initSingletons(props: { toasterRef: MutableRefObject<Toaster>; langCode?: LangCode }) {
+function initSingletons(props: { toasterRef: MutableRefObject<Toaster>; langCode: LangCode }) {
   if (!singletonObjects) {
     singletonObjects = createSingletons(props.langCode);
   }
@@ -47,9 +47,10 @@ function initSingletons(props: { toasterRef: MutableRefObject<Toaster>; langCode
 
 export const AppContextHolder: React.FC<{ initialLang?: LangCode; toasterRef: MutableRefObject<Toaster> }> = ({
   toasterRef,
+  initialLang,
   children,
 }) => {
-  const singletons = useMemo(() => initSingletons({ toasterRef }), []);
+  const singletons = useMemo(() => initSingletons({ toasterRef, langCode: initialLang || LangCode.en }), []);
 
   const lifeCycle = useLifeCycle(
     () => logger('AppContext onMount'),

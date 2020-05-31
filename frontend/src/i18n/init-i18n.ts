@@ -1,10 +1,10 @@
-import i18n, { InitOptions } from 'i18next';
+import i18n from 'i18next';
 
 import * as en from './json/en.json';
 import * as ja from './json/ja.json';
 import * as zhS from './json/zh-hans.json';
 import * as zhT from './json/zh-hant.json';
-import { inBrowser, inServer, isDevBuild } from '../config/build-env';
+import { inBrowser, isDevBuild } from '../config/build-env';
 import { createLogger } from '../util/debug-logger';
 import { initReactI18next, setDefaults } from 'react-i18next';
 
@@ -18,7 +18,7 @@ export const enum LangCode {
 }
 
 export const LangMap = [
-  /* [browser-language, our-language] */
+  /* [browser-language, our-language, label] */
   [/^en/i, LangCode.en, 'English'],
   [/^zh-(cn|sg)/i, LangCode.zhHanS, '简体中文'],
   [/^zh/i, LangCode.zhHanT, '繁體中文'],
@@ -34,6 +34,7 @@ function pickFallbackLanguages(wanted: LangCode) {
     case LangCode.zhHanS:
       return [LangCode.zhHanT, LangCode.ja, LangCode.en];
     case LangCode.en:
+    default:
       return [LangCode.ja, LangCode.zhHanS, LangCode.zhHanT];
   }
 }

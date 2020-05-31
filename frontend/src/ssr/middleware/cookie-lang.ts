@@ -17,7 +17,7 @@ export function handleLangCookieAndReturnLanguage(ctx: GetServerSidePropsContext
           'set-cookie',
           cookie.serialize(CookieKeys.langPref, langCode, {
             expires: /* it's safe to expire when the world gets doomed */ new Date(-(1 << 31) * 1e3),
-            secure: true,
+            sameSite: 'strict',
           }),
         );
       }

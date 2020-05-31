@@ -3,34 +3,34 @@ import App from 'next/app';
 import '../src/app.scss';
 import { Toaster } from '@blueprintjs/core';
 import { AppContextHolder } from '../src/internal/app-context';
+import { createLogger } from '../src/util/debug-logger';
+import { CommonPageProps } from '../src/next-types';
 
-const RealApp: React.FC = (props) => {
+const logger = createLogger(__filename);
+
+const RealApp: React.FC<CommonPageProps> = (props) => {
   const toasterRef = useRef<Toaster>(null!);
 
   return (
-    <>
-      <AppContextHolder toasterRef={toasterRef}>{props.children}</AppContextHolder>
+    <AppContextHolder toasterRef={toasterRef} initialLang={props.langCode}>
+      {props.children}>
       <Toaster ref={toasterRef} position="bottom" />
-    </>
+    </AppContextHolder>
   );
 };
 
-export default class extends App {
+export default class extends App<CommonPageProps> {
   static getInitialProps = App.getInitialProps;
 
   render() {
     const { Component } = this.props;
 
-    const { pathname, asPath, query } = this.props.router;
-    const pageProps: {} = {
-      ...this.props.pageProps,
-      route: { pathname, asPath, query },
-    };
+    logger('pageProps', this.props.pageProps);
 
     return (
       <React.StrictMode>
-        <RealApp>
-          <Component {...pageProps} />
+        <RealApp langCode={(this.props.pageProps as CommonPageProps).langCode}>
+          <Component {...this.props.pageProps} />
         </RealApp>
       </React.StrictMode>
     );
