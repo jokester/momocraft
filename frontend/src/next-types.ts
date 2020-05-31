@@ -4,12 +4,6 @@ import { LangCode } from './i18n/init-i18n';
 
 type FullPageProps<UrlParam, PerPageProps> = PerPageProps & {
   /**
-   * injected by _app.tsx
-   * @deprecated
-   * FIXME remove: useRouter() is much simpler
-   */
-  route: Pick<NextPageContext, 'pathname' | 'asPath'> & { query: UrlParam & Record<string, string> };
-  /**
    * injected by defaultGetServerSideProps (all pages should use that)
    */
   langCode?: LangCode;

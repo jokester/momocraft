@@ -6,7 +6,7 @@ import * as zhS from './json/zh-hans.json';
 import * as zhT from './json/zh-hant.json';
 import { inBrowser, inServer } from '../config/build-env';
 import { createLogger } from '../util/debug-logger';
-import { initReactI18next } from 'react-i18next';
+import { initReactI18next, setDefaults } from 'react-i18next';
 
 const logger = createLogger(__filename);
 
@@ -17,8 +17,6 @@ export const enum LangCode {
   zhHanT = 'zh-hant',
 }
 
-const defaultLang = LangCode.en;
-
 export const LangMap = [
   /* [browser-language, our-language] */
   [/^en/i, LangCode.en, 'English'],
@@ -27,47 +25,30 @@ export const LangMap = [
   [/^ja/i, LangCode.ja, '日本語'],
 ] as const;
 
-export function detectClientLang(): LangCode {
-  if (typeof navigator === 'undefined') return defaultLang;
+setDefaults({ useSuspense: false });
 
-  for (const possibleLang of [navigator.language, ...(navigator.languages ?? [])]) {
-    for (const [pattern, lang] of LangMap) {
-      if (pattern.test(possibleLang)) return lang;
-    }
-  }
+const defaultI18nOptions = {
+  debug: true,
+  defaultNS: 'all',
+  ns: ['all'],
+  resources: {
+    /* eslint-disable @typescript-eslint/ban-ts-ignore */
+    // @ts-ignore
+    [LangCode.en]: { all: en.default },
+    // @ts-ignore
+    [LangCode.zhHanT]: { all: zhT.default },
+    // @ts-ignore
+    [LangCode.zhHanS]: { all: zhS.default },
+    // @ts-ignore
+    [LangCode.ja]: { all: ja.default },
+    /* eslint-enable @typescript-eslint/ban-ts-ignore */
+  },
+};
 
-  return defaultLang;
-}
+export function initI18n(lang: LangCode) {
+  const boundInstance = i18n.createInstance({ ...defaultI18nOptions, lng: lang }).use(initReactI18next);
 
-export function pickLocale(routeLocale: string, clientLocale: null | string) {}
-
-async function initI18n(lang: LangCode) {
-  const initOptions: InitOptions = {
-    lng: lang,
-    debug: true,
-    fallbackLng: LangCode.en,
-    resources: {
-      /* eslint-disable @typescript-eslint/ban-ts-ignore */
-      // @ts-ignore
-      [LangCode.en]: { all: en.default },
-      // @ts-ignore
-      [LangCode.zhHanT]: { all: zhT.default },
-      // @ts-ignore
-      [LangCode.zhHanS]: { all: zhS.default },
-      // @ts-ignore
-      [LangCode.ja]: { all: ja.default },
-      /* eslint-enable @typescript-eslint/ban-ts-ignore */
-    },
-    defaultNS: 'all',
-    ns: ['all'],
-  };
-
-  logger('initOptions', initOptions);
-  const inited = await i18n.cloneInstance().use(initReactI18next).init(initOptions);
-
-  logger('inited', inited);
-  logger('inited', inited('siteName'));
-  logger('inited', inited('site.siteName'));
+  logger('inited', lang, boundInstance);
 
   if (inBrowser) {
     for (const event of ['initialized', 'loaded', 'failedLoading', 'missingKey', 'languageChanged'] as const) {
@@ -77,7 +58,6 @@ async function initI18n(lang: LangCode) {
     }
   }
 
-  return inited;
+  boundInstance.init();
+  return boundInstance;
 }
-
-// initI18n(LangCode.en);
