@@ -1,5 +1,6 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
+import { LangCode } from '../../i18n/init-i18n';
 
 export const FrontpageIntro: React.FC = () => {
   const [t] = useTranslation();

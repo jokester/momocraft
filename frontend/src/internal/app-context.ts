@@ -6,6 +6,7 @@ import { CollectionServiceImpl } from './collection-service';
 import { Toaster } from '@blueprintjs/core';
 import { FriendServiceImpl } from './friend-service';
 import { bindApi } from '../api/bind-api';
+import '../i18n/init-i18n';
 
 type Singletons = ReturnType<typeof initSingletons>;
 

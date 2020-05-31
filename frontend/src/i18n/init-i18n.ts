@@ -1,30 +1,34 @@
-import i18n from 'i18next';
-import { initReactI18next } from 'react-i18next';
+import i18n, { InitOptions } from 'i18next';
 
 import * as en from './json/en.json';
 import * as ja from './json/ja.json';
 import * as zhS from './json/zh-hans.json';
 import * as zhT from './json/zh-hant.json';
+import { inBrowser, inServer } from '../config/build-env';
+import { createLogger } from '../util/debug-logger';
+import { initReactI18next } from 'react-i18next';
 
-const enum SupportedLangs {
+const logger = createLogger(__filename);
+
+export const enum LangCode {
   en = 'en',
   ja = 'ja',
   zhHanS = 'zh-hans',
   zhHanT = 'zh-hant',
 }
 
-const fallbackLocale = SupportedLangs.en;
+const defaultLang = LangCode.en;
 
-const langMap = [
+export const langMap = [
   /* [browser-language, our-language] */
-  [/^en/i, SupportedLangs.en],
-  [/^zh-(cn|sg)/i, SupportedLangs.zhHanS],
-  [/^zh/i, SupportedLangs.zhHanT],
-  [/^ja/i, SupportedLangs.ja],
+  [/^en/i, LangCode.en, 'English'],
+  [/^zh-(cn|sg)/i, LangCode.zhHanS, '简体中文'],
+  [/^zh/i, LangCode.zhHanT, '繁體中文'],
+  [/^ja/i, LangCode.ja, '日本語'],
 ] as const;
 
-export function detectClientLang(): SupportedLangs {
-  if (typeof navigator === 'undefined') return fallbackLocale;
+export function detectClientLang(): LangCode {
+  if (typeof navigator === 'undefined') return defaultLang;
 
   for (const possibleLang of [navigator.language, ...(navigator.languages ?? [])]) {
     for (const [pattern, lang] of langMap) {
@@ -32,25 +36,46 @@ export function detectClientLang(): SupportedLangs {
     }
   }
 
-  return fallbackLocale;
+  return defaultLang;
 }
 
 export function pickLocale(routeLocale: string, clientLocale: null | string) {}
 
-export function initI18n(lang: SupportedLangs) {
-  i18n.use(initReactI18next).init({
+async function initI18n(lang: LangCode) {
+  const initOptions: InitOptions = {
     lng: lang,
+    debug: true,
+    fallbackLng: LangCode.en,
     resources: {
       // @ts-ignore
-      [SupportedLangs.en]: en.default,
+      [LangCode.en]: { all: en.default },
       // @ts-ignore
-      [SupportedLangs.zhHanT]: zhT.default,
+      [LangCode.zhHanT]: { all: zhT.default },
       // @ts-ignore
-      [SupportedLangs.zhHanS]: zhS.default,
+      [LangCode.zhHanS]: { all: zhS.default },
       // @ts-ignore
-      [SupportedLangs.ja]: ja.default,
+      [LangCode.ja]: { all: ja.default },
     },
-  });
+    defaultNS: 'all',
+    ns: ['all'],
+  };
 
-  return i18n;
+  logger('initOptions', initOptions);
+  const inited = await i18n.use(initReactI18next).init(initOptions);
+
+  logger('inited', inited);
+  logger('inited', inited('siteName'));
+  logger('inited', inited('site.siteName'));
+
+  if (inBrowser) {
+    for (const event of ['initialized', 'loaded', 'failedLoading', 'missingKey', 'languageChanged'] as const) {
+      i18n.on(event, (ev: unknown) => {
+        logger('i18n', event, ev);
+      });
+    }
+  }
+
+  return inited;
 }
+
+initI18n(LangCode.en);
