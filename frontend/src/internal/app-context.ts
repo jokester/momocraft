@@ -7,6 +7,7 @@ import { Toaster } from '@blueprintjs/core';
 import { FriendServiceImpl } from './friend-service';
 import { bindApi } from '../api/bind-api';
 import '../i18n/init-i18n';
+import { useLifeCycle } from '../components/generic-hooks/use-life-cycle';
 
 type Singletons = ReturnType<typeof initSingletons>;
 
@@ -14,8 +15,9 @@ const AppContext = createContext<Singletons>(null!);
 
 let singletonObjects: null | ReturnType<typeof createSingletons> = null;
 
+const logger = createLogger(__filename);
+
 function createSingletons() {
-  const logger = createLogger(__filename);
   logger('build env', isDevBuild, buildEnv);
 
   const auth = new AuthServiceImpl(bindApi, !inServer);
@@ -42,6 +44,11 @@ function initSingletons(props: { toasterRef: MutableRefObject<Toaster> }) {
 
 export const AppContextHolder: React.FC<{ toasterRef: MutableRefObject<Toaster> }> = ({ toasterRef, children }) => {
   const singletons = useMemo(() => initSingletons({ toasterRef }), []);
+
+  const lifeCycle = useLifeCycle(
+    () => logger('AppContext onMount'),
+    () => logger('AppContext onUnmount'),
+  );
 
   return createElement(AppContext.Provider, {
     value: singletons,
