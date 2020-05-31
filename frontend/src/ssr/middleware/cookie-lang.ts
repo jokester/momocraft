@@ -2,7 +2,7 @@ import { GetServerSidePropsContext } from 'next';
 import { LangCode, LangMap } from '../../i18n/init-i18n';
 import * as cookie from 'cookie';
 import { parse as parseHttpAcceptLang } from 'accept-language-parser';
-import { CookieKeys } from './cookie-keys';
+import { CookieConsts } from './cookie-consts';
 
 export function handleLangCookieAndReturnLanguage(ctx: GetServerSidePropsContext) {
   let langCode: LangCode;
@@ -10,13 +10,13 @@ export function handleLangCookieAndReturnLanguage(ctx: GetServerSidePropsContext
     const cookieInReq = cookie.parse(ctx.req.headers.cookie ?? '');
 
     {
-      const langInCookie = cookieInReq[CookieKeys.langPref];
+      const langInCookie = cookieInReq[CookieConsts.langPref];
       langCode = pickLanguage(langInCookie, ctx.req.headers['accept-language']);
       if (langCode !== langInCookie) {
         ctx.res.setHeader(
           'set-cookie',
-          cookie.serialize(CookieKeys.langPref, langCode, {
-            expires: /* it's safe to expire when the world gets doomed */ new Date(-(1 << 31) * 1e3),
+          cookie.serialize(CookieConsts.langPref, langCode, {
+            expires:CookieConsts.endOfKnownWorld ,
             sameSite: 'strict',
           }),
         );
