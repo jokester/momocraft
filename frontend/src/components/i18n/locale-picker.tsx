@@ -13,7 +13,6 @@ export const LocalePicker: React.FC = () => {
       onChange={(ev) => {
         i18n.changeLanguage(ev.target.value);
         JsCookie.set(CookieKeys.langPref, ev.target.value, {
-          domain: location.host,
           sameSite: 'strict',
           secure: true,
         });
