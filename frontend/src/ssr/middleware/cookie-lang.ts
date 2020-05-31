@@ -17,7 +17,7 @@ export function handleLangCookieAndReturnLanguage(ctx: GetServerSidePropsContext
           'set-cookie',
           cookie.serialize(CookieConsts.langPref, langCode, {
             expires: CookieConsts.endOfKnownWorld,
-            sameSite: 'strict',
+            sameSite: 'lax',
             secure: true,
           }),
         );

@@ -14,13 +14,13 @@ export const LocalePicker: React.FC = () => {
         i18n.changeLanguage(ev.target.value);
         JsCookie.set(CookieConsts.langPref, ev.target.value, {
           expires: CookieConsts.endOfKnownWorld,
-          sameSite: 'strict',
+          sameSite: 'lax',
           secure: true,
         });
       }}
     >
       {LangMap.map(([_, langCode, langName]) => (
-        <option key={langCode} selected={langCode === i18n.language} value={langCode}>
+        <option key={langCode} value={langCode}>
           {langName}
         </option>
       ))}
