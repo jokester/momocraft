@@ -2,6 +2,7 @@ import { PreJson } from '../../src/dummy/pre-json';
 import { PageType } from '../../src/next-types';
 import { Layout } from '../../src/components/layout/layout';
 import { InventoryShow } from '../../src/components/inventory-detail/inventory-show';
+import { defaultGetServerSideProps } from '../../src/ssr/default-get-server-side-props';
 
 /**
  * URL params from route (path) and query
@@ -28,3 +29,5 @@ const UserShowPage: PageType<UrlParam> = (props) => {
 // UnnamedPage.getInitialProps = async ctx => ({ });
 
 export default UserShowPage;
+
+export const getServerSideProps = defaultGetServerSideProps;

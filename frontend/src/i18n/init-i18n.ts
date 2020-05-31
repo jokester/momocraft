@@ -47,6 +47,7 @@ async function initI18n(lang: LangCode) {
     debug: true,
     fallbackLng: LangCode.en,
     resources: {
+      /* eslint-disable @typescript-eslint/ban-ts-ignore */
       // @ts-ignore
       [LangCode.en]: { all: en.default },
       // @ts-ignore
@@ -55,6 +56,7 @@ async function initI18n(lang: LangCode) {
       [LangCode.zhHanS]: { all: zhS.default },
       // @ts-ignore
       [LangCode.ja]: { all: ja.default },
+      /* eslint-enable @typescript-eslint/ban-ts-ignore */
     },
     defaultNS: 'all',
     ns: ['all'],

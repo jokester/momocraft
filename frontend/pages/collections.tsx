@@ -7,6 +7,7 @@ import { useCollectionList } from '../src/components/hooks/use-collections-api';
 import { InventoryCard, InventoryCartListView } from '../src/components/inventory-list/inventory-card-list';
 import { RenderPromiseEither } from '../src/components/hoc/render-promise-either';
 import { PageTitle } from '../src/components/layout/page-title';
+import { defaultGetServerSideProps } from '../src/ssr/default-get-server-side-props';
 
 const logger = createLogger(__filename);
 
@@ -58,3 +59,5 @@ const CollectionsPage: PageType = (props) => {
 };
 
 export default CollectionsPage;
+
+export const getServerSideProps = defaultGetServerSideProps;

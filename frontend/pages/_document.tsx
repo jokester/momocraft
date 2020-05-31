@@ -1,6 +1,7 @@
 import React from 'react';
 import Document, { Head, Main, NextScript } from 'next/document';
 import { GoogleAnalyticsTag } from '../src/tracking/tracking-tags';
+import { defaultGetServerSideProps } from '../src/ssr/default-get-server-side-props';
 
 export default class CustomDocument extends Document {
   render() {

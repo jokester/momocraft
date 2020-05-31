@@ -9,6 +9,7 @@ import { createLogger } from '../src/util/debug-logger';
 import gravatarUrl from 'gravatar-url';
 import { useAuthState } from '../src/components/hooks/use-auth-state';
 import { UserProfileDto } from '../src/api-generated/models';
+import { defaultGetServerSideProps } from '../src/ssr/default-get-server-side-props';
 
 const logger = createLogger(__filename);
 
@@ -130,3 +131,5 @@ const AccountPage: PageType = (props) => {
 // AccountPage.getInitialProps = async ctx => ({ });
 
 export default AccountPage;
+
+export const getServerSideProps = defaultGetServerSideProps;
