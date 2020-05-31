@@ -1,6 +1,19 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import App from 'next/app';
 import '../src/app.scss';
+import { Toaster } from '@blueprintjs/core';
+import { AppContextHolder } from '../src/internal/app-context';
+
+const RealApp: React.FC = (props) => {
+  const toasterRef = useRef<Toaster>(null!);
+
+  return (
+    <>
+      <AppContextHolder toasterRef={toasterRef}>{props.children}</AppContextHolder>
+      <Toaster ref={toasterRef} position="bottom" />
+    </>
+  );
+};
 
 export default class extends App {
   static getInitialProps = App.getInitialProps;
@@ -16,7 +29,9 @@ export default class extends App {
 
     return (
       <React.StrictMode>
-        <Component {...pageProps} />
+        <RealApp>
+          <Component {...pageProps} />
+        </RealApp>
       </React.StrictMode>
     );
   }
