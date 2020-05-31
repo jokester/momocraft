@@ -57,17 +57,17 @@ const defaultI18nOptions: InitOptions = {
 export function createI18nInstance(forSSR: boolean, lng: LangCode) {
   const fallbackLangs = pickFallbackLanguages(lng);
 
-  let boundInstance = i18n.createInstance({
+  const instance = i18n.createInstance({
     ...defaultI18nOptions,
     initImmediate: !forSSR,
     lng,
     fallbackLng: fallbackLangs,
   });
 
-  boundInstance.init();
+  instance.init();
 
   if (isDevBuild) {
-    logger('inited i18n', boundInstance);
+    logger('inited i18n', instance);
   }
-  return boundInstance;
+  return instance;
 }
