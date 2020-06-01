@@ -42,16 +42,10 @@ const defaultI18nOptions: InitOptions = {
   defaultNS: 'all',
   ns: ['all'],
   resources: {
-    /* eslint-disable @typescript-eslint/ban-ts-ignore */
-    // @ts-ignore
-    [LangCode.en]: { all: en.default },
-    // @ts-ignore
-    [LangCode.zhHanT]: { all: zhT.default },
-    // @ts-ignore
-    [LangCode.zhHanS]: { all: zhS.default },
-    // @ts-ignore
-    [LangCode.ja]: { all: ja.default },
-    /* eslint-enable @typescript-eslint/ban-ts-ignore */
+    [LangCode.en]: { all: en },
+    [LangCode.zhHanT]: { all: zhT },
+    [LangCode.zhHanS]: { all: zhS },
+    [LangCode.ja]: { all: ja },
   },
 };
 
@@ -68,7 +62,7 @@ export const createI18nInstance: I18NFactory = (forSSR: boolean, lng?: string) =
   instance.init();
 
   if (isDevBuild) {
-    logger('inited i18n', instance);
+    // logger('inited i18n', instance);
   }
   return instance;
 };
