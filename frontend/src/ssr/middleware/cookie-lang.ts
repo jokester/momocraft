@@ -33,9 +33,9 @@ function pickLanguage(fallback: LangCode, existedPref?: string, httpAcceptHeader
   }
 
   for (const specified of parseHttpAcceptLang(httpAcceptHeader || ''))
-    for (const [re, lang] of LangMap) {
-      if (re.exec(`${specified.code}-${specified.region}`)) {
-        return lang;
+    for (const [code, { pattern }] of LangMap) {
+      if (pattern.exec(`${specified.code}-${specified.region}`)) {
+        return code;
       }
     }
 

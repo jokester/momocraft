@@ -1,34 +1,34 @@
-import { LangMap } from '../../i18n/i18next-factory';
+import { Button, MenuItem, Alignment } from '@blueprintjs/core';
+import { Select } from '@blueprintjs/select';
+import { LangCode, LangMap, pickLanguageLabel } from '../../i18n/i18next-factory';
 import React from 'react';
-import JsCookie from 'js-cookie';
-import { CookieConsts } from '../../ssr/middleware/cookie-consts';
 import { createLogger } from '../../util/debug-logger';
 import { useI18n } from 'i18next-react';
+import { FontAwesomeIcon } from '../icon/fontawesome-icon';
+import { setLangCookie } from '../../i18n/i18n-pref';
 
 const logger = createLogger(__filename);
+
+const LangSelect = Select.ofType<LangCode>();
 
 export const LocalePicker: React.FC = () => {
   const i18n = useI18n();
 
-  logger('first render', i18n.language);
-
   return (
-    <select
-      value={i18n.language}
-      onChange={(ev) => {
-        i18n.changeLanguage(ev.target.value);
-        JsCookie.set(CookieConsts.langPref, ev.target.value, {
-          expires: CookieConsts.endOfKnownWorld,
-          sameSite: 'lax',
-          secure: true,
-        });
+    <LangSelect
+      items={[...LangMap.keys()]}
+      itemRenderer={(code, modifier) => (
+        <Button className="mx-1" onClick={modifier.handleClick}>
+          {pickLanguageLabel(code)}
+        </Button>
+      )}
+      filterable={false}
+      onItemSelect={(selected) => {
+        setLangCookie(selected as LangCode);
+        i18n.changeLanguage(selected);
       }}
     >
-      {LangMap.map(([_, langCode, langName]) => (
-        <option key={langCode} value={langCode}>
-          {langName}
-        </option>
-      ))}
-    </select>
+      <Button alignText={Alignment.CENTER} icon="translate" />
+    </LangSelect>
   );
 };

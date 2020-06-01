@@ -17,12 +17,15 @@ export const enum LangCode {
   zhHanT = 'zh-hant',
 }
 
-export const LangMap = [
-  /* [browser-language, our-language, label] */ [/^en/i, LangCode.en, 'English'],
-  [/^zh-(cn|sg)/i, LangCode.zhHanS, '简体中文'],
-  [/^zh/i, LangCode.zhHanT, '繁體中文'],
-  [/^ja/i, LangCode.ja, '日本語'],
-] as const;
+export const LangMap = new Map([
+  [LangCode.zhHanS, { pattern: /^zh-(cn|sg)/i, label: '简体中文' }],
+  [LangCode.zhHanT, { pattern: /^zh/i, label: '繁體中文' }],
+  [LangCode.en, { pattern: /^en/i, label: 'English' }],
+  [LangCode.ja, { pattern: /^ja/i, label: '日本語' }],
+] as const);
+/* [browser-language, our-language, label] */
+
+export const pickLanguageLabel = (code: string) => LangMap.get(code as LangCode)?.label || '';
 
 function pickFallbackLanguages(wanted: LangCode) {
   switch (wanted) {
