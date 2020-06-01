@@ -66,7 +66,7 @@ export const I18NextReactProvider: FunctionComponent<{ lang?: string; factory: I
     };
 
     if (!inServer) {
-      instance.on('languageChanged', internal._onLanguageChanged);
+      instance.on('languageChanged', ret._onLanguageChanged);
     }
 
     return ret;
@@ -78,9 +78,7 @@ export const I18NextReactProvider: FunctionComponent<{ lang?: string; factory: I
     }
   }, [props.lang]);
 
-  useEffect(() => {
-    internal.instance.off('languageChanged', internal._onLanguageChanged);
-  }, []);
+  useEffect(() => () => internal.instance.off('languageChanged', internal._onLanguageChanged), []);
 
   return createElement(I18NextReactContext.Provider, { value: internal }, props.children);
 };
