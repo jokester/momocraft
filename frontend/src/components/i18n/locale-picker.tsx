@@ -4,7 +4,6 @@ import { LangCode, LangMap, pickLanguageLabel } from '../../i18n/i18next-factory
 import React from 'react';
 import { createLogger } from '../../util/debug-logger';
 import { useI18n } from 'i18next-react';
-import { FontAwesomeIcon } from '../icon/fontawesome-icon';
 import { setLangCookie } from '../../i18n/i18n-pref';
 
 const logger = createLogger(__filename);

@@ -1,15 +1,18 @@
-import { GetServerSideProps } from 'next';
+import { GetServerSideProps, GetServerSidePropsContext } from 'next';
 import { createLogger } from '../util/debug-logger';
-import { inferLangForCookie } from './middleware/cookie-lang';
+import { inferLanguageForReq } from './middleware/cookie-lang';
+import { LangCode } from '../i18n/i18next-factory';
 
 const logger = createLogger(__filename);
 
-export const defaultGetServerSideProps: GetServerSideProps = async (ctx) => {
+export const defaultGetServerSideProps: GetServerSideProps = async (ctx) => ({ props: {} });
+
+function unused(ctx: GetServerSidePropsContext) {
   logger('req headers', ctx.req.headers);
 
   return {
     props: {
-      ...inferLangForCookie(ctx.req, ctx.res),
+      ...inferLanguageForReq(ctx.req, ctx.res, LangCode.en, false),
     },
   } as const;
-};
+}

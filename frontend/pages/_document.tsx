@@ -2,7 +2,9 @@ import React from 'react';
 import Document, { DocumentContext, DocumentInitialProps, Head, Main, NextScript } from 'next/document';
 import { GoogleAnalyticsTag } from '../src/tracking/tracking-tags';
 import { createLogger } from '../src/util/debug-logger';
-import { inferLangForCookie } from '../src/ssr/middleware/cookie-lang';
+import { inferLanguageForReq } from '../src/ssr/middleware/cookie-lang';
+import { LangCode } from '../src/i18n/i18next-factory';
+import { isDevBuild } from '../src/config/build-env';
 
 const logger = createLogger(__filename);
 
@@ -11,14 +13,19 @@ interface OurDocumentProps {
 }
 
 export default class CustomDocument extends Document<OurDocumentProps> {
+  /**
+   * @note only in server
+   * @param {DocumentContext} ctx
+   * @returns {Promise<OurDocumentProps & DocumentInitialProps>}
+   */
   static getInitialProps = async (ctx: DocumentContext) => {
-    if (!(ctx.req && ctx.res)) {
-      throw new Error('CustomDocument#getInitialProps requires req/res');
+    if (0) {
+      logger('docContext', ctx);
     }
 
     return {
       ...(await Document.getInitialProps(ctx)),
-      lang: inferLangForCookie(ctx.req, ctx.res).langCode,
+      lang: inferLanguageForReq(ctx.req || null, ctx.res || null, LangCode.en, true).langCode,
     } as OurDocumentProps & DocumentInitialProps;
   };
 

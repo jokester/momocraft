@@ -4,13 +4,19 @@ import { parse as parseHttpAcceptLang } from 'accept-language-parser';
 import { CookieConsts } from './cookie-consts';
 import { IncomingMessage, OutgoingMessage } from 'http';
 
-export function inferLangForCookie(req: IncomingMessage, res: OutgoingMessage) {
-  const cookieInReq = cookie.parse(req.headers.cookie ?? '');
+export function inferLanguageForReq(
+  req: null | IncomingMessage,
+  res: null | OutgoingMessage,
+  fallback: LangCode,
+  setCookie: boolean,
+) {
+  const cookieInReq = cookie.parse(req?.headers.cookie ?? '');
 
   const langInCookie = cookieInReq[CookieConsts.langPref];
-  const langCode = pickLanguage(LangCode.en, langInCookie, req.headers['accept-language']);
 
-  if (langCode !== langInCookie) {
+  const langCode = pickLanguage(fallback, langInCookie, req?.headers['accept-language']);
+
+  if (langCode !== langInCookie && setCookie && res) {
     /**
      * set-cookie so that client can use it
      */
