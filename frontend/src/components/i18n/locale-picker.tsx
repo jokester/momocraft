@@ -17,7 +17,13 @@ export const LocalePicker: React.FC = () => {
     <LangSelect
       items={[...LangMap.keys()]}
       itemRenderer={(code, modifier) => (
-        <Button className="mx-1" onClick={modifier.handleClick}>
+        <Button
+          key={code}
+          className="mx-1"
+          onClick={modifier.handleClick}
+          large={code === i18n.language}
+          small={code !== i18n.language}
+        >
           {pickLanguageLabel(code)}
         </Button>
       )}
