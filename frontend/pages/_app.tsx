@@ -13,10 +13,10 @@ const logger = createLogger(__filename);
 const RealApp: React.FC<CommonPageProps> = (props) => {
   const toasterRef = useRef<Toaster>(null!);
 
-  logger('initialLang', props.langCode);
+  logger('initialLang', props.lang);
 
   return (
-    <AppContextHolder toasterRef={toasterRef} initialLang={props.langCode}>
+    <AppContextHolder toasterRef={toasterRef} initialLang={props.lang}>
       {props.children}
       <Toaster ref={toasterRef} position="bottom" />
     </AppContextHolder>
@@ -42,8 +42,8 @@ export default class extends App<CommonPageProps> {
 
     return (
       <React.StrictMode>
-        <RealApp langCode={(this.props.pageProps as CommonPageProps).langCode}>
-          <Component {...this.props.pageProps} />
+        <RealApp lang={(this.props.pageProps as CommonPageProps).lang}>
+          <Component {...this.props} />
         </RealApp>
       </React.StrictMode>
     );
