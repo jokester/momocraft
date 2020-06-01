@@ -9,7 +9,7 @@ export const defaultGetServerSideProps: GetServerSideProps = async (ctx) => {
 
   return {
     props: {
-      ...inferLangForCookie(ctx),
+      ...inferLangForCookie(ctx.req, ctx.res),
     },
   } as const;
 };

@@ -1,12 +1,30 @@
 import React from 'react';
-import Document, { Head, Main, NextScript } from 'next/document';
+import Document, { DocumentContext, DocumentInitialProps, Head, Main, NextScript } from 'next/document';
 import { GoogleAnalyticsTag } from '../src/tracking/tracking-tags';
-import { defaultGetServerSideProps } from '../src/ssr/default-get-server-side-props';
+import { createLogger } from '../src/util/debug-logger';
+import { inferLangForCookie } from '../src/ssr/middleware/cookie-lang';
 
-export default class CustomDocument extends Document {
+const logger = createLogger(__filename);
+
+interface OurDocumentProps {
+  lang: string;
+}
+
+export default class CustomDocument extends Document<OurDocumentProps> {
+  static getInitialProps = async (ctx: DocumentContext) => {
+    if (!(ctx.req && ctx.res)) {
+      throw new Error('CustomDocument#getInitialProps requires req/res');
+    }
+
+    return {
+      ...(await Document.getInitialProps(ctx)),
+      lang: inferLangForCookie(ctx.req, ctx.res).langCode,
+    } as OurDocumentProps & DocumentInitialProps;
+  };
+
   render() {
     return (
-      <html lang="zh-CN">
+      <html lang={this.props.lang}>
         <Head>
           <GoogleAnalyticsTag />
           <link
