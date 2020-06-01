@@ -1,6 +1,6 @@
 import { ComponentType } from 'react';
 import { NextPageContext } from 'next';
-import { LangCode } from './i18n/init-i18n';
+import { LangCode } from './i18n/i18next-factory';
 
 export interface CommonPageProps {
   /**

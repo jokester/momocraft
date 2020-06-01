@@ -1,5 +1,5 @@
 import { GetServerSidePropsContext } from 'next';
-import { LangCode, LangMap } from '../../i18n/init-i18n';
+import { LangCode, LangMap } from '../../i18n/i18next-factory';
 import * as cookie from 'cookie';
 import { parse as parseHttpAcceptLang } from 'accept-language-parser';
 import { CookieConsts } from './cookie-consts';
@@ -33,9 +33,9 @@ function pickLanguage(fallback: LangCode, existedPref?: string, httpAcceptHeader
   }
 
   for (const specified of parseHttpAcceptLang(httpAcceptHeader || ''))
-    for (const [re, lang] of LangMap) {
-      if (re.exec(`${specified.code}-${specified.region}`)) {
-        return lang;
+    for (const [code, { pattern }] of LangMap) {
+      if (pattern.exec(`${specified.code}-${specified.region}`)) {
+        return code;
       }
     }
 

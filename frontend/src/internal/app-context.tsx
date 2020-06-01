@@ -6,10 +6,10 @@ import { CollectionServiceImpl } from './collection-service';
 import { Toaster } from '@blueprintjs/core';
 import { FriendServiceImpl } from './friend-service';
 import { bindApi } from '../api/bind-api';
-import '../i18n/init-i18n';
+import '../i18n/i18next-factory';
 import { useLifeCycle } from '../components/generic-hooks/use-life-cycle';
-import { LangCode } from '../i18n/init-i18n';
-import { useI18nProvider, I18NextReactContext } from '../i18n/i18next-react';
+import { createI18nInstance, LangCode } from '../i18n/i18next-factory';
+import { I18NextReactProvider } from 'i18next-react';
 
 type Singletons = ReturnType<typeof initSingletons>;
 
@@ -49,8 +49,6 @@ export const AppContextHolder: React.FC<{ initialLang?: LangCode; toasterRef: Mu
   initialLang,
   children,
 }) => {
-  const i18nProvider = useI18nProvider(initialLang || LangCode.en);
-
   const singletons = useMemo(() => initSingletons({ toasterRef, langCode: initialLang || LangCode.en }), []);
 
   const lifeCycle = useLifeCycle(
@@ -58,10 +56,16 @@ export const AppContextHolder: React.FC<{ initialLang?: LangCode; toasterRef: Mu
     () => logger('AppContext onUnmount'),
   );
 
-  return createElement(AppContext.Provider, {
-    value: singletons,
-    children: createElement(I18NextReactContext.Provider, { value: i18nProvider }, children),
-  });
+  return (
+    <AppContext.Provider value={singletons}>
+      <I18NextReactProvider
+        lang={initialLang}
+        factory={(isServer, lang) => createI18nInstance(isServer, lang as LangCode)}
+      >
+        {children}
+      </I18NextReactProvider>
+    </AppContext.Provider>
+  );
 };
 
 export const useSingletons = () => useContext(AppContext);
