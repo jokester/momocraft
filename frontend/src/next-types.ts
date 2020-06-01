@@ -4,9 +4,9 @@ import { LangCode } from './i18n/i18next-factory';
 
 export interface CommonPageProps {
   /**
-   * injected by defaultGetServerSideProps (all pages should use that)
+   * injected by _app.tsx (all pages should use that)
    */
-  langCode?: LangCode;
+  lang: LangCode;
 }
 
 type FullPageProps<UrlParam, PerPageProps> = PerPageProps & CommonPageProps;
