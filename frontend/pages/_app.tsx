@@ -15,7 +15,7 @@ const RealApp: React.FC<CommonPageProps> = (props) => {
 
   return (
     <AppContextHolder toasterRef={toasterRef} initialLang={props.langCode}>
-      {props.children}>
+      {props.children}
       <Toaster ref={toasterRef} position="bottom" />
     </AppContextHolder>
   );
