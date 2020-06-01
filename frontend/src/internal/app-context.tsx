@@ -9,7 +9,7 @@ import { bindApi } from '../api/bind-api';
 import '../i18n/i18next-factory';
 import { useLifeCycle } from '../components/generic-hooks/use-life-cycle';
 import { createI18nInstance, LangCode } from '../i18n/i18next-factory';
-import { I18NextReactProvider } from '../i18n/i18next-react';
+import { I18NextReactProvider } from 'i18next-react';
 
 type Singletons = ReturnType<typeof initSingletons>;
 

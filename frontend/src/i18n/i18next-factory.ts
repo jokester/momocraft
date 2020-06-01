@@ -1,11 +1,12 @@
 import i18n, { InitOptions } from 'i18next';
 
-import * as en from './json/en.json';
-import * as ja from './json/ja.json';
-import * as zhS from './json/zh-hans.json';
-import * as zhT from './json/zh-hant.json';
+import en from './json/en.json';
+import ja from './json/ja.json';
+import zhS from './json/zh-hans.json';
+import zhT from './json/zh-hant.json';
 import { isDevBuild } from '../config/build-env';
 import { createLogger } from '../util/debug-logger';
+import { I18NFactory } from 'i18next-react';
 
 const logger = createLogger(__filename);
 
@@ -54,8 +55,8 @@ const defaultI18nOptions: InitOptions = {
   },
 };
 
-export function createI18nInstance(forSSR: boolean, lng: LangCode) {
-  const fallbackLangs = pickFallbackLanguages(lng);
+export const createI18nInstance: I18NFactory = (forSSR: boolean, lng?: string) => {
+  const fallbackLangs = pickFallbackLanguages(lng as LangCode);
 
   const instance = i18n.createInstance({
     ...defaultI18nOptions,
@@ -70,4 +71,4 @@ export function createI18nInstance(forSSR: boolean, lng: LangCode) {
     logger('inited i18n', instance);
   }
   return instance;
-}
+};

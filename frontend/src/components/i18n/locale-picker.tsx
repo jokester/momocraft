@@ -3,7 +3,7 @@ import React from 'react';
 import JsCookie from 'js-cookie';
 import { CookieConsts } from '../../ssr/middleware/cookie-consts';
 import { createLogger } from '../../util/debug-logger';
-import { useI18n } from '../../i18n/i18next-react';
+import { useI18n } from 'i18next-react';
 
 const logger = createLogger(__filename);
 
