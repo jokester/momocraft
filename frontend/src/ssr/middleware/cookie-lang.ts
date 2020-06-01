@@ -1,20 +1,26 @@
-import { GetServerSidePropsContext } from 'next';
 import { LangCode, LangMap } from '../../i18n/i18next-factory';
 import * as cookie from 'cookie';
 import { parse as parseHttpAcceptLang } from 'accept-language-parser';
 import { CookieConsts } from './cookie-consts';
+import { IncomingMessage, OutgoingMessage } from 'http';
 
-export function inferLangForCookie(ctx: GetServerSidePropsContext) {
-  const cookieInReq = cookie.parse(ctx.req.headers.cookie ?? '');
+export function inferLanguageForReq(
+  req: null | IncomingMessage,
+  res: null | OutgoingMessage,
+  fallback: LangCode,
+  setCookie: boolean,
+) {
+  const cookieInReq = cookie.parse(req?.headers.cookie ?? '');
 
   const langInCookie = cookieInReq[CookieConsts.langPref];
-  const langCode = pickLanguage(LangCode.en, langInCookie, ctx.req.headers['accept-language']);
 
-  if (langCode !== langInCookie) {
+  const langCode = pickLanguage(fallback, langInCookie, req?.headers['accept-language']);
+
+  if (langCode !== langInCookie && setCookie && res) {
     /**
      * set-cookie so that client can use it
      */
-    ctx.res.setHeader(
+    res.setHeader(
       'set-cookie',
       cookie.serialize(CookieConsts.langPref, langCode, {
         expires: CookieConsts.endOfKnownWorld,
