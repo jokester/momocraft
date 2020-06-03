@@ -10,6 +10,7 @@ import '../i18n/i18next-factory';
 import { useLifeCycle } from '../components/generic-hooks/use-life-cycle';
 import { createI18nInstance, LangCode } from '../i18n/i18next-factory';
 import { I18NextReactProvider, useI18n } from 'i18next-react';
+import Head from 'next/head';
 
 type Singletons = ReturnType<typeof initSingletons>;
 
@@ -61,8 +62,8 @@ export const AppContextHolder: React.FC<{ initialLang?: LangCode; toasterRef: Mu
   return (
     <AppContext.Provider value={singletons}>
       <I18NextReactProvider lang={lang} factory={(isServer, lang) => createI18nInstance(isServer, lang as LangCode)}>
-        {children}
         <LanguageChangeResponder />
+        {children}
       </I18NextReactProvider>
     </AppContext.Provider>
   );
@@ -77,7 +78,12 @@ const LanguageChangeResponder: React.FC = () => {
     return () => i18n.off('languageChanged', setBodyLanguage);
   }, [i18n]);
 
-  return null;
+  return (
+    /* default title */
+    <Head>
+      <title>{i18n.t('site.siteName')}</title>
+    </Head>
+  );
 };
 
 export const useSingletons = () => useContext(AppContext);

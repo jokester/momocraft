@@ -3,6 +3,7 @@ import { PageType } from '../../src/next-types';
 import { Layout } from '../../src/components/layout/layout';
 import { defaultGetServerSideProps } from '../../src/ssr/default-get-server-side-props';
 import { useRouter } from 'next/router';
+import React from 'react';
 
 /**
  * URL params from route (path) and query

@@ -1,0 +1,32 @@
+name: Check (frontend)
+
+on:
+  pull_request:
+    paths:
+    - frontend/**
+
+defaults:
+  run:
+    shell: bash
+    working-directory: frontend
+
+jobs:
+  check:
+    name: Check
+    runs-on: ubuntu-20.04
+
+    steps:
+
+    - uses: actions/checkout@v2
+      with:
+        submodules: recursive
+
+    - uses: bahmutov/npm-install@v1
+      with:
+        working-directory: frontend
+
+    - name: Type Check
+      run: yarn typecheck
+
+    - name: Lint
+      run: yarn lint

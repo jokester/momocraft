@@ -33,10 +33,8 @@ export default class CustomDocument extends Document<OurDocumentProps> {
     return (
       <html lang={this.props.lang}>
         <Head>
-          <GoogleAnalyticsTag />
-
           <meta charSet="utf-8" />
-          <title>Momocraft</title>
+          <GoogleAnalyticsTag />
 
           <link
             key="font-awesome"
