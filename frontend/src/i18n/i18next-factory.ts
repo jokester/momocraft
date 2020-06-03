@@ -13,8 +13,8 @@ const logger = createLogger(__filename);
 export const enum LangCode {
   en = 'en',
   ja = 'ja',
-  zhHanS = 'zh-hans',
-  zhHanT = 'zh-hant',
+  zhHanS = 'zh-Hans',
+  zhHanT = 'zh-Hant',
 }
 
 export const LangMap = new Map([
