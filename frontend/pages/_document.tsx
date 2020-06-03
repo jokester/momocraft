@@ -27,9 +27,9 @@ export default class CustomDocument extends Document {
             integrity="sha256-TCBL18Dgf7kFC0vKWhEaFD+87xslflRbMTAaChRCyTc="
             crossOrigin="anonymous"
           />
-          <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1.5,minimum-scale=0.8" />
+          <meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1.5,minimum-scale=1" />
         </Head>
-        <body className="bg-dark">
+        <body>
           <Main />
           <NextScript />
         </body>

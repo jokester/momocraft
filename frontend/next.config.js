@@ -7,8 +7,6 @@ const optimizedImages = require('next-optimized-images');
 const withBundleAnalyzer = require('@zeit/next-bundle-analyzer');
 const withTM = require('next-transpile-modules');
 
-const tailwindcss = require('tailwindcss');
-
 const nextConf = {
   analyzeServer: ['server', 'both'].includes(process.env.BUNDLE_ANALYZE),
   analyzeBrowser: ['browser', 'both'].includes(process.env.BUNDLE_ANALYZE),
@@ -30,20 +28,16 @@ const nextConf = {
       /* dev */ 'http://127.0.0.1:3001',
   },
 
+  devIndicators: {
+    autoPrerender: false,
+  },
+
   // see https://nextjs.org/docs/#customizing-webpack-config
   webpack(config, { buildId, dev, isServer }) {
     config.plugins.push(
       new webpack.DefinePlugin({
-        /**
-         * reliable: only true in "yarn dev", for both server/browser
-         */
+        // becomes process.env.NEXT_DEV : boolean
         'process.env.NEXT_DEV': JSON.stringify(!!dev),
-        /**
-         * @deprecated UNREALIABLE
-         * true: in browser of dev build (!!)
-         * false: in browser of prod build (yarn start / yarn export)
-         */
-        // 'process.env.NEXT_SERVER': JSON.stringify(!!isServer),
       }),
     );
 
@@ -66,7 +60,7 @@ module.exports = withPlugins(
     [optimizedImages, { optimizeImages: false }],
     [withBundleAnalyzer],
     // [withSourceMap],  // this does not work
-    withTM(['lodash-es', '@jokester']),
+    withTM([/* ES modules used in server code */ 'lodash-es', '@jokester/ts-commonutil']),
   ],
   withSourceMap(nextConf),
 );
