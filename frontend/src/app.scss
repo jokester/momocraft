@@ -2,6 +2,9 @@
 @import 'tailwindcss/components';
 @import 'tailwindcss/utilities';
 
+@import './style/aspect-ratio-magic';
+@import './style/fonts';
+
 html {
   font-size: 15.5px;
 }

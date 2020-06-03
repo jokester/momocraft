@@ -1,13 +1,43 @@
 import React from 'react';
-import Document, { Head, Main, NextScript } from 'next/document';
+import Document, { DocumentContext, DocumentInitialProps, Head, Main, NextScript } from 'next/document';
 import { GoogleAnalyticsTag } from '../src/tracking/tracking-tags';
+import { createLogger } from '../src/util/debug-logger';
+import { inferLanguageForReq } from '../src/ssr/middleware/cookie-lang';
+import { LangCode } from '../src/i18n/i18next-factory';
+import { isDevBuild } from '../src/config/build-env';
 
-export default class CustomDocument extends Document {
+const logger = createLogger(__filename);
+
+interface OurDocumentProps {
+  lang: string;
+}
+
+export default class CustomDocument extends Document<OurDocumentProps> {
+  /**
+   * @note only in server
+   * @param {DocumentContext} ctx
+   * @returns {Promise<OurDocumentProps & DocumentInitialProps>}
+   */
+  static getInitialProps = async (ctx: DocumentContext) => {
+    if (0) {
+      logger('docContext', ctx);
+    }
+
+    return {
+      ...(await Document.getInitialProps(ctx)),
+      lang: inferLanguageForReq(ctx.req || null, ctx.res || null, LangCode.en, true).langCode,
+    } as OurDocumentProps & DocumentInitialProps;
+  };
+
   render() {
     return (
-      <html lang="zh-CN">
+      <html lang={this.props.lang}>
         <Head>
           <GoogleAnalyticsTag />
+
+          <meta charSet="utf-8" />
+          <title>Momocraft</title>
+
           <link
             key="font-awesome"
             rel="stylesheet"

@@ -1,10 +1,15 @@
 import { ComponentType } from 'react';
 import { NextPageContext } from 'next';
+import { LangCode } from './i18n/i18next-factory';
 
-type FullPageProps<UrlParam, PerPageProps> = PerPageProps & {
-  // injected by _app.tsx
-  route: Pick<NextPageContext, 'pathname' | 'asPath'> & { query: UrlParam & Record<string, string> };
-};
+export interface CommonPageProps {
+  /**
+   * injected by _app.tsx (all pages should use that)
+   */
+  lang: LangCode;
+}
+
+type FullPageProps<UrlParam, PerPageProps> = PerPageProps & CommonPageProps;
 
 type PageGetInitialProps<UrlParam = {}, PageProps = {}> = (
   ctx: NextPageContext & { query: UrlParam },

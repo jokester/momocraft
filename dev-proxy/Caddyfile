@@ -1,0 +1,9 @@
+127.0.0.1:55443 {
+    tls self_signed
+    log /dev/stdout
+
+    proxy / 127.0.0.1:3000 {
+        transparent
+    }
+}
+

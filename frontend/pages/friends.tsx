@@ -9,6 +9,7 @@ import { ItemsDatabaseV3, itemsDatabaseV3 } from '../src/items-db/dynamic-load-d
 import { RenderPromise } from '@jokester/ts-commonutil/react/hoc/render-promise';
 import { ItemColumnType } from '../src/model/item-id-def';
 import { UserFriendCollectionDto } from '../src/api-generated/models';
+import { defaultGetServerSideProps } from '../src/ssr/default-get-server-side-props';
 
 const FriendsPageContent: React.FC = () => {
   const [section, setSection] = useState(1 as 0 | 1 | 2);
@@ -99,3 +100,5 @@ const FriendsPage: React.FC = () => {
 };
 
 export default FriendsPage;
+
+export const getServerSideProps = defaultGetServerSideProps;

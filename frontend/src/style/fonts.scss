@@ -1,0 +1,23 @@
+$tailwindDefaultSans: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial,
+  'Noto Sans', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+
+:lang(en),
+.font-lang-en {
+  font-family: $tailwindDefaultSans;
+}
+
+:lang(zh-hans),
+.font-lang-zh-hans {
+  font-family: 'Noto Sans CJK SC', 'PingFang-SC', $tailwindDefaultSans;
+}
+
+:lang(zh-hant),
+.font-lang-zh-hant {
+  font-family: 'Noto Sans CJK TC', 'PingFang-TC', $tailwindDefaultSans;
+}
+
+:lang(ja),
+.font-lang-ja {
+  font-family: 'Noto Sans CJK JP', 'ヒラギノ角ゴ Pro W3', 'Hiragino Kaku Gothic Pro', 'メイリオ', Meiryo,
+    'ＭＳ Ｐゴシック', $tailwindDefaultSans;
+}
