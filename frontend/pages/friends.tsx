@@ -39,7 +39,7 @@ export const FriendCollections: React.FC<{
           .map((_) => itemsDb.itemsMap.get(_.itemId)!)
           .filter(Boolean)
           .map((item) => (
-            <li>
+            <li key={item.itemId}>
               {item.base[ItemColumnType.nameZhS]} / {item.base[ItemColumnType.nameJa]}
             </li>
           ))}
@@ -58,7 +58,12 @@ export const FriendsPageIWantSection: React.FC = (props) => {
           {(itemsDb) => (
             <div>
               {resolved.friendsOwns.map((friendCollections) => (
-                <FriendCollections itemsDb={itemsDb} friendCollections={friendCollections} friendSuffix="拥有:" />
+                <FriendCollections
+                  key={friendCollections.friend.userId}
+                  itemsDb={itemsDb}
+                  friendCollections={friendCollections}
+                  friendSuffix="拥有:"
+                />
               ))}
             </div>
           )}
@@ -77,7 +82,12 @@ export const FriendsPageFriendsWantSection: React.FC = (props) => {
           {(itemsDb) => (
             <div>
               {resolved.friendWants.map((friendCollections) => (
-                <FriendCollections itemsDb={itemsDb} friendCollections={friendCollections} friendSuffix="想要:" />
+                <FriendCollections
+                  key={friendCollections.friend.userId}
+                  itemsDb={itemsDb}
+                  friendCollections={friendCollections}
+                  friendSuffix="想要:"
+                />
               ))}
             </div>
           )}

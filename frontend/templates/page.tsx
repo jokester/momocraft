@@ -1,5 +1,6 @@
 import { PreJson } from '../src/dummy/pre-json';
 import { PageType } from '../src/next-types';
+import * as React from 'react';
 
 /**
  * URL params from route (path) and query

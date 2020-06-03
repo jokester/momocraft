@@ -4,6 +4,7 @@ import { Layout } from '../../src/components/layout/layout';
 import { InventoryShow } from '../../src/components/inventory-detail/inventory-show';
 import { defaultGetServerSideProps } from '../../src/ssr/default-get-server-side-props';
 import { useRouter } from 'next/router';
+import React from 'react';
 
 /**
  * URL params from route (path) and query
