@@ -22,6 +22,8 @@ jobs:
         submodules: recursive
 
     - uses: bahmutov/npm-install@v1
+      with:
+        working-directory: frontend
 
     - name: Type Check
       run: yarn typecheck
