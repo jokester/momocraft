@@ -1,6 +1,6 @@
 on:
   push:
-    branches: []
+    branches: [never-build]
 
 jobs:
   build_docker_images:
