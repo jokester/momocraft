@@ -4,3 +4,6 @@
 [submodule "external/translation-sheet-data"]
 	path = external/translation-sheet-data
 	url = https://github.com/alexislours/translation-sheet-data
+[submodule "external/items-sheet-data"]
+	path = external/items-sheet-data
+	url = https://github.com/acdb-team/google-sheets-to-json.git
