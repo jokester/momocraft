@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+
+set -uex
+
+cd $(dirname "$0")
+
+if false; then
+  [[ -f ./acnhapi-master.tgz ]] || wget https://github.com/alexislours/ACNHAPI/archive/master.tar.gz -O acnhapi-master.tgz
+  [[ -d ./ACNHAPI-master ]] || tar xf acnhapi-master.tgz
+fi
+
+rm -rf converted-sheets json-hashed
+
+mkdir -pv converted-sheets json-hashed
+
+yarn && node main
