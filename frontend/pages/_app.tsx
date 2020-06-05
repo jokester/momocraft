@@ -5,8 +5,8 @@ import { Toaster } from '@blueprintjs/core';
 import { AppContextHolder } from '../src/internal/app-context';
 import { createLogger } from '../src/util/debug-logger';
 import { CommonPageProps } from '../src/next-types';
-import { inferLanguageForReq } from '../src/ssr/middleware/cookie-lang';
-import { LangCode } from '../src/i18n/i18next-factory';
+import { pickLanguageForReq } from '../src/ssr/middleware/cookie-lang';
+import { LangCode } from '../src/const/languages';
 
 const logger = createLogger(__filename);
 
@@ -30,7 +30,7 @@ export default class extends App<CommonPageProps> {
     return {
       pageProps: {
         ...(await App.getInitialProps(ctx)).pageProps,
-        lang: inferLanguageForReq(ctx.ctx.req || null, ctx.ctx.res || null, LangCode.en, false).langCode,
+        lang: pickLanguageForReq(ctx.ctx.req, ctx.ctx.res, LangCode.en, false),
       } as CommonPageProps,
     };
   };

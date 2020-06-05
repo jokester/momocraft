@@ -1,6 +1,6 @@
 import React from 'react';
 import { ItemsV3Json } from '../../items-db/json-schema';
-import { CollectionState } from '../../const/collection';
+import { CollectionState } from '../../const-shared/collection';
 import { Button, ButtonGroup } from '@blueprintjs/core';
 import { createLogger } from '../../util/debug-logger';
 import { CollectionStateMap, useCollectionApi } from '../hooks/use-collections-api';

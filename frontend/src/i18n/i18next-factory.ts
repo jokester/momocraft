@@ -4,26 +4,12 @@ import en from './json/en.json';
 import ja from './json/ja.json';
 import zhS from './json/zh-hans.json';
 import zhT from './json/zh-hant.json';
-import { isDevBuild } from '../config/build-env';
+import { isDevBuild } from '../const/build-env';
 import { createLogger } from '../util/debug-logger';
 import { I18NFactory } from 'i18next-react';
+import { LangCode, LangMap } from '../const/languages';
 
 const logger = createLogger(__filename);
-
-export const enum LangCode {
-  en = 'en',
-  ja = 'ja',
-  zhHanS = 'zh-Hans',
-  zhHanT = 'zh-Hant',
-}
-
-export const LangMap = new Map([
-  [LangCode.zhHanS, { pattern: /^zh-(cn|sg)/i, label: '简体中文' }],
-  [LangCode.zhHanT, { pattern: /^zh/i, label: '繁體中文' }],
-  [LangCode.en, { pattern: /^en/i, label: 'English' }],
-  [LangCode.ja, { pattern: /^ja/i, label: '日本語' }],
-] as const);
-/* [browser-language, our-language, label] */
 
 export const pickLanguageLabel = (code: string) => LangMap.get(code as LangCode)?.label || '';
 
@@ -42,13 +28,13 @@ function pickFallbackLanguages(wanted: LangCode) {
 }
 
 const defaultI18nOptions: InitOptions = {
-  defaultNS: 'all',
-  ns: ['all'],
+  defaultNS: 'translation',
+  ns: ['translation'],
   resources: {
-    [LangCode.en]: { all: en },
-    [LangCode.zhHanT]: { all: zhT },
-    [LangCode.zhHanS]: { all: zhS },
-    [LangCode.ja]: { all: ja },
+    [LangCode.en]: { translation: en },
+    [LangCode.zhHanT]: { translation: zhT },
+    [LangCode.zhHanS]: { translation: zhS },
+    [LangCode.ja]: { translation: ja },
   },
 };
 

@@ -1,4 +1,4 @@
-import { inServer } from '../config/build-env';
+import { inServer } from '../const/build-env';
 
 interface TypedLocalStorage<PersistenceMap> {
   getItem<K extends keyof PersistenceMap>(key: K): null | PersistenceMap[K];

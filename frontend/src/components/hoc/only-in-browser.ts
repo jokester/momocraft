@@ -1,4 +1,4 @@
-import { inBrowser, isDevBuild } from '../../config/build-env';
+import { inBrowser, isDevBuild } from '../../const/build-env';
 import React from 'react';
 
 export const OnlyInBrowser: React.FC = (props) => {
