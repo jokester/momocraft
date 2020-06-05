@@ -7,7 +7,6 @@ export function setLangCookie(code: LangCode) {
   JsCookie.set(CookieConsts.langPref, code, {
     expires: CookieConsts.endOfKnownWorld,
     sameSite: 'lax',
-    secure: true,
   });
 }
 
