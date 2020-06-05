@@ -3,10 +3,10 @@ import { Either, fold, left, right } from 'fp-ts/lib/Either';
 import { BehaviorSubject, Observable } from 'rxjs';
 
 import { map } from 'rxjs/operators';
-import { ErrorCodeEnum } from '../const/error-code';
+import { ErrorCodeEnum } from '../const-shared/error-code';
 import { toTypedLocalStorage } from '../util/typed-local-storage';
 import { createLogger } from '../util/debug-logger';
-import { isDevBuild } from '../config/build-env';
+import { isDevBuild } from '../const/build-env';
 import { AuthedSessionDto } from '../api-generated/models';
 import { ApiProvider } from '../api/bind-api';
 import { EmailAuthRequestDto, UserProfileDto } from '../api-generated';

@@ -2,7 +2,7 @@ import * as ApiRuntime from '../api-generated/runtime';
 import { ApiResponse } from './api-convention';
 import { left, right } from 'fp-ts/lib/Either';
 import { createLogger } from '../util/debug-logger';
-import { ErrorCodeEnum, deriveErrorMessage, isErrorCodeEnum } from '../const/error-code';
+import { ErrorCodeEnum, deriveErrorMessage, isErrorCodeEnum } from '../const-shared/error-code';
 import { getOrElse } from 'fp-ts/lib/Option';
 import { ApiErrorDto } from '../api-generated/models';
 

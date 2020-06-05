@@ -4,7 +4,7 @@ import { TypedRoutes } from '../../typed-routes';
 import { FontAwesomeIcon } from '../icon/fontawesome-icon';
 import { useRouter } from 'next/router';
 import classNames from 'classnames';
-import { LocalePicker } from '../i18n/locale-picker';
+import { LanguagePicker } from '../i18n/language-picker';
 import { Button } from '@blueprintjs/core';
 
 const SectionLink: React.FC<{ text: string | React.ReactElement; linkTo: string }> = (props) => {
@@ -28,6 +28,6 @@ export const Header: React.FC<{ here: string }> = (props) => (
     <Link href={TypedRoutes.account}>
       <Button icon="user" />
     </Link>
-    <LocalePicker />
+    <LanguagePicker />
   </div>
 );

@@ -1,5 +1,5 @@
 import { Configuration, DefaultApi } from '../api-generated';
-import { buildEnv, inBrowser } from '../config/build-env';
+import { buildEnv, inBrowser } from '../const/build-env';
 import { Never } from '@jokester/ts-commonutil/concurrency/timing';
 
 export interface ApiProvider {

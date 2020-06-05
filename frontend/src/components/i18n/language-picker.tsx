@@ -1,16 +1,16 @@
 import { Button, MenuItem, Alignment } from '@blueprintjs/core';
 import { Select } from '@blueprintjs/select';
-import { LangCode, LangMap, pickLanguageLabel } from '../../i18n/i18next-factory';
 import React from 'react';
 import { createLogger } from '../../util/debug-logger';
 import { useI18n } from 'i18next-react';
-import { setLangCookie } from '../../i18n/i18n-pref';
+import { pickLanguageLabel } from '../../i18n/i18next-factory';
+import { LangCode, LangMap } from '../../const/languages';
 
 const logger = createLogger(__filename);
 
 const LangSelect = Select.ofType<LangCode>();
 
-export const LocalePicker: React.FC = () => {
+export const LanguagePicker: React.FC = () => {
   const i18n = useI18n();
 
   return (
@@ -30,7 +30,6 @@ export const LocalePicker: React.FC = () => {
       )}
       filterable={false}
       onItemSelect={(selected) => {
-        setLangCookie(selected as LangCode);
         i18n.changeLanguage(selected);
       }}
     >

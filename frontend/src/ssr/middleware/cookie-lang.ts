@@ -1,15 +1,15 @@
-import { LangCode, LangMap } from '../../i18n/i18next-factory';
 import * as cookie from 'cookie';
-import { parse as parseHttpAcceptLang } from 'accept-language-parser';
-import { CookieConsts } from './cookie-consts';
+import { CookieConsts } from '../../const/cookie-keys';
 import { IncomingMessage, OutgoingMessage } from 'http';
+import { LangCode } from '../../const/languages';
+import { pickLanguage } from '../../i18n/i18n-pref';
 
-export function inferLanguageForReq(
-  req: null | IncomingMessage,
-  res: null | OutgoingMessage,
+export function pickLanguageForReq(
+  req: undefined | IncomingMessage,
+  res: undefined | OutgoingMessage,
   fallback: LangCode,
   setCookie: boolean,
-) {
+): LangCode {
   const cookieInReq = cookie.parse(req?.headers.cookie ?? '');
 
   const langInCookie = cookieInReq[CookieConsts.langPref];
@@ -30,20 +30,5 @@ export function inferLanguageForReq(
     );
   }
 
-  return { langCode } as const;
-}
-
-function pickLanguage(fallback: LangCode, existedPref?: string, httpAcceptHeader?: string): LangCode {
-  if ([LangCode.ja, LangCode.en, LangCode.zhHanS, LangCode.zhHanT].includes(existedPref as LangCode)) {
-    return existedPref as LangCode;
-  }
-
-  for (const specified of parseHttpAcceptLang(httpAcceptHeader || ''))
-    for (const [code, { pattern }] of LangMap) {
-      if (pattern.exec(`${specified.code}-${specified.region}`)) {
-        return code;
-      }
-    }
-
-  return LangCode.en;
+  return langCode;
 }

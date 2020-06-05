@@ -14,7 +14,7 @@ import {
   UserFriendRequestDto,
   FriendListDto,
 } from '../api-generated/models';
-import { CollectionState } from '../const/collection';
+import { CollectionState } from '../const-shared/collection';
 
 const logger = createLogger(__filename, true);
 

@@ -6,7 +6,7 @@ import { useConcurrencyControl } from '@jokester/ts-commonutil/react/hook/use-co
 import { Button, FormGroup, InputGroup, Label } from '@blueprintjs/core';
 import { fold } from 'fp-ts/lib/Either';
 import { RenderPromiseEither } from '../hoc/render-promise-either';
-import { FriendUserDto } from '../../api-generated/models';
+import { FriendListDto, FriendUserDto } from '../../api-generated/models';
 import { ApiError } from '../../api/api-convention';
 
 export const FriendListSection: React.FC = () => {

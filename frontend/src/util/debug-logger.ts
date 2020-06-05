@@ -1,5 +1,5 @@
 import debug from 'debug';
-import { isDevBuild } from '../config/build-env';
+import { isDevBuild } from '../const/build-env';
 
 const pathSegments = __dirname.split(/[/\\]/);
 

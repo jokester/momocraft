@@ -1,6 +1,6 @@
 import { useSingletons } from '../../internal/app-context';
 import { useMemo } from 'react';
-import { CollectionState } from '../../const/collection';
+import { CollectionState } from '../../const-shared/collection';
 import { Maps } from '@jokester/ts-commonutil/collection/maps';
 import { fold, map, right } from 'fp-ts/lib/Either';
 import { useConcurrencyControl } from '@jokester/ts-commonutil/react/hook/use-concurrency-control';
