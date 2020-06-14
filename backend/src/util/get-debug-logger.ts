@@ -1,6 +1,6 @@
 import path from 'path';
 import debug from 'debug';
-import { getDebugNamespace } from '../ts-commonutil/logging/get-debug-namespace';
+import { getDebugNamespace } from '@jokester/ts-commonutil/cjs/logging/get-debug-namespace';
 
 const createNamespace = getDebugNamespace(path.join(__dirname, '..'));
 export function getDebugLogger(srcFile: string): debug.IDebugger {
