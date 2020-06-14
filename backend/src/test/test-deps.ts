@@ -2,7 +2,7 @@ import { createConnection } from 'typeorm';
 import { UserAccount } from '../db/entities/user-account';
 import { OAuthAccount } from '../db/entities/oauth-account';
 import { EntropyService } from '../deps/entropy.service';
-import { DeepReadonly } from '../ts-commonutil/type';
+import { DeepReadonly } from '@jokester/ts-commonutil/cjs/type/freeze';
 import { GoogleOAuthResponse } from '../user/google-oauth.service';
 import { JwtService } from '@nestjs/jwt';
 import { EmailAuthRequestDto } from '../model/auth.dto';

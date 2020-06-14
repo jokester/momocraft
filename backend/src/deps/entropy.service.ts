@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import nanoid from 'nanoid';
 import * as bcrypt from 'bcrypt';
-import { randomString } from '../ts-commonutil/text/random-string';
+import { randomString } from '@jokester/ts-commonutil/cjs/text/random-string';
 
 @Injectable()
 export class EntropyService {

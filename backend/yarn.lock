@@ -501,6 +501,11 @@
     "@types/yargs" "^15.0.0"
     chalk "^3.0.0"
 
+"@jokester/ts-commonutil@^0.2.1":
+  version "0.2.1"
+  resolved "https://registry.yarnpkg.com/@jokester/ts-commonutil/-/ts-commonutil-0.2.1.tgz#7b97182aeed20b197b0a89030a8a19ca9688a135"
+  integrity sha512-DMcJ/BaNY73sWIhHf+0idyvdr1wj5WPlVdU0QH2QqlZA2vFhcPprJO2/0lT1YilzSmVUJCmWgh66CQTNatg4lA==
+
 "@nestjs/cli@^7.0":
   version "7.1.5"
   resolved "https://registry.yarnpkg.com/@nestjs/cli/-/cli-7.1.5.tgz#34939660dfe9ee6b71190e30c1cbf6515eb243be"

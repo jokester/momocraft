@@ -11,7 +11,7 @@ import { JwtService } from '@nestjs/jwt';
 import { fromNullable, isNone, Option } from 'fp-ts/lib/Option';
 import { absent } from '../util/absent';
 import { Sanitize } from '../util/input-santinizer';
-import { randomAlphaNum } from '../ts-commonutil/text/random-string';
+import { randomAlphaNum } from '@jokester/ts-commonutil/cjs/text/random-string';
 import { ErrorCodeEnum } from '../const/error-code';
 import { UserProfileDto } from '../model/user-profile.dto';
 

@@ -5,7 +5,7 @@ import { UserAccount } from '../db/entities/user-account';
 import { UserItemCollection } from '../db/entities/user-item-collection';
 import { getDebugLogger } from '../util/get-debug-logger';
 import { TypeORMUtils } from '../util/typeorm-upsert';
-import { DefaultMap } from '../ts-commonutil/collection/default-map';
+import { DefaultMap } from '@jokester/ts-commonutil/cjs/collection/default-map';
 import { UserFriendRequest } from '../db/entities/user-friend-request';
 import { transform } from './user-friend.service';
 import { ItemCollectionDto } from '../model/collections.dto';
