@@ -35,6 +35,9 @@ import {
   OAuthGoogleRequestDto,
   OAuthGoogleRequestDtoFromJSON,
   OAuthGoogleRequestDtoToJSON,
+  OAuthRequestDto,
+  OAuthRequestDtoFromJSON,
+  OAuthRequestDtoToJSON,
   UserCollectionListDto,
   UserCollectionListDtoFromJSON,
   UserCollectionListDtoToJSON,
@@ -45,6 +48,10 @@ import {
   UserProfileDtoFromJSON,
   UserProfileDtoToJSON,
 } from '../models';
+
+export interface AuthControllerDoDiscordOAuthRequest {
+  oAuthRequestDto: OAuthRequestDto;
+}
 
 export interface AuthControllerDoEmailSignInRequest {
   emailAuthRequestDto: EmailAuthRequestDto;
@@ -84,6 +91,44 @@ export interface MomoUserControllerSaveUserFriendRequestRequest {
  *
  */
 export class DefaultApi extends runtime.BaseAPI {
+  /**
+   */
+  async authControllerDoDiscordOAuthRaw(
+    requestParameters: AuthControllerDoDiscordOAuthRequest,
+  ): Promise<runtime.ApiResponse<AuthedSessionDto>> {
+    if (requestParameters.oAuthRequestDto === null || requestParameters.oAuthRequestDto === undefined) {
+      throw new runtime.RequiredError(
+        'oAuthRequestDto',
+        'Required parameter requestParameters.oAuthRequestDto was null or undefined when calling authControllerDoDiscordOAuth.',
+      );
+    }
+
+    const queryParameters: runtime.HTTPQuery = {};
+
+    const headerParameters: runtime.HTTPHeaders = {};
+
+    headerParameters['Content-Type'] = 'application/json';
+
+    const response = await this.request({
+      path: `/auth/oauth/discord`,
+      method: 'POST',
+      headers: headerParameters,
+      query: queryParameters,
+      body: OAuthRequestDtoToJSON(requestParameters.oAuthRequestDto),
+    });
+
+    return new runtime.JSONApiResponse(response, (jsonValue) => AuthedSessionDtoFromJSON(jsonValue));
+  }
+
+  /**
+   */
+  async authControllerDoDiscordOAuth(
+    requestParameters: AuthControllerDoDiscordOAuthRequest,
+  ): Promise<AuthedSessionDto> {
+    const response = await this.authControllerDoDiscordOAuthRaw(requestParameters);
+    return await response.value();
+  }
+
   /**
    */
   async authControllerDoEmailSignInRaw(
