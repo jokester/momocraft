@@ -1,11 +1,5 @@
-export const enum OAuthProide {
-  google = "google",
-  discord = "discord",
-
-}
 
 export const OAuthCallbackUrls = {
-  google: []
-  ,
+  google: ['http://'],
   discord: [],
-} as const
+} as const;

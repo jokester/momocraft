@@ -1,11 +1,12 @@
-import { Column, CreateDateColumn, Entity, Index, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
-import { GoogleOAuthResponse } from '../../user/google-oauth.service';
+import { Column, CreateDateColumn, Entity, Index, PrimaryGeneratedColumn, Unique, UpdateDateColumn } from 'typeorm';
 
-export enum OAuthProvider {
-  googleOAuth2 = 'google-oauth2',
+export const enum OAuthProvider {
+  google = 'google',
+  discord = 'discord',
 }
 
 @Entity()
+@Unique(['provider', 'externalId'])
 export class OAuthAccount {
   @PrimaryGeneratedColumn()
   readonly oAuthAccountId!: number;
@@ -16,7 +17,7 @@ export class OAuthAccount {
   @Column()
   readonly userId!: number;
 
-  @Column({ unique: true })
+  @Column()
   @Index()
   readonly externalId!: string;
 
@@ -32,13 +33,9 @@ export class OAuthAccount {
   @UpdateDateColumn()
   readonly updatedAt!: Date;
 
-  constructor(init?: Pick<OAuthAccount, 'provider' | 'userId' | 'externalId' | 'credentials' | 'userInfo'>) {
+  constructor(init?: OAuthAccount) {
     if (init) {
       Object.assign(this, init);
     }
-  }
-
-  isGoogle(): this is GoogleOAuthResponse {
-    return this.provider === OAuthProvider.googleOAuth2;
   }
 }
