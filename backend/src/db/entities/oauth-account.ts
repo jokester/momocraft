@@ -1,10 +1,6 @@
 import { Column, CreateDateColumn, Entity, Index, PrimaryGeneratedColumn, Unique, UpdateDateColumn } from 'typeorm';
 import { DiscordOAuth } from '../../user/oauth-client.provider';
-
-export const enum OAuthProvider {
-  googleOAuth2 = 'googleOAuth2',
-  discord = 'discord',
-}
+import { OAuthProvider } from '../../const/oauth-conf';
 
 @Entity()
 @Unique(['provider', 'externalId'])

@@ -4,7 +4,7 @@ import { Either, isLeft, left, right } from 'fp-ts/lib/Either';
 import { GoogleOAuthResponse } from './google-oauth.service';
 import { TypeORMConnection } from '../db/typeorm-connection.provider';
 import { Connection, DeepPartial } from 'typeorm';
-import { OAuthAccount, OAuthProvider } from '../db/entities/oauth-account';
+import { OAuthAccount} from '../db/entities/oauth-account';
 import { UserAccount } from '../db/entities/user-account';
 import { EntropyService } from '../deps/entropy.service';
 import { JwtService } from '@nestjs/jwt';
@@ -15,6 +15,7 @@ import { randomAlphaNum } from '@jokester/ts-commonutil/cjs/text/random-string';
 import { ErrorCodeEnum } from '../const/error-code';
 import { UserProfileDto } from '../model/user-profile.dto';
 import { TokenSet, UserinfoResponse } from 'openid-client';
+import { OAuthProvider } from "../const/oauth-conf";
 
 const logger = getDebugLogger(__filename);
 

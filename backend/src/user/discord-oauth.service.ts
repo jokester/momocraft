@@ -7,7 +7,7 @@ import { Connection } from 'typeorm';
 import { ErrorCodeEnum } from '../const/error-code';
 import { UserService } from './user.service';
 import { UserAccount } from '../db/entities/user-account';
-import { OAuthProvider } from '../db/entities/oauth-account';
+import { OAuthProvider } from "../const/oauth-conf";
 
 const logger = getDebugLogger(__filename);
 
