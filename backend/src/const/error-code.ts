@@ -11,6 +11,8 @@ export const enum ErrorCodeEnum {
   userExisted = 'user_existed',
   userNotFound = 'user_not_found',
   passwordUnmatch = 'password_unmatch',
+  oAuthEmailNotVerified = 'oAuthEmailNotVerified',
+  oAuthFailed = 'oAuthFailed',
 
   // validation
   malformedUserId = 'malformed_user_id',
@@ -39,6 +41,8 @@ export function isErrorCodeEnum(x: unknown): x is ErrorCodeEnum {
     case ErrorCodeEnum.malformedUserId:
     case ErrorCodeEnum.malformedEmail:
     case ErrorCodeEnum.malformedPassword:
+    case ErrorCodeEnum.oAuthFailed:
+    case ErrorCodeEnum.oAuthEmailNotVerified:
 
     case ErrorCodeEnum.maxConcurrencyExceeded:
     case ErrorCodeEnum.notImplemented:

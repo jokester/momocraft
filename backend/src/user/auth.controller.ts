@@ -6,10 +6,11 @@ import { getRightOrThrow } from '../util/fpts-getter';
 import { Sanitize } from '../util/input-santinizer';
 import { UserAccount } from '../db/entities/user-account';
 import { AuthedUser } from './user-jwt-auth.middleware';
-import { AuthedSessionDto, OAuthGoogleRequestDto, EmailAuthRequestDto } from '../model/auth.dto';
+import { AuthedSessionDto, OAuthGoogleRequestDto, EmailAuthRequestDto, OAuthRequestDto } from '../model/auth.dto';
 import { ApiCreatedResponse, ApiOkResponse } from '@nestjs/swagger';
 import { UserProfileDto } from '../model/user-profile.dto';
 import { ApiErrorDto } from '../model/api-error.dto';
+import { DiscordOauthService } from './discord-oauth.service';
 
 const logger = getDebugLogger(__filename);
 
@@ -20,7 +21,11 @@ export interface AuthSuccessRes {
 
 @Controller('auth')
 export class AuthController {
-  constructor(private readonly googleOAuthService: GoogleOAuthService, private readonly userService: UserService) {}
+  constructor(
+    private readonly googleOAuthService: GoogleOAuthService,
+    private readonly discordOauthService: DiscordOauthService,
+    private readonly userService: UserService,
+  ) {}
 
   @Post('oauth/google')
   @Header('Cache-Control', 'private;max-age=0;')
@@ -55,6 +60,18 @@ export class AuthController {
     throw new BadRequestException();
   }
 
+  @Post('oauth/discord')
+  @Header('Cache-Control', 'private;max-age=0;')
+  @ApiCreatedResponse({ type: AuthedSessionDto })
+  async doDiscordOAuth(@Body() payload: OAuthRequestDto): Promise<AuthedSessionDto> {
+    const authedUser = getRightOrThrow(
+      await this.discordOauthService.attemptAuth(payload.code, payload.redirectUrl),
+      (l) => new BadRequestException('oauth fail', l),
+    );
+
+    return this.issueAuthSuccessResponse(authedUser);
+  }
+
   @Post('email/signup')
   @Header('Cache-Control', 'private;max-age=0;')
   @ApiCreatedResponse({ type: AuthedSessionDto })
@@ -66,7 +83,7 @@ export class AuthController {
       (l) => new BadRequestException('error signing up', l),
     );
 
-    return this.resolveAuthSuccess(created);
+    return this.issueAuthSuccessResponse(created);
   }
 
   @Post('email/signin')
@@ -81,7 +98,7 @@ export class AuthController {
       (l) => new BadRequestException('error logging in', l),
     );
 
-    return this.resolveAuthSuccess(authedUser);
+    return this.issueAuthSuccessResponse(authedUser);
   }
 
   @Post('jwt/refresh')
@@ -89,7 +106,7 @@ export class AuthController {
   @HttpCode(201)
   @ApiCreatedResponse({ type: AuthedSessionDto })
   async doRefreshToken(@AuthedUser() authedUser: UserAccount): Promise<AuthSuccessRes> {
-    return this.resolveAuthSuccess(authedUser);
+    return this.issueAuthSuccessResponse(authedUser);
   }
 
   @Get('dummy/do-not-call')
@@ -98,7 +115,7 @@ export class AuthController {
     return { statusCode: 200, message: 'MSG', error: 'ERR' };
   }
 
-  private async resolveAuthSuccess(authedUser: UserAccount): Promise<AuthSuccessRes> {
+  private async issueAuthSuccessResponse(authedUser: UserAccount): Promise<AuthSuccessRes> {
     return {
       jwtToken: await this.userService.createJwtTokenForUser(authedUser),
       user: await this.userService.resolveUser(authedUser),

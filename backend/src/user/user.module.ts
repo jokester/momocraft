@@ -8,6 +8,7 @@ import { absent } from '../util/absent';
 import { AuthController } from './auth.controller';
 import { GoogleOAuthService } from './google-oauth.service';
 import { UserJwtAuthMiddleware } from './user-jwt-auth.middleware';
+import { DiscordOAuth } from './oauth-client.provider';
 
 @Module({
   imports: [
@@ -26,7 +27,7 @@ import { UserJwtAuthMiddleware } from './user-jwt-auth.middleware';
     }),
   ],
   controllers: [AuthController],
-  providers: [UserService, GoogleOAuthService, EntropyService],
+  providers: [UserService, GoogleOAuthService, EntropyService, DiscordOAuth.Provider],
   exports: [UserService],
 })
 export class UserModule implements NestModule {

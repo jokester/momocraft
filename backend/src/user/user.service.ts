@@ -14,6 +14,7 @@ import { Sanitize } from '../util/input-santinizer';
 import { randomAlphaNum } from '@jokester/ts-commonutil/cjs/text/random-string';
 import { ErrorCodeEnum } from '../const/error-code';
 import { UserProfileDto } from '../model/user-profile.dto';
+import { TokenSet, UserinfoResponse } from 'openid-client';
 
 const logger = getDebugLogger(__filename);
 
@@ -101,19 +102,14 @@ export class UserService {
 
   async resolveUser(userAccount: UserAccount): Promise<UserProfileDto> {
     const oauthAccounts = await this.conn.getRepository(OAuthAccount).find({ userId: userAccount.internalUserId });
-    const resolved: UserProfileDto = {
+
+    /** TODO: use user info from OAuthAccount */
+
+    return {
       userId: userAccount.userId,
       email: userAccount.emailId,
       avatarUrl: undefined,
     };
-
-    for (const o of oauthAccounts) {
-      if (o.isGoogle() && !resolved.avatarUrl) {
-        resolved.avatarUrl = o.userInfo.picture || undefined;
-      }
-    }
-
-    return resolved;
   }
 
   createJwtTokenForUser(user: UserAccount): Promise<string> {
@@ -131,6 +127,65 @@ export class UserService {
     return user;
   }
 
+  async findOrCreateWithOAuth(
+    provider: OAuthProvider,
+    tokenSet: TokenSet,
+    userInfo: UserinfoResponse,
+  ): Promise<Either<ErrorCodeEnum, UserAccount>> {
+    if (!(userInfo?.email && userInfo?.email_verified)) {
+      return left(ErrorCodeEnum.oAuthEmailNotVerified);
+    }
+    const externalId = userInfo.email.toLowerCase();
+    const oAuthAccountRepo = this.conn.getRepository(OAuthAccount);
+
+    const existedOAuth = await oAuthAccountRepo.findOne({ externalId });
+
+    // return existed user
+    if (existedOAuth) {
+      const [
+        user = absent(`userId=${existedOAuth.userId} from existedOAuthId=${existedOAuth.oAuthAccountId}`),
+      ] = await this.conn.getRepository(UserAccount).find({ internalUserId: existedOAuth.userId });
+
+      await oAuthAccountRepo.save({
+        credentials: tokenSet,
+        userInfo,
+      });
+
+      return right(user);
+    }
+
+    const randomHash = await this.entropy.bcryptHash(randomAlphaNum(16));
+
+    // FIXME: allow existing user without OAuthAccount
+
+    return this.conn.transaction(async (entityManager) => {
+      const userAccount = await entityManager.save(
+        new UserAccount({
+          userId: this.entropy.createUserStringId(),
+          internalMeta: {},
+          emailId: externalId,
+          passwordHash: randomHash,
+        }),
+      );
+      const oauthAccount = await entityManager.save(
+        new OAuthAccount({
+          provider: OAuthProvider.googleOAuth2,
+          userId: userAccount.internalUserId,
+          externalId,
+          credentials: tokenSet,
+          userInfo: userInfo,
+        }),
+      );
+
+      return right(userAccount);
+    });
+  }
+
+  /**
+   * @deprecated
+   * @param {GoogleOAuthResponse} oauthResponse
+   * @returns {Promise<Either<string, UserAccount>>}
+   */
   async findOrCreateWithGoogleOAuth(oauthResponse: GoogleOAuthResponse): Promise<Either<string, UserAccount>> {
     if (!(oauthResponse?.userInfo?.verified_email && oauthResponse.userInfo.email)) {
       return left('email must be verified');

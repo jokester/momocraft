@@ -10,6 +10,11 @@ export class OAuthGoogleRequestDto {
   redirectUrl!: string;
 }
 
+export class OAuthRequestDto {
+  code!: string;
+  redirectUrl!: string;
+}
+
 export class EmailAuthRequestDto {
   email!: string;
   password!: string;

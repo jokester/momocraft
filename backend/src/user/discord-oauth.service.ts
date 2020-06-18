@@ -1,41 +1,47 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable, Scope } from '@nestjs/common';
 import { DiscordOAuth } from './oauth-client.provider';
-import { TokenSet, UserinfoResponse } from 'openid-client';
-import { Either, left, right } from 'fp-ts/lib/Either';
+import { Either, isLeft, left, right } from 'fp-ts/lib/Either';
 import { getDebugLogger } from '../util/get-debug-logger';
-
-interface DiscordTokenSet extends TokenSet {}
-
-interface DiscordUserInfo extends UserinfoResponse {}
+import { TypeORMConnection } from '../db/typeorm-connection.provider';
+import { Connection } from 'typeorm';
+import { ErrorCodeEnum } from '../const/error-code';
+import { UserService } from './user.service';
+import { UserAccount } from '../db/entities/user-account';
+import { OAuthProvider } from '../db/entities/oauth-account';
 
 const logger = getDebugLogger(__filename);
 
-@Injectable()
+@Injectable({ scope: Scope.DEFAULT })
 export class DiscordOauthService {
-  constructor(@Inject(DiscordOAuth.DiToken) private readonly client: DiscordOAuth.Client) {}
+  constructor(
+    @Inject(DiscordOAuth.DiToken) private readonly client: DiscordOAuth.Client,
+    @Inject(TypeORMConnection) private readonly conn: Connection,
+    private readonly userService: UserService,
+  ) {}
 
-  async issueRequestUrl() {
-    const x = this.client.authorizationUrl({});
+  async attemptAuth(code: string, redirectUrl: string): Promise<Either<ErrorCodeEnum, UserAccount>> {
+    const discordIdentity = await this.fetchAuthedUser(code, redirectUrl);
+
+    if (isLeft(discordIdentity)) return discordIdentity;
+
+    const { tokenSet, userInfo } = discordIdentity.right;
+
+    return this.userService.findOrCreateWithOAuth(OAuthProvider.discord, tokenSet, userInfo);
   }
 
-  async handleCallbackUrl(
-    url: string,
-  ): Promise<Either<string, { tokens: DiscordTokenSet; userInfo: DiscordUserInfo }>> {
+  private async fetchAuthedUser(
+    code: string,
+    redirectUrl: string,
+  ): Promise<Either<ErrorCodeEnum, DiscordOAuth.Authed>> {
     try {
-      const param = this.client.callbackParams(url);
-      if (!param.code) {
-        return left('illegal callback url');
-      }
+      const tokenSet = await this.client.callback(redirectUrl, { code });
+      logger('DiscordOauthService#attemptAuth', tokenSet);
+      const userInfo = await this.client.userinfo(tokenSet);
+      logger('DiscordOauthService#attemptAuth', userInfo);
 
-      const tokens = await this.client.callback(url, param);
-      const userInfo = await this.client.userinfo(tokens);
-
-      if (!(userInfo.email && userInfo.email_verified)) {
-        return left('email not verified');
-      }
-      return right({ tokens, userInfo });
+      return right({ tokenSet, userInfo });
     } catch (e) {
-      return left('internal error');
+      return left(ErrorCodeEnum.oAuthFailed);
     }
   }
 }

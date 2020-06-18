@@ -1,7 +1,8 @@
 import { Column, CreateDateColumn, Entity, Index, PrimaryGeneratedColumn, Unique, UpdateDateColumn } from 'typeorm';
+import { DiscordOAuth } from '../../user/oauth-client.provider';
 
 export const enum OAuthProvider {
-  google = 'google',
+  googleOAuth2 = 'googleOAuth2',
   discord = 'discord',
 }
 
@@ -33,9 +34,22 @@ export class OAuthAccount {
   @UpdateDateColumn()
   readonly updatedAt!: Date;
 
-  constructor(init?: OAuthAccount) {
+  constructor(init?: Omit<OAuthAccount, 'isDiscord' | 'isGoogle' | 'createdAt' | 'updatedAt' | 'oAuthAccountId'>) {
     if (init) {
       Object.assign(this, init);
     }
   }
+
+  isDiscord(): this is CastedOAuthAccount<DiscordOAuth.TokenSet, DiscordOAuth.UserInfo> {
+    return this.provider === OAuthProvider.discord;
+  }
+
+  isGoogle(): this is CastedOAuthAccount<never, never> {
+    return this.provider === OAuthProvider.googleOAuth2;
+  }
+}
+
+interface CastedOAuthAccount<Cred, UserInfo> {
+  credientials: Cred;
+  userInfo: UserInfo;
 }
