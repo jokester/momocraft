@@ -4,7 +4,7 @@ import { Either, isLeft, left, right } from 'fp-ts/lib/Either';
 import { GoogleOAuthResponse } from './google-oauth.service';
 import { TypeORMConnection } from '../db/typeorm-connection.provider';
 import { Connection, DeepPartial } from 'typeorm';
-import { OAuthAccount} from '../db/entities/oauth-account';
+import { OAuthAccount } from '../db/entities/oauth-account';
 import { UserAccount } from '../db/entities/user-account';
 import { EntropyService } from '../deps/entropy.service';
 import { JwtService } from '@nestjs/jwt';
@@ -15,7 +15,7 @@ import { randomAlphaNum } from '@jokester/ts-commonutil/cjs/text/random-string';
 import { ErrorCodeEnum } from '../const/error-code';
 import { UserProfileDto } from '../model/user-profile.dto';
 import { TokenSet, UserinfoResponse } from 'openid-client';
-import { OAuthProvider } from "../const/oauth-conf";
+import { OAuthProvider } from '../const/oauth-conf';
 
 const logger = getDebugLogger(__filename);
 
@@ -130,13 +130,10 @@ export class UserService {
 
   async findOrCreateWithOAuth(
     provider: OAuthProvider,
+    externalId: string,
     tokenSet: TokenSet,
-    userInfo: UserinfoResponse,
+    userInfo: object,
   ): Promise<Either<ErrorCodeEnum, UserAccount>> {
-    if (!(userInfo?.email && userInfo?.email_verified)) {
-      return left(ErrorCodeEnum.oAuthEmailNotVerified);
-    }
-    const externalId = userInfo.email.toLowerCase();
     const oAuthAccountRepo = this.conn.getRepository(OAuthAccount);
 
     const existedOAuth = await oAuthAccountRepo.findOne({ externalId });
@@ -147,10 +144,13 @@ export class UserService {
         user = absent(`userId=${existedOAuth.userId} from existedOAuthId=${existedOAuth.oAuthAccountId}`),
       ] = await this.conn.getRepository(UserAccount).find({ internalUserId: existedOAuth.userId });
 
-      await oAuthAccountRepo.save({
-        credentials: tokenSet,
-        userInfo,
-      });
+      await oAuthAccountRepo.update(
+        { oAuthAccountId: existedOAuth.oAuthAccountId },
+        {
+          credentials: tokenSet,
+          userInfo,
+        },
+      );
 
       return right(user);
     }
@@ -170,7 +170,7 @@ export class UserService {
       );
       const oauthAccount = await entityManager.save(
         new OAuthAccount({
-          provider: OAuthProvider.googleOAuth2,
+          provider,
           userId: userAccount.internalUserId,
           externalId,
           credentials: tokenSet,

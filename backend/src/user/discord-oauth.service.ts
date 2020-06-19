@@ -7,7 +7,7 @@ import { Connection } from 'typeorm';
 import { ErrorCodeEnum } from '../const/error-code';
 import { UserService } from './user.service';
 import { UserAccount } from '../db/entities/user-account';
-import { OAuthProvider } from "../const/oauth-conf";
+import { OAuthProvider } from '../const/oauth-conf';
 
 const logger = getDebugLogger(__filename);
 
@@ -26,7 +26,12 @@ export class DiscordOauthService {
 
     const { tokenSet, userInfo } = discordIdentity.right;
 
-    return this.userService.findOrCreateWithOAuth(OAuthProvider.discord, tokenSet, userInfo);
+    if (!(userInfo?.email && userInfo?.verified)) {
+      return left(ErrorCodeEnum.oAuthEmailNotVerified);
+    }
+
+    const externalId = userInfo.email.toLowerCase();
+    return this.userService.findOrCreateWithOAuth(OAuthProvider.discord, externalId, tokenSet, userInfo);
   }
 
   private async fetchAuthedUser(
@@ -34,13 +39,14 @@ export class DiscordOauthService {
     redirectUrl: string,
   ): Promise<Either<ErrorCodeEnum, DiscordOAuth.Authed>> {
     try {
-      const tokenSet = await this.client.callback(redirectUrl, { code });
-      logger('DiscordOauthService#attemptAuth', tokenSet);
-      const userInfo = await this.client.userinfo(tokenSet);
-      logger('DiscordOauthService#attemptAuth', userInfo);
+      const tokenSet = await this.client.oauthCallback(redirectUrl, { code });
+      logger('DiscordOauthService#attemptAuth tokenSet', tokenSet);
+      const userInfo = (await this.client.userinfo(tokenSet)) as DiscordOAuth.UserInfo;
+      logger('DiscordOauthService#attemptAuth userInfo', userInfo);
 
       return right({ tokenSet, userInfo });
     } catch (e) {
+      logger('DiscordOauthService#attemptAuth fail', e);
       return left(ErrorCodeEnum.oAuthFailed);
     }
   }

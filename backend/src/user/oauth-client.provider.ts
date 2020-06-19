@@ -3,10 +3,7 @@ import { ConfigService } from '@nestjs/config';
 import * as OpenIdClient from 'openid-client';
 import { absent } from '../util/absent';
 
-interface OAuthExternalIdentity<
-  T extends OpenIdClient.TokenSet = OpenIdClient.TokenSet,
-  U extends OpenIdClient.UserinfoResponse = OpenIdClient.UserinfoResponse
-> {
+interface OAuthExternalIdentity<T extends OpenIdClient.TokenSet, U> {
   tokenSet: T;
   userInfo: U;
 }
@@ -46,7 +43,23 @@ export namespace DiscordOAuth {
   }
 
   export interface TokenSet extends OpenIdClient.TokenSet {}
-  export interface UserInfo extends OpenIdClient.UserinfoResponse {}
+
+  /**
+   * @see https://discord.com/developers/docs/resources/user#user-object
+   */
+  export interface UserInfo extends OpenIdClient.UserinfoResponse {
+    sub: never;
+    id: string;
+    username: string;
+    avatar: string;
+    discriminator: string;
+    public_flags: number;
+    flags: number;
+    email: string;
+    verified: boolean;
+    locale: string;
+    mfa_enabled: boolean;
+  }
   export interface Authed extends OAuthExternalIdentity<TokenSet, UserInfo> {}
 
   const Issuer = new OpenIdClient.Issuer({
@@ -54,6 +67,7 @@ export namespace DiscordOAuth {
     authorization_endpoint: 'https://discord.com/api/oauth2/authorize',
     token_endpoint: 'https://discord.com/api/oauth2/token',
     revocation_endpoint: 'https://discord.com/api/oauth2/token/revoke',
+    userinfo_endpoint: 'https://discord.com/api/v6/users/@me',
   }) as OpenIdClient.Issuer<Client>;
 
   export const Provider: FactoryProvider<Client> = {
