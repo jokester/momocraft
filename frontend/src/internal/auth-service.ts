@@ -7,10 +7,10 @@ import { ErrorCodeEnum } from '../const-shared/error-code';
 import { toTypedLocalStorage } from '../util/typed-local-storage';
 import { createLogger } from '../util/debug-logger';
 import { isDevBuild } from '../const/build-env';
-import { AuthedSessionDto } from '../api-generated/models';
 import { ApiProvider } from '../api/bind-api';
-import { EmailAuthRequestDto, UserProfileDto } from '../api-generated';
 import { launderResponse } from '../api/launder-api-response';
+import { EmailAuthRequestDto, OAuthRequestDto } from '../api-generated/models';
+import { UserProfileDto, AuthedSessionDto } from '../api-generated/models';
 
 const logger = createLogger(__filename);
 
@@ -79,6 +79,13 @@ export class AuthServiceImpl {
     if (this.hasPendingAuth) return left(ErrorCodeEnum.maxConcurrencyExceeded);
     this.onStartAuth();
     const res = await launderResponse(this.useApi().authControllerDoEmailSignInRaw({ emailAuthRequestDto: param }));
+    return this.onAuthResponse(res);
+  }
+
+  async oAuthSignIn(param: OAuthRequestDto): ApiResponse<UserProfileDto> {
+    // if (this.hasPendingAuth) return left(ErrorCodeEnum.maxConcurrencyExceeded);
+    this.onStartAuth();
+    const res = await launderResponse(this.useApi().authControllerDoDiscordOAuthRaw({ oAuthRequestDto: param }));
     return this.onAuthResponse(res);
   }
 

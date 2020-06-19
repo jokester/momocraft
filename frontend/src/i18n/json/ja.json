@@ -2,5 +2,8 @@
   "site": {
     "siteName": "桃蔵",
     "siteDesc": "あなたのあつもり道具コレクション"
+  },
+  "errors": {
+    "otherError": "エラーが発生しました"
   }
 }

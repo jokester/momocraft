@@ -2,5 +2,8 @@
   "site": {
     "siteName": "Momocraft",
     "siteDesc": "Your online ACNH items collection"
+  },
+  "error": {
+    "otherError": "Something went wrong"
   }
 }
