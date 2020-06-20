@@ -18,7 +18,7 @@ export function useOAuthCodeCallback(provider: OAuthProvider, code?: string) {
 
   useEffect(() => {
     if (typeof code === 'string' && provider === OAuthProvider.discord) {
-      auth.oAuthSignIn({ code, redirectUrl: location.origin + location.pathname }).then((authResult) =>
+      auth.oDiscordAuthSignIn({ code, redirectUrl: location.origin + location.pathname }).then((authResult) =>
         fold(
           (l: ApiError) => {
             toaster.current?.show({ intent: 'warning', message: Messages.apiError(i18n, l) });
