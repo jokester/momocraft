@@ -31,7 +31,7 @@ jobs:
       run: yarn lint
 
     - name: Run test
-      run: yarn test
+      run: yarn test --ci --forceExit
       env:
         OAUTH_GOOGLE_CLIENT_ID: void
         OAUTH_GOOGLE_CLIENT_SECRET: void
