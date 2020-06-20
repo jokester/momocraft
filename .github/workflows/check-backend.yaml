@@ -38,7 +38,7 @@ jobs:
         OAUTH_DISCORD_CLIENT_ID: void
         OAUTH_DISCORD_CLIENT_SECRET: void
         TYPEORM_CONNECTION: postgres
-        TYPEORM_URL: postgres://pguser:secret@postgres:5432/momo_dev
+        TEST_DB_URL: postgres://pguser:secret@postgres:5432/momo_dev
 
     services:
       postgres:

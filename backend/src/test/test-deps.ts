@@ -11,7 +11,7 @@ import { DiscordOAuth } from '../user/oauth-client.provider';
 export namespace TestDeps {
   export const testConnection = createConnection({
     type: 'postgres',
-    url: 'postgresql://pguser:secret@127.0.0.1:54432/momo_test',
+    url: process.env['TEST_DB_URL'] || 'postgresql://pguser:secret@127.0.0.1:54432/momo_test',
     logger: 'debug',
     entities: [UserAccount, OAuthAccount],
   });
