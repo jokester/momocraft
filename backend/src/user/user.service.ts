@@ -130,21 +130,23 @@ export class UserService {
 
   async findOrCreateWithOAuth(
     provider: OAuthProvider,
-    externalId: string,
+    externalLowercaseEmailId: string,
     tokenSet: TokenSet,
     userInfo: object,
   ): Promise<Either<ErrorCodeEnum, UserAccount>> {
     const oAuthAccountRepo = this.conn.getRepository(OAuthAccount);
 
-    const existedOAuth = await oAuthAccountRepo.findOne({ externalId });
+    const existedOAuth = await oAuthAccountRepo.findOne({ externalId: externalLowercaseEmailId });
 
-    // return existed user
+    /**
+     * when oauth account existed: update and return
+     */
     if (existedOAuth) {
       const [
         user = absent(`userId=${existedOAuth.userId} from existedOAuthId=${existedOAuth.oAuthAccountId}`),
       ] = await this.conn.getRepository(UserAccount).find({ internalUserId: existedOAuth.userId });
 
-      await oAuthAccountRepo.update(
+      const updated = await oAuthAccountRepo.update(
         { oAuthAccountId: existedOAuth.oAuthAccountId },
         {
           credentials: tokenSet,
@@ -152,31 +154,45 @@ export class UserService {
         },
       );
 
+      if (updated.affected !== 1) {
+        throw new Error(`error updating existed OAuthAccount`);
+      }
+
       return right(user);
     }
 
-    const randomHash = await this.entropy.bcryptHash(randomAlphaNum(16));
+    /**
+     * when user with same email existed: link to new OAuthAccount and return
+     */
+    const existedUserWithSameEmail = await this.conn
+      .getRepository(UserAccount)
+      .findOne({ emailId: externalLowercaseEmailId });
+    if (existedUserWithSameEmail) {
+      await this.conn.getRepository(OAuthAccount).create({
+        provider,
+        userId: existedUserWithSameEmail.internalUserId,
+        externalId: externalLowercaseEmailId,
+        credentials: tokenSet,
+        userInfo: userInfo,
+      });
+    }
 
-    // FIXME: allow existing user without OAuthAccount
+    const randomPass = await this.entropy.bcryptHash(randomAlphaNum(16));
 
     return this.conn.transaction(async (entityManager) => {
-      const userAccount = await entityManager.save(
-        new UserAccount({
-          userId: this.entropy.createUserStringId(),
-          internalMeta: {},
-          emailId: externalId,
-          passwordHash: randomHash,
-        }),
-      );
-      const oauthAccount = await entityManager.save(
-        new OAuthAccount({
-          provider,
-          userId: userAccount.internalUserId,
-          externalId,
-          credentials: tokenSet,
-          userInfo: userInfo,
-        }),
-      );
+      const userAccount = await entityManager.create(UserAccount, {
+        userId: this.entropy.createUserStringId(),
+        internalMeta: {},
+        emailId: externalLowercaseEmailId,
+        passwordHash: randomPass,
+      });
+      const oauthAccount = await entityManager.create(OAuthAccount, {
+        provider,
+        userId: userAccount.internalUserId,
+        externalId: externalLowercaseEmailId,
+        credentials: tokenSet,
+        userInfo: userInfo,
+      });
 
       return right(userAccount);
     });
