@@ -8,7 +8,7 @@ import { either } from 'fp-ts';
 import { Observable } from 'rxjs';
 
 export interface ExposedAuthState {
-  user?: UserProfileDto;
+  user: null | UserProfileDto;
   pendingAuth: boolean;
 }
 
@@ -21,13 +21,13 @@ export function useAuthState(): ExposedAuthState {
           (v: null | ApiResponseSync<UserProfileDto>) =>
             v &&
             either.fold(
-              (l: unknown) => ({ pendingAuth: false }),
-              (user: UserProfileDto) => ({ user, pendingAuth: false }),
+              (l: unknown) => ({ pendingAuth: false, user: null }),
+              (user: UserProfileDto) => ({ user, pendingAuth: false } as ExposedAuthState),
             )(v),
         ),
       ),
     [auth],
   );
 
-  return useObserved(authState, null) || ({ pendingAuth: true } as const);
+  return useObserved(authState, null) || { pendingAuth: true, user: null };
 }
