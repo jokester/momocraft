@@ -24,10 +24,6 @@ export namespace TestDeps {
     await conn.createEntityManager().clear(OAuthAccount);
   }
 
-  export async function dropTestDatabase(): Promise<void> {
-    const conn = await testConnection;
-  }
-
   export const mockedEntropy = new EntropyService();
 
   export const mockedJwtService = new JwtService({ secret: 'veryverysecret', signOptions: { expiresIn: '7 days' } });
@@ -68,6 +64,6 @@ export namespace MockData {
 
   export const discordOAuthUserInfoValid: DiscordOAuth.UserInfo = {
     email: 'discord-user@example.com',
-    email_verified: true,
+    verified: true,
   } as any;
 }

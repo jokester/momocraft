@@ -5,83 +5,37 @@ import { INestApplication } from '@nestjs/common';
 import { GoogleOAuthResponse, GoogleOAuthService } from '../user/google-oauth.service';
 import { MockData, TestDeps } from './test-deps';
 import { right } from 'fp-ts/lib/Either';
-import { TypeORMConnection } from '../db/typeorm-connection.provider';
 import { JwtService } from '@nestjs/jwt';
 import { getDebugLogger } from '../util/get-debug-logger';
 import { UserService } from '../user/user.service';
 import { AuthController, AuthSuccessRes } from '../user/auth.controller';
 import { MomoUserController } from '../momo/momo-user.controller';
-import { EntropyService } from '../deps/entropy.service';
 import { getSomeOrThrow } from '../util/fpts-getter';
 import { absent } from '../util/absent';
 import { EmailAuthRequestDto } from '../model/auth.dto';
 import { DiscordOAuth } from '../user/oauth-client.provider';
+import { buildTesteeAppBundle } from './test-app-factory';
 
 const logger = getDebugLogger(__filename);
 
 describe('AppController (e2e)', () => {
+  const { testBundle, bundledAfterAll, bundledBeforeAll } = buildTesteeAppBundle();
   let app: INestApplication;
   let jwtService: JwtService;
   let userService: UserService;
-  let createdUserShortId: string;
-  let discordOAuthClient: DiscordOAuth.Client;
 
   beforeAll(async () => {
-    const moduleFixture = await Test.createTestingModule({
-      imports: [AppModule],
-    })
-      .overrideProvider(TypeORMConnection)
-      .useValue(TestDeps.testConnection)
-      .overrideProvider(JwtService)
-      .useValue(TestDeps.mockedJwtService)
-      .overrideProvider(EntropyService)
-      .useValue(TestDeps.mockedEntropy)
-      .overrideProvider(DiscordOAuth.Provider)
-      .useValue({})
-      .compile();
-
-    app = moduleFixture.createNestApplication();
-    await app.init();
-
-    jwtService = await moduleFixture.resolve(JwtService);
-    userService = await moduleFixture.resolve(UserService);
-    discordOAuthClient = await /* no idea why can't */ app.get(DiscordOAuth.DiToken);
-
-    await TestDeps.clearTestDatabase();
-
-    let nanoIdSeq = 0;
-
-    jest.spyOn(TestDeps.mockedEntropy, 'createUserStringId').mockImplementation(() => `nanoid-${++nanoIdSeq}`);
+    await bundledBeforeAll();
+    app = testBundle.app;
+    jwtService = testBundle.jwtService;
+    userService = testBundle.userService;
   });
 
-  afterAll(async () => {
-    await app.close();
-    await TestDeps.dropTestDatabase();
-  });
+  beforeEach(TestDeps.clearTestDatabase);
+
+  afterAll(bundledAfterAll);
 
   describe(AuthController, () => {
-    describe('POST /auth/oauth/discord', () => {
-      it('creates UserAccount and OAuthAccount when none existed', async () => {
-        jest
-          // @ts-ignore
-          .spyOn(discordOAuthClient, 'oauthCallback')
-          .mockResolvedValue(MockData.discordOAuthTokenValid);
-
-        jest
-          // @ts-ignore
-          .spyOn(discordOAuthClient, 'userinfo')
-          .mockResolvedValue(MockData.discordOAuthTokenValid);
-
-        const res = await request(app.getHttpServer())
-          .post('/auth/oauth/discord')
-          .send(MockData.oauthRequest)
-          .expect(201);
-
-        const jwtToken = JSON.parse(res.text).jwtToken;
-        await jwtService.verifyAsync(jwtToken);
-      });
-    });
-
     it('POST /auth/oauth/google returns jwtToken on succeed', async () => {
       jest
         .spyOn(GoogleOAuthService.prototype, 'auth')
@@ -180,9 +134,7 @@ describe('AppController (e2e)', () => {
     });
 
     it('GET /user/self with proper auth returns resolved user', async () => {
-      const userAccount1 = getSomeOrThrow(await userService.findUser({ userId: createdUserShortId }), () =>
-        absent('user by shortId'),
-      );
+      const userAccount1 = getSomeOrThrow(await userService.findUser({ userId: '' }), () => absent('user by shortId'));
 
       const jwtToken = await userService.createJwtTokenForUser(userAccount1);
 
@@ -192,9 +144,7 @@ describe('AppController (e2e)', () => {
     });
 
     it('PUT /user/self updated resolved user', async () => {
-      const userAccount1 = getSomeOrThrow(await userService.findUser({ userId: createdUserShortId }), () =>
-        absent('user by shortId'),
-      );
+      const userAccount1 = getSomeOrThrow(await userService.findUser({ userId: '' }), () => absent('user by shortId'));
 
       const jwtToken = await userService.createJwtTokenForUser(userAccount1);
 
