@@ -39,7 +39,7 @@ export function useOAuthCodeCallback(provider: OAuthProvider, code?: string) {
       logger('signing in with google oauth', code);
       auth.googleOAuthSignIn({ code, redirectUrl: location.origin + location.pathname }).then(onAuthResult);
     } /* no matched discord */ else {
-      // router.replace(TypedRoutes.account);
+      router.replace(TypedRoutes.account);
     }
   }, []);
 }

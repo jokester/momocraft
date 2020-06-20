@@ -37,7 +37,7 @@ export const DiscordLoginButton: React.FC = () => {
 
 export const GoogleLoginButton: React.FC = () => {
   const gotoGoogleAuth = () => {
-    location.href = buildOAuthEndpoints().discord;
+    location.href = buildOAuthEndpoints().google;
   };
   return <Button onClick={gotoGoogleAuth}>Login with Google</Button>;
 };
