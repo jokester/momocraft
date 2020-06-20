@@ -32,9 +32,6 @@ import {
   FriendUserDto,
   FriendUserDtoFromJSON,
   FriendUserDtoToJSON,
-  OAuthGoogleRequestDto,
-  OAuthGoogleRequestDtoFromJSON,
-  OAuthGoogleRequestDtoToJSON,
   OAuthRequestDto,
   OAuthRequestDtoFromJSON,
   OAuthRequestDtoToJSON,
@@ -62,7 +59,7 @@ export interface AuthControllerDoEmailSignUpRequest {
 }
 
 export interface AuthControllerDoGoogleOAuthRequest {
-  oAuthGoogleRequestDto: OAuthGoogleRequestDto;
+  oAuthRequestDto: OAuthRequestDto;
 }
 
 export interface MomoUserControllerGetCollectionsRequest {
@@ -206,10 +203,10 @@ export class DefaultApi extends runtime.BaseAPI {
   async authControllerDoGoogleOAuthRaw(
     requestParameters: AuthControllerDoGoogleOAuthRequest,
   ): Promise<runtime.ApiResponse<AuthedSessionDto>> {
-    if (requestParameters.oAuthGoogleRequestDto === null || requestParameters.oAuthGoogleRequestDto === undefined) {
+    if (requestParameters.oAuthRequestDto === null || requestParameters.oAuthRequestDto === undefined) {
       throw new runtime.RequiredError(
-        'oAuthGoogleRequestDto',
-        'Required parameter requestParameters.oAuthGoogleRequestDto was null or undefined when calling authControllerDoGoogleOAuth.',
+        'oAuthRequestDto',
+        'Required parameter requestParameters.oAuthRequestDto was null or undefined when calling authControllerDoGoogleOAuth.',
       );
     }
 
@@ -224,7 +221,7 @@ export class DefaultApi extends runtime.BaseAPI {
       method: 'POST',
       headers: headerParameters,
       query: queryParameters,
-      body: OAuthGoogleRequestDtoToJSON(requestParameters.oAuthGoogleRequestDto),
+      body: OAuthRequestDtoToJSON(requestParameters.oAuthRequestDto),
     });
 
     return new runtime.JSONApiResponse(response, (jsonValue) => AuthedSessionDtoFromJSON(jsonValue));
