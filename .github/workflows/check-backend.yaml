@@ -39,7 +39,7 @@ jobs:
         OAUTH_DISCORD_CLIENT_ID: void
         OAUTH_DISCORD_CLIENT_SECRET: void
         TYPEORM_CONNECTION: postgres
-        TEST_DB_URL: postgres://pguser:secret@postgres:5432/momo_dev
+        TEST_DB_URL: postgres://pguser:secret@localhost:5432/momo_dev
 
     services:
       postgres:
@@ -54,3 +54,5 @@ jobs:
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
+        ports:
+          - 5432:5432
