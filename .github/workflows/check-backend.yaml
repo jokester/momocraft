@@ -1,14 +1,14 @@
-name: Check (frontend)
+name: Check (backend)
 
 on:
   pull_request:
     paths:
-    - frontend/**
+    - backend/**
 
 defaults:
   run:
     shell: bash
-    working-directory: frontend
+    working-directory: backend
 
 jobs:
   check:
@@ -21,7 +21,7 @@ jobs:
 
     - uses: bahmutov/npm-install@v1
       with:
-        working-directory: frontend
+        working-directory: backend
 
     - name: Type Check
       run: yarn typecheck
