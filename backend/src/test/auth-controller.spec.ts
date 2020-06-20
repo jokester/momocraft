@@ -49,7 +49,12 @@ describe(AuthController, () => {
       });
 
       it('creates user at controller', async () => {
-        await authController.doDiscordOAuth(MockData.oauthRequest);
+        const u1 = await authController.doDiscordOAuth(MockData.oauthRequest);
+        const u2 = await authController.doDiscordOAuth(MockData.oauthRequest);
+
+        expect(await userService.findUserWithJwtToken(u1.jwtToken)).toEqual(
+          await userService.findUserWithJwtToken(u2.jwtToken),
+        );
       });
 
       it('creates UserAccount and OAuthAccount when none existed', async () => {
@@ -73,6 +78,27 @@ describe(AuthController, () => {
         const user = getRightOrThrow(await userService.findUserWithJwtToken(oAuthAuthed.jwtToken), (l) => new Error(l));
 
         expect(user.internalUserId).toEqual(emailCreated.internalUserId);
+      });
+    });
+
+    describe('when discord rejects oauth', () => {
+      beforeEach(() => {
+        jest
+          // @ts-ignore
+          .spyOn(discordOAuthClient, 'oauthCallback')
+          .mockResolvedValue(MockData.discordOAuthTokenValid);
+
+        jest
+          // @ts-ignore
+          .spyOn(discordOAuthClient, 'userinfo')
+          .mockRejectedValue({});
+      });
+
+      it('return 400', async () => {
+        const res = await request(app.getHttpServer())
+          .post('/auth/oauth/discord')
+          .send(MockData.oauthRequest)
+          .expect(400);
       });
     });
   });
