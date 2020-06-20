@@ -33,6 +33,7 @@ jobs:
     - name: Run test
       run: yarn test --ci --forceExit
       env:
+        JWT_SECRET: secret
         OAUTH_GOOGLE_CLIENT_ID: void
         OAUTH_GOOGLE_CLIENT_SECRET: void
         OAUTH_DISCORD_CLIENT_ID: void
