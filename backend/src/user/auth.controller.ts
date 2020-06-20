@@ -6,7 +6,7 @@ import { getRightOrThrow } from '../util/fpts-getter';
 import { Sanitize } from '../util/input-santinizer';
 import { UserAccount } from '../db/entities/user-account';
 import { AuthedUser } from './user-jwt-auth.middleware';
-import { AuthedSessionDto, OAuthGoogleRequestDto, EmailAuthRequestDto, OAuthRequestDto } from '../model/auth.dto';
+import { AuthedSessionDto, EmailAuthRequestDto, OAuthRequestDto } from '../model/auth.dto';
 import { ApiCreatedResponse, ApiOkResponse } from '@nestjs/swagger';
 import { UserProfileDto } from '../model/user-profile.dto';
 import { ApiErrorDto } from '../model/api-error.dto';
@@ -30,28 +30,16 @@ export class AuthController {
   @Post('oauth/google')
   @Header('Cache-Control', 'private;max-age=0;')
   @ApiCreatedResponse({ type: AuthedSessionDto })
-  async doGoogleOAuth(@Body() payload: OAuthRequestDto): Promise<{ jwtToken: string }> {
+  async doGoogleOAuth(@Body() payload: OAuthRequestDto) {
     if (payload && payload.code && payload.redirectUrl) {
-      const oauthRes = getRightOrThrow(
-        await this.googleOAuthService.auth(payload.code, payload.redirectUrl),
+      const authedUser = getRightOrThrow(
+        await this.googleOAuthService.auth(payload),
         (l) => new BadRequestException('auth failed', l),
       );
 
-      logger('got google oauth response', oauthRes);
+      logger('user authed', authedUser);
 
-      const user = getRightOrThrow(
-        await this.userService.findOrCreateWithGoogleOAuth(oauthRes),
-        /**
-         * objectOrError: string => { message: objectOrError }
-         * objectOrError: string, error:
-         * @returns {BadRequestException}
-         */
-        (l) => new BadRequestException('auth failed', l),
-      );
-
-      logger('user authed', user);
-
-      return { jwtToken: await this.userService.createJwtTokenForUser(user) };
+      return this.issueAuthSuccessResponse(authedUser);
     }
     throw new BadRequestException();
   }

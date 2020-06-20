@@ -1,11 +1,4 @@
 export const enum OAuthProvider {
-  /**
-   * @deprecated
-   * @type {string}
-   * FIXME: rename
-   */
-  googleOAuth2 = 'google',
   discord = 'discord',
+  google = 'google',
 }
-
-export const SupportedOAuthProviders = [OAuthProvider.googleOAuth2, OAuthProvider.discord];

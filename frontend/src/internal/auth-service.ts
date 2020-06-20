@@ -66,20 +66,25 @@ export class AuthServiceImpl {
     );
   }
 
-  async emailSignUp(param: EmailAuthRequestDto): ApiResponse<UserProfileDto> {
+  emailSignUp(param: EmailAuthRequestDto): ApiResponse<UserProfileDto> {
     return this.replaceSession(
       launderResponse(this.useApi().authControllerDoEmailSignUpRaw({ emailAuthRequestDto: param })),
     );
   }
 
-  async emailSignIn(param: EmailAuthRequestDto): ApiResponse<UserProfileDto> {
+  emailSignIn(param: EmailAuthRequestDto): ApiResponse<UserProfileDto> {
     return this.replaceSession(
       launderResponse(this.useApi().authControllerDoEmailSignInRaw({ emailAuthRequestDto: param })),
     );
   }
 
-  async oDiscordAuthSignIn(param: OAuthRequestDto): ApiResponse<UserProfileDto> {
+  discordOAuthSignIn(param: OAuthRequestDto): ApiResponse<UserProfileDto> {
     const res = launderResponse(this.useApi().authControllerDoDiscordOAuthRaw({ oAuthRequestDto: param }));
+    return this.replaceSession(res);
+  }
+
+  googleOAuthSignIn(param: OAuthRequestDto): ApiResponse<UserProfileDto> {
+    const res = launderResponse(this.useApi().authControllerDoGoogleOAuthRaw({ oAuthRequestDto: param }));
     return this.replaceSession(res);
   }
 

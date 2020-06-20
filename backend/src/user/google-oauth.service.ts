@@ -1,58 +1,58 @@
-import { google, oauth2_v2 as GoogleOAuth2V2 } from 'googleapis';
-import { Injectable } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
+import { Inject, Injectable } from '@nestjs/common';
 import { getDebugLogger } from '../util/get-debug-logger';
-import { oauth2 } from 'googleapis/build/src/apis/oauth2';
-import { Either, left, right } from 'fp-ts/lib/Either';
-import { GetTokenResponse } from 'google-auth-library/build/src/auth/oauth2client';
-import { absent } from '../util/absent';
+import { Either, isLeft, left, right } from 'fp-ts/lib/Either';
+import { OAuthRequestDto } from '../model/auth.dto';
+import { GoogleOAuth } from './oauth-client.provider';
+import { UserService } from './user.service';
+import { ErrorCodeEnum } from '../const/error-code';
+import { UserAccount } from '../db/entities/user-account';
+import { OAuthProvider } from '../const/oauth-conf';
 
 const logger = getDebugLogger(__filename);
 
-export interface GoogleOAuthResponse {
-  credentials: GetTokenResponse;
-  userInfo: GoogleOAuth2V2.Schema$Userinfoplus;
-}
-
 @Injectable()
 export class GoogleOAuthService {
-  constructor(private readonly confService: ConfigService) {}
+  constructor(
+    @Inject(GoogleOAuth.DiToken) private readonly client: GoogleOAuth.GoogleOAuthClient,
+    private readonly userService: UserService,
+  ) {}
 
-  async auth(code: string, redirectUrl: string): Promise<Either<string, GoogleOAuthResponse>> {
-    const client = this.createAuthClient(redirectUrl);
-
-    let token;
+  async auth(param: OAuthRequestDto): Promise<Either<ErrorCodeEnum, UserAccount>> {
     try {
-      token = await client.getToken(code);
+      const externalIdentity = await this.fetchAuthedUser(param.code, param.redirectUrl);
+
+      if (isLeft(externalIdentity)) return externalIdentity;
+
+      const { tokenSet, userInfo } = externalIdentity.right;
+
+      if (!(userInfo?.email && userInfo?.email_verified)) {
+        return left(ErrorCodeEnum.oAuthEmailNotVerified);
+      }
+
+      const externalId = userInfo.email.toLowerCase();
+      return this.userService.findOrCreateWithOAuth(OAuthProvider.google, externalId, tokenSet, userInfo);
     } catch (e) {
-      logger('GoogleOAuthService#auth error getting token', e);
-      return left('error in auth');
-    }
-
-    try {
-      client.setCredentials(token.tokens);
-      const oauthUserInfo = oauth2({ version: 'v2', auth: client });
-      const got = await oauthUserInfo.userinfo.get();
-
-      logger('GoogleOAuthService#auth', got);
-
-      return right({
-        credentials: token,
-        userInfo: got.data,
-      });
-    } catch (e) {
-      logger('GoogleOAuthService#auth thrown', e);
-
-      return left('GoogleOAuthService#auth error getting user info');
+      return left(ErrorCodeEnum.oAuthFailed);
     }
   }
 
-  private createAuthClient(redirectUrl: string) {
-    return new google.auth.OAuth2({
-      clientId: this.confService.get('OAUTH_GOOGLE_CLIENT_ID') || absent('$OAUTH_GOOGLE_CLIENT_ID'),
-      clientSecret: this.confService.get('OAUTH_GOOGLE_CLIENT_SECRET') || absent('$OAUTH_GOOGLE_CLIENT_SECRET'),
-      redirectUri:
-        redirectUrl || this.confService.get('OAUTH_GOOGLE_REDIRECT_URI') || absent('$OAUTH_GOOGLE_REDIRECT_URI'),
-    });
+  private async fetchAuthedUser(code: string, redirectUrl: string): Promise<Either<ErrorCodeEnum, GoogleOAuth.Authed>> {
+    try {
+      const tokenSet = await this.client.oauthCallback(redirectUrl, { code });
+
+      logger('GoogleOAuthService#fetchAuthedUser tokenSet', tokenSet);
+
+      const userInfo = (await this.client.userinfo(tokenSet)) as GoogleOAuth.UserInfo;
+
+      logger('GoogleOAuthService#fetchAuthedUser userInfo', userInfo);
+
+      return right({
+        tokenSet,
+        userInfo,
+      });
+    } catch (e) {
+      logger('GoogleOAuthService#fetchAuthedUser thrown', e);
+      return left(ErrorCodeEnum.oAuthFailed);
+    }
   }
 }

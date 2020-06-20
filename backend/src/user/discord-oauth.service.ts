@@ -2,8 +2,6 @@ import { Inject, Injectable, Scope } from '@nestjs/common';
 import { DiscordOAuth } from './oauth-client.provider';
 import { Either, isLeft, left, right } from 'fp-ts/lib/Either';
 import { getDebugLogger } from '../util/get-debug-logger';
-import { TypeORMConnection } from '../db/typeorm-connection.provider';
-import { Connection } from 'typeorm';
 import { ErrorCodeEnum } from '../const/error-code';
 import { UserService } from './user.service';
 import { UserAccount } from '../db/entities/user-account';
@@ -15,7 +13,6 @@ const logger = getDebugLogger(__filename);
 export class DiscordOAuthService {
   constructor(
     @Inject(DiscordOAuth.DiToken) private readonly client: DiscordOAuth.Client,
-    @Inject(TypeORMConnection) private readonly conn: Connection,
     private readonly userService: UserService,
   ) {}
 

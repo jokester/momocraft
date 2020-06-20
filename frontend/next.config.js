@@ -28,6 +28,7 @@ const nextConf = {
       /* dev */ 'http://127.0.0.1:3001',
 
     OAUTH_DISCORD_CLIENT_ID: process.env.OAUTH_DISCORD_CLIENT_ID,
+    OAUTH_GOOGLE_CLIENT_ID: process.env.OAUTH_GOOGLE_CLIENT_ID,
   },
 
   devIndicators: {

@@ -3,10 +3,10 @@ import { UserAccount } from '../db/entities/user-account';
 import { OAuthAccount } from '../db/entities/oauth-account';
 import { EntropyService } from '../deps/entropy.service';
 import { DeepReadonly } from '@jokester/ts-commonutil/cjs/type/freeze';
-import { GoogleOAuthResponse } from '../user/google-oauth.service';
 import { JwtService } from '@nestjs/jwt';
 import { EmailAuthRequestDto, OAuthRequestDto } from '../model/auth.dto';
-import { DiscordOAuth } from '../user/oauth-client.provider';
+import { DiscordOAuth, GoogleOAuth } from '../user/oauth-client.provider';
+import { IdTokenClaims } from 'openid-client';
 
 export namespace TestDeps {
   export const testConnection = createConnection({
@@ -33,20 +33,22 @@ export namespace MockData {
   export const oauthRequest = { code: '123', redirectUrl: '456' } as OAuthRequestDto;
 
   export const googleOAuthResponseValid = {
-    credentials: {
-      tokens: {
-        // eslint-disable-next-line @typescript-eslint/camelcase
-        id_token: 'iiid-token',
+    tokenSet: {
+      expired(): boolean {
+        return false;
+      },
+      claims(): never {
+        throw 'wont be called';
       },
       res: null,
     },
     userInfo: {
+      sub: 0 as never,
       email: 'hey@me.com',
-      // eslint-disable-next-line @typescript-eslint/camelcase
       verified_email: true,
       picture: 'https://example.com/a.png',
     },
-  } as DeepReadonly<GoogleOAuthResponse>;
+  } as DeepReadonly<GoogleOAuth.Authed>;
 
   export const googleOAuthResponseEmailUnverified = {
     ...googleOAuthResponseValid,
