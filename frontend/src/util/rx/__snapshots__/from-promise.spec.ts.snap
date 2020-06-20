@@ -1,0 +1,12 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`from-promise rxjs: fromRxJs1 1`] = `
+Array [
+  Notification {
+    "error": undefined,
+    "hasValue": true,
+    "kind": "N",
+    "value": 1,
+  },
+]
+`;

@@ -1,0 +1,58 @@
+name: Check (backend)
+
+on:
+  pull_request:
+    paths:
+    - backend/**
+
+defaults:
+  run:
+    shell: bash
+    working-directory: backend
+
+jobs:
+
+  check-backend:
+    name: Check
+    runs-on: ubuntu-20.04
+
+    steps:
+
+    - uses: actions/checkout@v2
+
+    - uses: bahmutov/npm-install@v1
+      with:
+        working-directory: backend
+
+    - name: Type Check
+      run: yarn typecheck
+
+    - name: Lint
+      run: yarn lint
+
+    - name: Run test
+      run: yarn test --ci --forceExit
+      env:
+        JWT_SECRET: secret
+        OAUTH_GOOGLE_CLIENT_ID: void
+        OAUTH_GOOGLE_CLIENT_SECRET: void
+        OAUTH_DISCORD_CLIENT_ID: void
+        OAUTH_DISCORD_CLIENT_SECRET: void
+        TYPEORM_CONNECTION: postgres
+        TEST_DB_URL: postgres://pguser:secret@localhost:5432/momo_dev
+
+    services:
+      postgres:
+        image: postgres:12.2-alpine
+        env:
+          POSTGRES_USER: pguser
+          POSTGRES_PASSWORD: secret
+          POSTGRES_DB: momo_dev
+        # Set health checks to wait until postgres has started
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432

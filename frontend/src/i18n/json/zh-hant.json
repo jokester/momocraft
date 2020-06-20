@@ -2,5 +2,8 @@
   "site": {
     "siteName": "Momocraft",
     "siteDesc": "動物森友会 在線收藏夾"
+  },
+  "errors": {
+    "otherError": "出錯啦"
   }
 }

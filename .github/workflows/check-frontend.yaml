@@ -18,8 +18,6 @@ jobs:
     steps:
 
     - uses: actions/checkout@v2
-      with:
-        submodules: recursive
 
     - uses: bahmutov/npm-install@v1
       with:

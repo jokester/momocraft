@@ -1,0 +1,26 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`toObservableEither transforms (stream of promise) to (stream of promise result) 1`] = `
+Array [
+  Object {
+    "_tag": "Right",
+    "right": 1,
+  },
+  Object {
+    "_tag": "Left",
+    "left": 2,
+  },
+  Object {
+    "_tag": "Right",
+    "right": 3,
+  },
+  Object {
+    "_tag": "Left",
+    "left": 4,
+  },
+  Object {
+    "_tag": "Right",
+    "right": 5,
+  },
+]
+`;

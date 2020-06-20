@@ -2,5 +2,12 @@
   "site": {
     "siteName": "Momocraft",
     "siteDesc": "Your online ACNH items collection"
+  },
+  "error": {
+    "otherError": "Something went wrong"
+  },
+  "common": {
+    "teleportStarting": "Teleport starting, please sit and wait.",
+    "pleaseWait": "Please wait"
   }
 }

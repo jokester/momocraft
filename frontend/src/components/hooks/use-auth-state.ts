@@ -1,12 +1,33 @@
 import { useSingletons } from '../../internal/app-context';
 import { useMemo } from 'react';
 import { useObserved } from '../generic-hooks/use-observed';
-import { dummyAuthState } from '../../api/api-convention';
-import { ExposedAuthState } from '../../internal/auth-service';
+import { ApiResponseSync } from '../../api/api-convention';
+import { UserProfileDto } from '../../api-generated/models';
+import { map } from 'rxjs/operators';
+import { either } from 'fp-ts';
+import { Observable } from 'rxjs';
+
+export interface ExposedAuthState {
+  user: null | UserProfileDto;
+  pendingAuth: boolean;
+}
 
 export function useAuthState(): ExposedAuthState {
   const { auth } = useSingletons();
-  const authState = useMemo(() => auth.authed, [auth]);
+  const authState: Observable<null | ExposedAuthState> = useMemo(
+    () =>
+      auth.authed.pipe(
+        map(
+          (v: null | ApiResponseSync<UserProfileDto>) =>
+            v &&
+            either.fold(
+              (l: unknown) => ({ pendingAuth: false, user: null }),
+              (user: UserProfileDto) => ({ user, pendingAuth: false } as ExposedAuthState),
+            )(v),
+        ),
+      ),
+    [auth],
+  );
 
-  return useObserved(authState, dummyAuthState);
+  return useObserved(authState, null) || { pendingAuth: true, user: null };
 }

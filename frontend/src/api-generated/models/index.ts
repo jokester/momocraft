@@ -6,6 +6,7 @@ export * from './FriendListDto';
 export * from './FriendUserDto';
 export * from './ItemCollectionDto';
 export * from './OAuthGoogleRequestDto';
+export * from './OAuthRequestDto';
 export * from './UserCollectionListDto';
 export * from './UserFriendCollectionDto';
 export * from './UserFriendRequestDto';

@@ -41,11 +41,11 @@ export default class extends App<CommonPageProps> {
     logger('pageProps', this.props.pageProps);
 
     return (
-      <React.StrictMode>
-        <RealApp lang={(this.props.pageProps as CommonPageProps).lang}>
-          <Component {...this.props} />
-        </RealApp>
-      </React.StrictMode>
+      // <React.StrictMode>
+      <RealApp lang={(this.props.pageProps as CommonPageProps).lang}>
+        <Component {...this.props} />
+      </RealApp>
+      // </React.StrictMode>
     );
   }
 }

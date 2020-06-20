@@ -2,5 +2,8 @@
   "site": {
     "siteName": "Momocraft",
     "siteDesc": "动物之森 在线收藏夹"
+  },
+  "errors": {
+    "otherError": "发生错误"
   }
 }

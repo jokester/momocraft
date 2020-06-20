@@ -27,6 +27,7 @@ module.exports = {
     '@typescript-eslint/no-empty-interface': 0,
     '@typescript-eslint/no-parameter-properties': 0,
     '@typescript-eslint/no-namespace': 0,
+    '@typescript-eslint/explicit-function-return-type': 0,
     '@typescript-eslint/no-empty-function': 0,
     '@typescript-eslint/no-explicit-any': 0,
     'react-hooks/rules-of-hooks': 'error',

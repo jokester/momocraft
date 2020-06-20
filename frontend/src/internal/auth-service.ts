@@ -1,101 +1,96 @@
-import { ApiResponse, ApiError } from '../api/api-convention';
-import { Either, fold, left, right } from 'fp-ts/lib/Either';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { ApiError, ApiResponse, ApiResponseSync } from '../api/api-convention';
+import { Either, isLeft, isRight, left, map as mapEither, right } from 'fp-ts/lib/Either';
+import { BehaviorSubject, ConnectableObservable, from, Observable, ReplaySubject } from 'rxjs';
 
-import { map } from 'rxjs/operators';
+import { first, map, multicast, startWith, switchMap } from 'rxjs/operators';
 import { ErrorCodeEnum } from '../const-shared/error-code';
 import { toTypedLocalStorage } from '../util/typed-local-storage';
 import { createLogger } from '../util/debug-logger';
 import { isDevBuild } from '../const/build-env';
-import { AuthedSessionDto } from '../api-generated/models';
 import { ApiProvider } from '../api/bind-api';
-import { EmailAuthRequestDto, UserProfileDto } from '../api-generated';
 import { launderResponse } from '../api/launder-api-response';
+import { AuthedSessionDto, EmailAuthRequestDto, OAuthRequestDto, UserProfileDto } from '../api-generated/models';
+import { createDebugObserver } from '../util/rx/debug-observer';
 
 const logger = createLogger(__filename);
 
-export interface ExposedAuthState {
-  user?: UserProfileDto;
-  profile: null;
-  pendingAuth: boolean;
-}
-
-interface InternalAuthState {
-  identity: null | AuthedSessionDto;
-  pendingAuth: boolean;
-}
-
-const exposeAuthState = map<InternalAuthState, ExposedAuthState>((_: InternalAuthState) => ({
-  pendingAuth: _.pendingAuth,
-  user: _.identity?.user,
-  profile: null,
-}));
+const exposeAuthState = mapEither<AuthedSessionDto, UserProfileDto>((_) => _.user);
 
 export class AuthServiceImpl {
   private readonly persist = toTypedLocalStorage<{
     moAur: AuthedSessionDto;
   }>();
 
-  private readonly _authState = new BehaviorSubject<InternalAuthState>({
-    pendingAuth: false,
-    identity: this.persist.getItem('moAur'),
-  });
+  private readonly authAttempts = new BehaviorSubject<ApiResponse<AuthedSessionDto>>(
+    Promise.resolve(left(ErrorCodeEnum.notAuthenticated)),
+  );
 
-  constructor(
-    private readonly useApi: ApiProvider,
+  private readonly internalAuthState: ConnectableObservable<null | ApiResponseSync<AuthedSessionDto>>;
 
-    refreshSession: boolean,
-  ) {
-    logger('authState.init', this._authState.value);
+  constructor(private readonly useApi: ApiProvider, refreshSessionOnStart: boolean) {
+    const internalAuthStateSubject = new ReplaySubject<null | ApiResponseSync<AuthedSessionDto>>(1);
+    this.internalAuthState = this.authAttempts.pipe(
+      switchMap((neverReject) => from(neverReject).pipe(startWith(null))),
+      multicast(internalAuthStateSubject),
+    ) as ConnectableObservable<null | ApiResponseSync<AuthedSessionDto>>;
+
+    this.internalAuthState.subscribe((latest) => {
+      if (latest) {
+        if (isLeft(latest)) {
+          this.persist.removeItem('moAur');
+        } else {
+          this.persist.setItem('moAur', latest.right);
+        }
+      }
+    });
 
     if (isDevBuild) {
-      this._authState.subscribe({
-        next(v) {
-          logger('authState.next', v);
-        },
-        error(e) {
-          logger('authState.error', e);
-        },
-      });
+      this.authAttempts.subscribe(createDebugObserver(__filename, 'authAttempts'));
+      this.internalAuthState.subscribe(createDebugObserver(__filename, 'internalAuthState'));
     }
 
-    if (this._authState.value.identity && refreshSession) {
-      setTimeout(() => this.refreshSession());
+    const revivedAuth = this.persist.getItem('moAur');
+    if (refreshSessionOnStart && revivedAuth?.jwtToken) {
+      this.refreshSession(revivedAuth.jwtToken);
     }
+
+    this.internalAuthState.connect();
   }
 
-  get authed(): Observable<ExposedAuthState> {
-    return this._authState.pipe(exposeAuthState);
+  get authed(): Observable<null | ApiResponseSync<UserProfileDto>> {
+    return this.internalAuthState.pipe(
+      map(
+        (maybeState) =>
+          maybeState && mapEither<AuthedSessionDto, UserProfileDto>((_: AuthedSessionDto) => _.user)(maybeState),
+      ),
+    );
   }
 
   async emailSignUp(param: EmailAuthRequestDto): ApiResponse<UserProfileDto> {
-    if (this.hasPendingAuth) return left(ErrorCodeEnum.maxConcurrencyExceeded);
-    this.onStartAuth();
-    const res = await launderResponse(this.useApi().authControllerDoEmailSignUpRaw({ emailAuthRequestDto: param }));
-    return this.onAuthResponse(res);
+    return this.replaceSession(
+      launderResponse(this.useApi().authControllerDoEmailSignUpRaw({ emailAuthRequestDto: param })),
+    );
   }
 
   async emailSignIn(param: EmailAuthRequestDto): ApiResponse<UserProfileDto> {
-    if (this.hasPendingAuth) return left(ErrorCodeEnum.maxConcurrencyExceeded);
-    this.onStartAuth();
-    const res = await launderResponse(this.useApi().authControllerDoEmailSignInRaw({ emailAuthRequestDto: param }));
-    return this.onAuthResponse(res);
+    return this.replaceSession(
+      launderResponse(this.useApi().authControllerDoEmailSignInRaw({ emailAuthRequestDto: param })),
+    );
   }
 
-  private async refreshSession() {
-    if (this.hasPendingAuth) return left(ErrorCodeEnum.maxConcurrencyExceeded);
-    this.onStartAuth();
-    const res = await launderResponse(this.useApi().authControllerDoRefreshTokenRaw());
-    return this.onAuthResponse(res);
+  async oDiscordAuthSignIn(param: OAuthRequestDto): ApiResponse<UserProfileDto> {
+    const res = launderResponse(this.useApi().authControllerDoDiscordOAuthRaw({ oAuthRequestDto: param }));
+    return this.replaceSession(res);
+  }
+
+  private refreshSession(jwtToken: string) {
+    const res = launderResponse(this.useApi(buildAuthHeader(jwtToken)).authControllerDoRefreshTokenRaw());
+    this.replaceSession(res);
   }
 
   signOut(): Either<string, void> {
-    if (this._authState.value.pendingAuth || !this._authState.value.identity) {
-      return left('incorrect state');
-    }
-    this._authState.next({ identity: null, pendingAuth: false });
-    this.persist.removeItem('moAur');
-    return right(0 as never);
+    this.authAttempts.next(Promise.resolve(left(ErrorCodeEnum.notAuthenticated)));
+    return right(undefined);
   }
 
   async withAuthedIdentity<T>(
@@ -104,37 +99,21 @@ export class AuthServiceImpl {
       authHeader: Record<string, string>,
       isRetry: boolean,
     ) => Promise<Either<ApiError, T>>,
-    authRefresh = false,
+    /* TODO support this flag */ authRefresh = false,
   ): Promise<Either<ApiError, T>> {
-    const identity = this._authState.value.identity;
+    const identity = await this.internalAuthState.pipe(first()).toPromise();
 
-    if (identity) {
-      // TODO: should support token refresh / retry
-      return consumer(identity.user, buildAuthHeader(identity.jwtToken), false);
+    if (identity && isRight(identity)) {
+      return consumer(identity.right.user, buildAuthHeader(identity.right.jwtToken), false);
     }
 
-    return left(ErrorCodeEnum.notAuthenticated);
+    return identity || left(ErrorCodeEnum.notAuthenticated);
   }
 
-  private get hasPendingAuth() {
-    return !!this._authState.value.identity;
+  private replaceSession(res: ApiResponse<AuthedSessionDto>): ApiResponse<UserProfileDto> {
+    this.authAttempts.next(res);
+    return res.then(exposeAuthState);
   }
-
-  private onStartAuth = () => {
-    this._authState.next({ ...this._authState.value, pendingAuth: true });
-  };
-
-  private onAuthResponse = fold<ApiError, AuthedSessionDto, Either<ApiError, UserProfileDto>>(
-    (l) => {
-      this._authState.next({ identity: null, pendingAuth: false });
-      return left(l);
-    },
-    (r) => {
-      this.persist.setItem('moAur', r);
-      this._authState.next({ identity: r, pendingAuth: false });
-      return right(r.user);
-    },
-  );
 }
 
 /**

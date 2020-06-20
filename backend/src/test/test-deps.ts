@@ -5,26 +5,21 @@ import { EntropyService } from '../deps/entropy.service';
 import { DeepReadonly } from '@jokester/ts-commonutil/cjs/type/freeze';
 import { GoogleOAuthResponse } from '../user/google-oauth.service';
 import { JwtService } from '@nestjs/jwt';
-import { EmailAuthRequestDto } from '../model/auth.dto';
+import { EmailAuthRequestDto, OAuthRequestDto } from '../model/auth.dto';
+import { DiscordOAuth } from '../user/oauth-client.provider';
 
 export namespace TestDeps {
   export const testConnection = createConnection({
     type: 'postgres',
-    url: 'postgresql://pguser:secret@127.0.0.1:54432/momo_test',
-    synchronize: true,
+    url: process.env['TEST_DB_URL'] || 'postgresql://pguser:secret@127.0.0.1:54432/momo_test',
     logger: 'debug',
     entities: [UserAccount, OAuthAccount],
   });
 
-  export async function clearTestDatabase(): Promise<void> {
+  export async function resetTestDB(): Promise<void> {
     const conn = await testConnection;
+    await conn.transaction(async (em) => await em.query(`DROP SCHEMA public CASCADE; CREATE SCHEMA public;`));
     await conn.synchronize(true);
-    await conn.createEntityManager().clear(UserAccount);
-    await conn.createEntityManager().clear(OAuthAccount);
-  }
-
-  export async function dropTestDatabase(): Promise<void> {
-    const conn = await testConnection;
   }
 
   export const mockedEntropy = new EntropyService();
@@ -34,6 +29,8 @@ export namespace TestDeps {
 
 export namespace MockData {
   export const authPayload = { email: 'a@b.com', password: '1234567' } as EmailAuthRequestDto;
+
+  export const oauthRequest = { code: '123', redirectUrl: '456' } as OAuthRequestDto;
 
   export const googleOAuthResponseValid = {
     credentials: {
@@ -56,4 +53,15 @@ export namespace MockData {
     // eslint-disable-next-line @typescript-eslint/camelcase
     userInfo: { ...googleOAuthResponseValid.userInfo, verified_email: null },
   } as const;
+
+  export const discordOAuthTokenValid: DiscordOAuth.TokenSet = {
+    access_token: 'valid',
+    expired: () => false,
+    claims: fail,
+  };
+
+  export const discordOAuthUserInfoValid: DiscordOAuth.UserInfo = {
+    email: 'discord-user@example.com',
+    verified: true,
+  } as any;
 }
