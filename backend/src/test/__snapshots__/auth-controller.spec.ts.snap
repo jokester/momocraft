@@ -1,0 +1,16 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`AuthController POST /auth/email/signup returns 201 + user on success: POST /auth/email/signup 201 1`] = `
+Object {
+  "email": "a@b.com",
+  "userId": "nanoid-5",
+}
+`;
+
+exports[`AuthController POST /auth/oauth/google when google returns unverified user profile return 400 on auth error: auth 400 res 1`] = `
+Object {
+  "error": "email must be verified",
+  "message": "auth failed",
+  "statusCode": 400,
+}
+`;

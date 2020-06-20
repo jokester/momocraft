@@ -69,16 +69,14 @@ export class UserService {
     if (isLeft(sanitizedEmail)) return sanitizedEmail;
     if (isLeft(sanitizedPass)) return sanitizedPass;
 
-    const user = new UserAccount({
-      userId: this.entropy.createUserStringId(),
-      internalMeta: {},
-      emailId: sanitizedEmail.right,
-      passwordHash: await this.entropy.bcryptHash(sanitizedPass.right),
-    });
-
     return this.conn
       .getRepository(UserAccount)
-      .save(user)
+      .save({
+        userId: this.entropy.createUserStringId(),
+        internalMeta: {},
+        emailId: sanitizedEmail.right,
+        passwordHash: await this.entropy.bcryptHash(sanitizedPass.right),
+      })
       .then(right, (err) => {
         logger('UserService#signUpWithEmail error creating', err);
         return left(ErrorCodeEnum.userExisted);
@@ -168,31 +166,36 @@ export class UserService {
       .getRepository(UserAccount)
       .findOne({ emailId: externalLowercaseEmailId });
     if (existedUserWithSameEmail) {
-      await this.conn.getRepository(OAuthAccount).create({
+      await this.conn.getRepository(OAuthAccount).save({
         provider,
         userId: existedUserWithSameEmail.internalUserId,
         externalId: externalLowercaseEmailId,
         credentials: tokenSet,
         userInfo: userInfo,
       });
+      return right(existedUserWithSameEmail);
     }
 
     const randomPass = await this.entropy.bcryptHash(randomAlphaNum(16));
 
     return this.conn.transaction(async (entityManager) => {
-      const userAccount = await entityManager.create(UserAccount, {
-        userId: this.entropy.createUserStringId(),
-        internalMeta: {},
-        emailId: externalLowercaseEmailId,
-        passwordHash: randomPass,
-      });
-      const oauthAccount = await entityManager.create(OAuthAccount, {
-        provider,
-        userId: userAccount.internalUserId,
-        externalId: externalLowercaseEmailId,
-        credentials: tokenSet,
-        userInfo: userInfo,
-      });
+      const userAccount = await entityManager.save(
+        new UserAccount({
+          userId: this.entropy.createUserStringId(),
+          internalMeta: {},
+          emailId: externalLowercaseEmailId,
+          passwordHash: randomPass,
+        }),
+      );
+      const oauthAccount = await entityManager.save(
+        new OAuthAccount({
+          provider,
+          userId: userAccount.internalUserId,
+          externalId: externalLowercaseEmailId,
+          credentials: tokenSet,
+          userInfo: userInfo,
+        }),
+      );
 
       return right(userAccount);
     });

@@ -20,8 +20,6 @@ export namespace TestDeps {
     const conn = await testConnection;
     await conn.transaction(async (em) => await em.query(`DROP SCHEMA public CASCADE; CREATE SCHEMA public;`));
     await conn.synchronize(true);
-    await conn.createEntityManager().clear(UserAccount);
-    await conn.createEntityManager().clear(OAuthAccount);
   }
 
   export const mockedEntropy = new EntropyService();
