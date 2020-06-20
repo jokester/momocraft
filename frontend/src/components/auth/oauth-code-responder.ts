@@ -18,17 +18,19 @@ export function useOAuthCodeCallback(provider: OAuthProvider, code?: string) {
 
   useEffect(() => {
     if (typeof code === 'string' && provider === OAuthProvider.discord) {
-      auth.oDiscordAuthSignIn({ code, redirectUrl: location.origin + location.pathname }).then((authResult) =>
+      auth.oDiscordAuthSignIn({ code, redirectUrl: location.origin + location.pathname }).then((authResult) => {
         fold(
           (l: ApiError) => {
             toaster.current?.show({ intent: 'warning', message: Messages.apiError(i18n, l) });
           },
           (r: UserProfileDto) => {
             toaster.current?.show({ intent: 'success', message: i18n.t('auth.Success') });
-            if (mounted.current) router.replace(TypedRoutes.account);
           },
-        )(authResult),
-      );
+        )(authResult);
+        if (mounted.current) router.replace(TypedRoutes.account);
+      });
+    } /* no matched discord */ else {
+      router.replace(TypedRoutes.account);
     }
   }, []);
 }

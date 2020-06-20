@@ -5,5 +5,9 @@
   },
   "error": {
     "otherError": "Something went wrong"
+  },
+  "common": {
+    "teleportStarting": "Teleport starting, please sit and wait.",
+    "pleaseWait": "Please wait"
   }
 }
