@@ -12,12 +12,11 @@ export namespace TestDeps {
   export const testConnection = createConnection({
     type: 'postgres',
     url: 'postgresql://pguser:secret@127.0.0.1:54432/momo_test',
-    synchronize: true,
     logger: 'debug',
     entities: [UserAccount, OAuthAccount],
   });
 
-  export async function clearTestDatabase(): Promise<void> {
+  export async function resetTestBase(): Promise<void> {
     const conn = await testConnection;
     await conn.synchronize(true);
     await conn.createEntityManager().clear(UserAccount);

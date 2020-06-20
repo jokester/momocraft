@@ -22,7 +22,7 @@ describe(AuthController, () => {
   });
   afterAll(testee.bundledAfterAll);
 
-  afterEach(TestDeps.clearTestDatabase);
+  beforeEach(TestDeps.resetTestBase);
 
   describe('POST /auth/oauth/discord', () => {
     describe('when discord allows oauth', () => {

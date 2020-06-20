@@ -38,8 +38,6 @@ export function buildTesteeAppBundle() {
     bundle.userService = await moduleFixture.resolve(UserService);
     bundle.discordOAuthClient = await /* moduleFixture.resolve() fails, no idea why  */ app.get(DiscordOAuth.DiToken);
 
-    await TestDeps.clearTestDatabase();
-
     let nanoIdSeq = 0;
 
     jest.spyOn(TestDeps.mockedEntropy, 'createUserStringId').mockImplementation(() => `nanoid-${++nanoIdSeq}`);
