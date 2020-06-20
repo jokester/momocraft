@@ -11,7 +11,8 @@ defaults:
     working-directory: backend
 
 jobs:
-  check:
+
+  check-backend:
     name: Check
     runs-on: ubuntu-20.04
 
@@ -28,3 +29,27 @@ jobs:
 
     - name: Lint
       run: yarn lint
+
+    - name: Run test
+      run: yarn test
+      env:
+        OAUTH_GOOGLE_CLIENT_ID: void
+        OAUTH_GOOGLE_CLIENT_SECRET: void
+        OAUTH_DISCORD_CLIENT_ID: void
+        OAUTH_DISCORD_CLIENT_SECRET: void
+        TYPEORM_CONNECTION: postgres
+        TYPEORM_URL: postgres://pguser:secret@postgres:5432/momo_dev
+
+    services:
+      postgres:
+        image: postgres:12.2-alpine
+        env:
+          POSTGRES_USER: pguser
+          POSTGRES_PASSWORD: secret
+          POSTGRES_USER: momo_dev
+        # Set health checks to wait until postgres has started
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
