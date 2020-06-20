@@ -31,7 +31,7 @@ describe('AppController (e2e)', () => {
     userService = testBundle.userService;
   });
 
-  beforeEach(TestDeps.resetTestBase);
+  beforeEach(TestDeps.resetTestDB);
 
   afterAll(bundledAfterAll);
 
