@@ -34,10 +34,12 @@
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
     "react-intersection-observer": "^8.26.2",
+    "react-use": "^15.3.0",
     "reset-css": "^5.0.1",
     "rxjs": "^6.5.5",
     "tailwindcss": "^1.4.6",
-    "tslib": "^2.0.0"
+    "tslib": "^2.0.0",
+    "use-constant": "^1.0.0"
   },
   "devDependencies": {
     "@babel/plugin-proposal-class-properties": "^7.8.3",
