@@ -15,6 +15,7 @@ import { EntropyService } from '../deps/entropy.service';
 import { getSomeOrThrow } from '../util/fpts-getter';
 import { absent } from '../util/absent';
 import { EmailAuthRequestDto } from '../model/auth.dto';
+import { DiscordOAuth } from '../user/oauth-client.provider';
 
 const logger = getDebugLogger(__filename);
 
@@ -23,6 +24,7 @@ describe('AppController (e2e)', () => {
   let jwtService: JwtService;
   let userService: UserService;
   let createdUserShortId: string;
+  let discordOAuthClient: DiscordOAuth.Client;
 
   beforeAll(async () => {
     const moduleFixture = await Test.createTestingModule({
@@ -34,13 +36,17 @@ describe('AppController (e2e)', () => {
       .useValue(TestDeps.mockedJwtService)
       .overrideProvider(EntropyService)
       .useValue(TestDeps.mockedEntropy)
+      .overrideProvider(DiscordOAuth.Provider)
+      .useValue({})
       .compile();
 
     app = moduleFixture.createNestApplication();
+    await app.init();
+
     jwtService = await moduleFixture.resolve(JwtService);
     userService = await moduleFixture.resolve(UserService);
+    discordOAuthClient = await /* no idea why can't */ app.get(DiscordOAuth.DiToken);
 
-    await app.init();
     await TestDeps.clearTestDatabase();
 
     let nanoIdSeq = 0;
@@ -54,15 +60,34 @@ describe('AppController (e2e)', () => {
   });
 
   describe(AuthController, () => {
+    describe('POST /auth/oauth/discord', () => {
+      it('creates UserAccount and OAuthAccount when none existed', async () => {
+        jest
+          // @ts-ignore
+          .spyOn(discordOAuthClient, 'oauthCallback')
+          .mockResolvedValue(MockData.discordOAuthTokenValid);
+
+        jest
+          // @ts-ignore
+          .spyOn(discordOAuthClient, 'userinfo')
+          .mockResolvedValue(MockData.discordOAuthTokenValid);
+
+        const res = await request(app.getHttpServer())
+          .post('/auth/oauth/discord')
+          .send(MockData.oauthRequest)
+          .expect(201);
+
+        const jwtToken = JSON.parse(res.text).jwtToken;
+        await jwtService.verifyAsync(jwtToken);
+      });
+    });
+
     it('POST /auth/oauth/google returns jwtToken on succeed', async () => {
       jest
         .spyOn(GoogleOAuthService.prototype, 'auth')
         .mockResolvedValue(right<string, GoogleOAuthResponse>(MockData.googleOAuthResponseValid));
 
-      const res = await request(app.getHttpServer())
-        .post('/auth/oauth/google')
-        .send({ code: '123', redirectUrl: '456' })
-        .expect(201);
+      const res = await request(app.getHttpServer()).post('/auth/oauth/google').send(MockData.oauthRequest).expect(201);
 
       const jwtToken = JSON.parse(res.text).jwtToken;
       expect(jwtToken).toBeTruthy();

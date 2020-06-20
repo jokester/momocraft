@@ -5,7 +5,8 @@ import { EntropyService } from '../deps/entropy.service';
 import { DeepReadonly } from '@jokester/ts-commonutil/cjs/type/freeze';
 import { GoogleOAuthResponse } from '../user/google-oauth.service';
 import { JwtService } from '@nestjs/jwt';
-import { EmailAuthRequestDto } from '../model/auth.dto';
+import { EmailAuthRequestDto, OAuthRequestDto } from '../model/auth.dto';
+import { DiscordOAuth } from '../user/oauth-client.provider';
 
 export namespace TestDeps {
   export const testConnection = createConnection({
@@ -35,6 +36,8 @@ export namespace TestDeps {
 export namespace MockData {
   export const authPayload = { email: 'a@b.com', password: '1234567' } as EmailAuthRequestDto;
 
+  export const oauthRequest = { code: '123', redirectUrl: '456' } as OAuthRequestDto;
+
   export const googleOAuthResponseValid = {
     credentials: {
       tokens: {
@@ -56,4 +59,15 @@ export namespace MockData {
     // eslint-disable-next-line @typescript-eslint/camelcase
     userInfo: { ...googleOAuthResponseValid.userInfo, verified_email: null },
   } as const;
+
+  export const discordOAuthTokenValid: DiscordOAuth.TokenSet = {
+    access_token: 'valid',
+    expired: () => false,
+    claims: fail,
+  };
+
+  export const discordOAuthUserInfoValid: DiscordOAuth.UserInfo = {
+    email: 'discord-user@example.com',
+    email_verified: true,
+  } as any;
 }

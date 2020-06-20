@@ -10,7 +10,7 @@ import { AuthedSessionDto, OAuthGoogleRequestDto, EmailAuthRequestDto, OAuthRequ
 import { ApiCreatedResponse, ApiOkResponse } from '@nestjs/swagger';
 import { UserProfileDto } from '../model/user-profile.dto';
 import { ApiErrorDto } from '../model/api-error.dto';
-import { DiscordOauthService } from './discord-oauth.service';
+import { DiscordOAuthService } from './discord-oauth.service';
 
 const logger = getDebugLogger(__filename);
 
@@ -23,18 +23,14 @@ export interface AuthSuccessRes {
 export class AuthController {
   constructor(
     private readonly googleOAuthService: GoogleOAuthService,
-    private readonly discordOauthService: DiscordOauthService,
+    private readonly discordOauthService: DiscordOAuthService,
     private readonly userService: UserService,
   ) {}
 
   @Post('oauth/google')
   @Header('Cache-Control', 'private;max-age=0;')
   @ApiCreatedResponse({ type: AuthedSessionDto })
-  async doGoogleOAuth(
-    @Request() req: Request,
-    @Body() payload: OAuthGoogleRequestDto,
-    // eslint-disable-next-line @typescript-eslint/camelcase
-  ): Promise<{ jwtToken: string }> {
+  async doGoogleOAuth(@Body() payload: OAuthRequestDto): Promise<{ jwtToken: string }> {
     if (payload && payload.code && payload.redirectUrl) {
       const oauthRes = getRightOrThrow(
         await this.googleOAuthService.auth(payload.code, payload.redirectUrl),

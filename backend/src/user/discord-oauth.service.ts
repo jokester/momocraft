@@ -12,7 +12,7 @@ import { OAuthProvider } from '../const/oauth-conf';
 const logger = getDebugLogger(__filename);
 
 @Injectable({ scope: Scope.DEFAULT })
-export class DiscordOauthService {
+export class DiscordOAuthService {
   constructor(
     @Inject(DiscordOAuth.DiToken) private readonly client: DiscordOAuth.Client,
     @Inject(TypeORMConnection) private readonly conn: Connection,
