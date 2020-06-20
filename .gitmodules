@@ -1,6 +1,3 @@
-[submodule "backend/submodules/ts-commonutil"]
-	path = submodules/ts-commonutil
-	url = https://github.com/jokester/ts-commonutil
 [submodule "external/translation-sheet-data"]
 	path = external/translation-sheet-data
 	url = https://github.com/alexislours/translation-sheet-data
