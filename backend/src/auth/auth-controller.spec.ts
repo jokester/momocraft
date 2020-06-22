@@ -1,16 +1,14 @@
-import { AuthController, AuthSuccessRes } from '../user/auth.controller';
-import { buildTesteeAppBundle } from './test-app-factory';
+import { AuthController, AuthSuccessRes } from './auth.controller';
+import { buildTesteeAppBundle } from '../test/test-app-factory';
 import { INestApplication } from '@nestjs/common';
-import { MockData, TestDeps } from './test-deps';
+import { MockData, TestDeps } from '../test/test-deps';
 import request from 'supertest';
 import { JwtService } from '@nestjs/jwt';
-import { DiscordOAuth, GoogleOAuth } from '../user/oauth-client.provider';
+import { DiscordOAuth, GoogleOAuth } from './oauth-client.provider';
 import { UserService } from '../user/user.service';
 import { getRightOrThrow } from '../util/fpts-getter';
 import { getDebugLogger } from '../util/get-debug-logger';
-import { right } from 'fp-ts/lib/Either';
 import { EmailAuthRequestDto } from '../model/auth.dto';
-import { ErrorCodeEnum } from '../const/error-code';
 
 const logger = getDebugLogger(__filename);
 

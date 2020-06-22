@@ -1,10 +1,10 @@
 import { Inject, Injectable, Scope } from '@nestjs/common';
 
 import { getDebugLogger } from '../util/get-debug-logger';
-import { GoogleOAuth } from './oauth-client.provider';
+import { DiscordOAuth } from './oauth-client.provider';
 import { Either, isLeft, left, right } from 'fp-ts/lib/Either';
 import { OAuthRequestDto } from '../model/auth.dto';
-import { UserService } from './user.service';
+import { UserService } from '../user/user.service';
 import { ErrorCodeEnum } from '../const/error-code';
 import { UserAccount } from '../db/entities/user-account';
 import { OAuthProvider } from '../const/oauth-conf';
@@ -12,9 +12,9 @@ import { OAuthProvider } from '../const/oauth-conf';
 const logger = getDebugLogger(__filename);
 
 @Injectable({ scope: Scope.DEFAULT })
-export class GoogleOAuthService {
+export class DiscordOAuthService {
   constructor(
-    @Inject(GoogleOAuth.DiToken) private readonly client: GoogleOAuth.Client,
+    @Inject(DiscordOAuth.DiToken) private readonly client: DiscordOAuth.Client,
     private readonly userService: UserService,
   ) {}
 
@@ -25,28 +25,27 @@ export class GoogleOAuthService {
 
     const { tokenSet, userInfo } = externalIdentity.right;
 
-    if (!(userInfo?.email && userInfo?.email_verified)) {
+    if (!(userInfo?.email && userInfo?.verified)) {
       return left(ErrorCodeEnum.oAuthEmailNotVerified);
     }
 
     const externalId = userInfo.email.toLowerCase();
-    return this.userService.findOrCreateWithOAuth(OAuthProvider.google, externalId, tokenSet, userInfo);
+    return this.userService.findOrCreateWithOAuth(OAuthProvider.discord, externalId, tokenSet, userInfo);
   }
 
   private async fetchIdentity({
     redirectUrl,
     code,
-  }: OAuthRequestDto): Promise<Either<ErrorCodeEnum, GoogleOAuth.Authed>> {
+  }: OAuthRequestDto): Promise<Either<ErrorCodeEnum, DiscordOAuth.Authed>> {
     try {
       const tokenSet = await this.client.oauthCallback(redirectUrl, { code });
-      logger('GoogleOAuthService#fetchAuthedUser tokenSet', tokenSet);
-
-      const userInfo = (await this.client.userinfo(tokenSet)) as GoogleOAuth.UserInfo;
-      logger('GoogleOAuthService#fetchAuthedUser userInfo', userInfo);
+      logger('DiscordOauthService#attemptAuth tokenSet', tokenSet);
+      const userInfo = (await this.client.userinfo(tokenSet)) as DiscordOAuth.UserInfo;
+      logger('DiscordOauthService#attemptAuth userInfo', userInfo);
 
       return right({ tokenSet, userInfo });
     } catch (e) {
-      logger('GoogleOAuthService#fetchAuthedUser thrown', e);
+      logger('DiscordOauthService#attemptAuth fail', e);
       return left(ErrorCodeEnum.oAuthFailed);
     }
   }
