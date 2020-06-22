@@ -1,7 +1,7 @@
 import { BadRequestException, Body, Controller, Get, Header, HttpCode, Post, Request } from '@nestjs/common';
 import { getDebugLogger } from '../util/get-debug-logger';
-import { GoogleOAuthService } from './google-oauth.service';
-import { UserService } from './user.service';
+import { GoogleOAuthService } from '../user/google-oauth.service';
+import { UserService } from '../user/user.service';
 import { getRightOrThrow } from '../util/fpts-getter';
 import { Sanitize } from '../util/input-santinizer';
 import { UserAccount } from '../db/entities/user-account';
@@ -10,7 +10,7 @@ import { AuthedSessionDto, EmailAuthRequestDto, OAuthRequestDto } from '../model
 import { ApiCreatedResponse, ApiOkResponse } from '@nestjs/swagger';
 import { UserProfileDto } from '../model/user-profile.dto';
 import { ApiErrorDto } from '../model/api-error.dto';
-import { DiscordOAuthService } from './discord-oauth.service';
+import { DiscordOAuthService } from '../user/discord-oauth.service';
 
 const logger = getDebugLogger(__filename);
 
@@ -76,8 +76,6 @@ export class AuthController {
   @Header('Cache-Control', 'private;max-age=0;')
   @ApiOkResponse({ type: AuthedSessionDto })
   async doEmailSignIn(@Body() payload: EmailAuthRequestDto): Promise<AuthSuccessRes> {
-    // this.validateEmailAuthPaylod(payload);
-
     const authedUser = getRightOrThrow(
       await this.userService.signInWithEmail(payload.email, payload.password),
       (l) => new BadRequestException('error logging in', l),
@@ -100,17 +98,10 @@ export class AuthController {
     return { statusCode: 200, message: 'MSG', error: 'ERR' };
   }
 
-  protected async issueAuthSuccessResponse(authedUser: UserAccount): Promise<AuthSuccessRes> {
+  private async issueAuthSuccessResponse(authedUser: UserAccount): Promise<AuthSuccessRes> {
     return {
       jwtToken: await this.userService.createJwtTokenForUser(authedUser),
       user: await this.userService.resolveUser(authedUser),
     };
-  }
-
-  private validateEmailAuthPaylod(payload?: EmailAuthRequestDto) {
-    // FIXME: move validate here
-    if (!(Sanitize.isString(payload?.email) && Sanitize.isString(payload?.password))) {
-      throw new BadRequestException();
-    }
   }
 }

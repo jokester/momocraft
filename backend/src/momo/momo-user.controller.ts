@@ -13,7 +13,7 @@ import { UserService } from '../user/user.service';
 import { getRightOrThrow, getSomeOrThrow } from '../util/fpts-getter';
 import { getDebugLogger } from '../util/get-debug-logger';
 import { UserAccount } from '../db/entities/user-account';
-import { AuthedUser } from '../user/user-jwt-auth.middleware';
+import { AuthedUser } from '../auth/user-jwt-auth.middleware';
 import { Sanitize } from '../util/input-santinizer';
 import { UserCollectionService } from './user-collection.service';
 import { ErrorCodeEnum } from '../const/error-code';
