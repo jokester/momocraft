@@ -1,5 +1,5 @@
 import { Column, CreateDateColumn, Entity, Index, PrimaryGeneratedColumn, Unique, UpdateDateColumn } from 'typeorm';
-import { DiscordOAuth, GoogleOAuth } from '../../user/oauth-client.provider';
+import { DiscordOAuth, GoogleOAuth } from '../../auth/oauth-client.provider';
 import { OAuthProvider } from '../../const/oauth-conf';
 
 @Entity()

@@ -5,7 +5,7 @@ import { EntropyService } from '../deps/entropy.service';
 import { DeepReadonly } from '@jokester/ts-commonutil/cjs/type/freeze';
 import { JwtService } from '@nestjs/jwt';
 import { EmailAuthRequestDto, OAuthRequestDto } from '../model/auth.dto';
-import { DiscordOAuth, GoogleOAuth } from '../user/oauth-client.provider';
+import { DiscordOAuth, GoogleOAuth } from '../auth/oauth-client.provider';
 
 export namespace TestDeps {
   export const testConnection = createConnection({

@@ -1,7 +1,7 @@
 import { INestApplication } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { UserService } from '../user/user.service';
-import { DiscordOAuth, GoogleOAuth } from '../user/oauth-client.provider';
+import { DiscordOAuth, GoogleOAuth } from '../auth/oauth-client.provider';
 import { Test } from '@nestjs/testing';
 import { AppModule } from '../app.module';
 import { TypeORMConnection } from '../db/typeorm-connection.provider';

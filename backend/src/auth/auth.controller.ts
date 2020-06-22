@@ -1,6 +1,6 @@
 import { BadRequestException, Body, Controller, Get, Header, HttpCode, Post, Request } from '@nestjs/common';
 import { getDebugLogger } from '../util/get-debug-logger';
-import { GoogleOAuthService } from '../user/google-oauth.service';
+import { GoogleOAuthService } from './google-oauth.service';
 import { UserService } from '../user/user.service';
 import { getRightOrThrow } from '../util/fpts-getter';
 import { Sanitize } from '../util/input-santinizer';
@@ -10,7 +10,7 @@ import { AuthedSessionDto, EmailAuthRequestDto, OAuthRequestDto } from '../model
 import { ApiCreatedResponse, ApiOkResponse } from '@nestjs/swagger';
 import { UserProfileDto } from '../model/user-profile.dto';
 import { ApiErrorDto } from '../model/api-error.dto';
-import { DiscordOAuthService } from '../user/discord-oauth.service';
+import { DiscordOAuthService } from './discord-oauth.service';
 
 const logger = getDebugLogger(__filename);
 
