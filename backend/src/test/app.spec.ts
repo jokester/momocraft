@@ -1,19 +1,12 @@
 import request from 'supertest';
-import { Test } from '@nestjs/testing';
-import { AppModule } from '../app.module';
 import { INestApplication } from '@nestjs/common';
-import { GoogleOAuthResponse, GoogleOAuthService } from '../user/google-oauth.service';
-import { MockData, TestDeps } from './test-deps';
-import { right } from 'fp-ts/lib/Either';
+import { TestDeps } from './test-deps';
 import { JwtService } from '@nestjs/jwt';
 import { getDebugLogger } from '../util/get-debug-logger';
 import { UserService } from '../user/user.service';
-import { AuthController, AuthSuccessRes } from '../user/auth.controller';
 import { MomoUserController } from '../momo/momo-user.controller';
 import { getSomeOrThrow } from '../util/fpts-getter';
 import { absent } from '../util/absent';
-import { EmailAuthRequestDto } from '../model/auth.dto';
-import { DiscordOAuth } from '../user/oauth-client.provider';
 import { buildTesteeAppBundle } from './test-app-factory';
 
 const logger = getDebugLogger(__filename);

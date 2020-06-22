@@ -37,4 +37,5 @@ export type TypedRouteParam<RouteNode> = RouteNode extends (param: infer Param) 
 
 export const OAuthAuthorizationUrl = {
   discord: 'https://discord.com/api/oauth2/authorize',
+  google: 'https://accounts.google.com/o/oauth2/v2/auth',
 } as const;

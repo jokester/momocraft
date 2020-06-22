@@ -1,9 +1,8 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable, Scope } from '@nestjs/common';
 import { getDebugLogger } from '../util/get-debug-logger';
 import { Either, isLeft, left, right } from 'fp-ts/lib/Either';
-import { GoogleOAuthResponse } from './google-oauth.service';
 import { TypeORMConnection } from '../db/typeorm-connection.provider';
-import { Connection, DeepPartial } from 'typeorm';
+import { Connection } from 'typeorm';
 import { OAuthAccount } from '../db/entities/oauth-account';
 import { UserAccount } from '../db/entities/user-account';
 import { EntropyService } from '../deps/entropy.service';
@@ -23,7 +22,7 @@ interface JwtTokenPayload {
   userId: string;
 }
 
-@Injectable()
+@Injectable({ scope: Scope.DEFAULT })
 export class UserService {
   constructor(
     @Inject(TypeORMConnection) private conn: Connection,
@@ -130,7 +129,7 @@ export class UserService {
     provider: OAuthProvider,
     externalLowercaseEmailId: string,
     tokenSet: TokenSet,
-    userInfo: object,
+    userInfo: UserinfoResponse,
   ): Promise<Either<ErrorCodeEnum, UserAccount>> {
     const oAuthAccountRepo = this.conn.getRepository(OAuthAccount);
 
@@ -199,67 +198,5 @@ export class UserService {
 
       return right(userAccount);
     });
-  }
-
-  /**
-   * @deprecated
-   * @param {GoogleOAuthResponse} oauthResponse
-   * @returns {Promise<Either<string, UserAccount>>}
-   */
-  async findOrCreateWithGoogleOAuth(oauthResponse: GoogleOAuthResponse): Promise<Either<string, UserAccount>> {
-    if (!(oauthResponse?.userInfo?.verified_email && oauthResponse.userInfo.email)) {
-      return left('email must be verified');
-    }
-    const oAuthAccountRepo = this.conn.getRepository(OAuthAccount);
-
-    const existedOAuth = await oAuthAccountRepo.findOne({ externalId: oauthResponse.credentials.tokens.id_token! });
-
-    // return existed user
-    if (existedOAuth) {
-      const [user = absent('user by existedOAuth')] = await this.conn
-        .getRepository(UserAccount)
-        .find({ internalUserId: existedOAuth.userId });
-
-      // update oauth account
-      Object.assign(existedOAuth, {
-        credentials: oauthResponse.credentials,
-        userInfo: oauthResponse.userInfo,
-      });
-
-      await oAuthAccountRepo.save(existedOAuth as DeepPartial<OAuthAccount>);
-
-      return right(user);
-    }
-
-    const sanitizedEmail = Sanitize.email(oauthResponse.userInfo.email);
-
-    if (isLeft(sanitizedEmail)) return sanitizedEmail;
-
-    const randomHash = await this.entropy.bcryptHash(randomAlphaNum(16));
-
-    // try create
-    const res = await this.conn.transaction(async (entityManager) => {
-      const userAccount = await entityManager.save(
-        new UserAccount({
-          userId: this.entropy.createUserStringId(),
-          internalMeta: {},
-          emailId: sanitizedEmail.right,
-          passwordHash: randomHash,
-        }),
-      );
-      const oauthAccount = await entityManager.save(
-        new OAuthAccount({
-          provider: OAuthProvider.googleOAuth2,
-          userId: userAccount.internalUserId,
-          externalId: oauthResponse.credentials.tokens.id_token!,
-          credentials: oauthResponse.credentials,
-          userInfo: oauthResponse.userInfo,
-        }),
-      );
-
-      return right(userAccount);
-    });
-
-    return res;
   }
 }

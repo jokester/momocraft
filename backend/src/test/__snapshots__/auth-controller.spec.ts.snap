@@ -9,7 +9,7 @@ Object {
 
 exports[`AuthController POST /auth/oauth/google when google returns unverified user profile return 400 on auth error: auth 400 res 1`] = `
 Object {
-  "error": "email must be verified",
+  "error": "oAuthEmailNotVerified",
   "message": "auth failed",
   "statusCode": 400,
 }

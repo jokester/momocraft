@@ -4,13 +4,13 @@ import { INestApplication } from '@nestjs/common';
 import { MockData, TestDeps } from './test-deps';
 import request from 'supertest';
 import { JwtService } from '@nestjs/jwt';
-import { DiscordOAuth } from '../user/oauth-client.provider';
+import { DiscordOAuth, GoogleOAuth } from '../user/oauth-client.provider';
 import { UserService } from '../user/user.service';
 import { getRightOrThrow } from '../util/fpts-getter';
 import { getDebugLogger } from '../util/get-debug-logger';
-import { GoogleOAuthResponse, GoogleOAuthService } from '../user/google-oauth.service';
 import { right } from 'fp-ts/lib/Either';
 import { EmailAuthRequestDto } from '../model/auth.dto';
+import { ErrorCodeEnum } from '../const/error-code';
 
 const logger = getDebugLogger(__filename);
 
@@ -19,6 +19,7 @@ describe(AuthController, () => {
   let app: INestApplication;
   let jwtService: JwtService;
   let discordOAuthClient: DiscordOAuth.Client;
+  let googleOAuthClient: GoogleOAuth.Client;
   let authController: AuthController;
   let userService: UserService;
 
@@ -27,6 +28,7 @@ describe(AuthController, () => {
     app = testee.testBundle.app;
     jwtService = testee.testBundle.jwtService;
     discordOAuthClient = testee.testBundle.discordOAuthClient;
+    googleOAuthClient = testee.testBundle.googleOAuthClient;
     authController = app.get(AuthController);
     userService = app.get(UserService);
   });
@@ -105,9 +107,17 @@ describe(AuthController, () => {
 
   describe('POST /auth/oauth/google', () => {
     describe('when google allows oauth', () => {
-      jest
-        .spyOn(GoogleOAuthService.prototype, 'auth')
-        .mockResolvedValue(right<string, GoogleOAuthResponse>(MockData.googleOAuthResponseValid));
+      beforeEach(() => {
+        jest
+          // @ts-ignore
+          .spyOn(googleOAuthClient, 'oauthCallback')
+          .mockResolvedValue(MockData.googleOAuthResponseValid.tokenSet);
+
+        jest
+          // @ts-ignore
+          .spyOn(googleOAuthClient, 'userinfo')
+          .mockResolvedValue(MockData.googleOAuthResponseValid.userInfo);
+      });
 
       it('returns 201/jwtToken on succeed', async () => {
         const res = await request(app.getHttpServer())
@@ -133,11 +143,18 @@ describe(AuthController, () => {
     });
 
     describe('when google returns unverified user profile', () => {
-      it('return 400 on auth error', async () => {
+      beforeEach(() => {
         jest
-          .spyOn(GoogleOAuthService.prototype, 'auth')
-          .mockResolvedValue(right<string, GoogleOAuthResponse>(MockData.googleOAuthResponseEmailUnverified));
+          // @ts-ignore
+          .spyOn(googleOAuthClient, 'oauthCallback')
+          .mockResolvedValue(MockData.googleOAuthResponseValid.tokenSet);
+        jest
+          // @ts-ignore
+          .spyOn(googleOAuthClient, 'userinfo')
+          .mockResolvedValue(MockData.googleOAuthResponseEmailUnverified.userInfo);
+      });
 
+      it('return 400 on auth error', async () => {
         const authErrorRes = await request(app.getHttpServer())
           .post('/auth/oauth/google')
           .send({ code: '123', redirectUrl: 'someUrl' })

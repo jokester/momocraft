@@ -5,7 +5,7 @@ import { UserProfileDto } from '../../api-generated/models';
 import { isLeft } from 'fp-ts/lib/Either';
 import { CenterH } from '../layout/layout';
 import { Button, FormGroup, InputGroup, Label } from '@blueprintjs/core';
-import { DiscordLoginButton } from './oauth-login-button';
+import { DiscordLoginButton, GoogleLoginButton } from './oauth-login-button';
 
 export const FormWarning: React.FC = () => {
   return (
@@ -86,6 +86,9 @@ export const LoginOrSignupForm: React.FC<{ pendingAuth: boolean }> = ({ pendingA
       </CenterH>
       <CenterH>
         <DiscordLoginButton />
+      </CenterH>
+      <CenterH>
+        <GoogleLoginButton />
       </CenterH>
     </div>
   );
