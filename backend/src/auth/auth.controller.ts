@@ -5,7 +5,7 @@ import { UserService } from '../user/user.service';
 import { getRightOrThrow } from '../util/fpts-getter';
 import { Sanitize } from '../util/input-santinizer';
 import { UserAccount } from '../db/entities/user-account';
-import { AuthedUser } from './user-jwt-auth.middleware';
+import { AuthedUser } from '../user/user-jwt-auth.middleware';
 import { AuthedSessionDto, EmailAuthRequestDto, OAuthRequestDto } from '../model/auth.dto';
 import { ApiCreatedResponse, ApiOkResponse } from '@nestjs/swagger';
 import { UserProfileDto } from '../model/user-profile.dto';

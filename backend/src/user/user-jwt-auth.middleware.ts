@@ -7,7 +7,7 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { Request, Response } from 'express';
-import { UserService } from '../user/user.service';
+import { UserService } from './user.service';
 import { getDebugLogger } from '../util/get-debug-logger';
 import { getRightOrThrow } from '../util/fpts-getter';
 import { UserAccount } from '../db/entities/user-account';
