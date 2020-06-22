@@ -129,6 +129,7 @@ export class MomoUserController {
   }
 
   /**
+   * FIXME: move to user controller
    * @param {UserAccount} authedUser
    * @param {{}} params
    * @returns {Promise<UserProfileDto>}

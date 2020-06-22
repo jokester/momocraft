@@ -27,7 +27,7 @@ export namespace TestDeps {
 }
 
 export namespace MockData {
-  export const authPayload = { email: 'a@b.com', password: '1234567' } as EmailAuthRequestDto;
+  export const authPayload = { email: 'a@B.com', password: '1234567' } as EmailAuthRequestDto;
 
   export const oauthRequest = { code: '123', redirectUrl: '456' } as OAuthRequestDto;
 
