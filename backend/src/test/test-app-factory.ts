@@ -1,7 +1,7 @@
 import { INestApplication } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { UserService } from '../user/user.service';
-import { DiscordOAuth } from '../user/oauth-client.provider';
+import { DiscordOAuth, GoogleOAuth } from '../user/oauth-client.provider';
 import { Test } from '@nestjs/testing';
 import { AppModule } from '../app.module';
 import { TypeORMConnection } from '../db/typeorm-connection.provider';
@@ -15,6 +15,7 @@ export function buildTesteeAppBundle() {
     createdUserShortId: '',
     userService: null! as UserService,
     discordOAuthClient: {} as DiscordOAuth.Client,
+    googleOAuthClient: {} as GoogleOAuth.Client,
   };
 
   async function beforeAll() {
@@ -37,6 +38,7 @@ export function buildTesteeAppBundle() {
     bundle.jwtService = await moduleFixture.resolve(JwtService);
     bundle.userService = await moduleFixture.resolve(UserService);
     bundle.discordOAuthClient = await /* moduleFixture.resolve() fails, no idea why  */ app.get(DiscordOAuth.DiToken);
+    bundle.googleOAuthClient = await app.get(GoogleOAuth.DiToken);
 
     let nanoIdSeq = 0;
 

@@ -37,8 +37,6 @@ export class AuthController {
         (l) => new BadRequestException('auth failed', l),
       );
 
-      logger('user authed', authedUser);
-
       return this.issueAuthSuccessResponse(authedUser);
     }
     throw new BadRequestException();
@@ -48,12 +46,15 @@ export class AuthController {
   @Header('Cache-Control', 'private;max-age=0;')
   @ApiCreatedResponse({ type: AuthedSessionDto })
   async doDiscordOAuth(@Body() payload: OAuthRequestDto): Promise<AuthedSessionDto> {
-    const authedUser = getRightOrThrow(
-      await this.discordOauthService.attemptAuth(payload),
-      (l) => new BadRequestException('oauth fail', l),
-    );
+    if (payload && payload.code && payload.redirectUrl) {
+      const authedUser = getRightOrThrow(
+        await this.discordOauthService.attemptAuth(payload),
+        (l) => new BadRequestException('oauth fail', l),
+      );
+      return this.issueAuthSuccessResponse(authedUser);
+    }
 
-    return this.issueAuthSuccessResponse(authedUser);
+    throw new BadRequestException();
   }
 
   @Post('email/signup')
@@ -99,7 +100,7 @@ export class AuthController {
     return { statusCode: 200, message: 'MSG', error: 'ERR' };
   }
 
-  private async issueAuthSuccessResponse(authedUser: UserAccount): Promise<AuthSuccessRes> {
+  protected async issueAuthSuccessResponse(authedUser: UserAccount): Promise<AuthSuccessRes> {
     return {
       jwtToken: await this.userService.createJwtTokenForUser(authedUser),
       user: await this.userService.resolveUser(authedUser),

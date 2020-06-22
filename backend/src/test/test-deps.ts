@@ -6,7 +6,6 @@ import { DeepReadonly } from '@jokester/ts-commonutil/cjs/type/freeze';
 import { JwtService } from '@nestjs/jwt';
 import { EmailAuthRequestDto, OAuthRequestDto } from '../model/auth.dto';
 import { DiscordOAuth, GoogleOAuth } from '../user/oauth-client.provider';
-import { IdTokenClaims } from 'openid-client';
 
 export namespace TestDeps {
   export const testConnection = createConnection({
@@ -32,7 +31,7 @@ export namespace MockData {
 
   export const oauthRequest = { code: '123', redirectUrl: '456' } as OAuthRequestDto;
 
-  export const googleOAuthResponseValid = {
+  export const googleOAuthResponseValid: DeepReadonly<GoogleOAuth.Authed> = {
     tokenSet: {
       expired(): boolean {
         return false;
@@ -45,15 +44,14 @@ export namespace MockData {
     userInfo: {
       sub: 0 as never,
       email: 'hey@me.com',
-      verified_email: true,
+      email_verified: true,
       picture: 'https://example.com/a.png',
     },
-  } as DeepReadonly<GoogleOAuth.Authed>;
+  };
 
   export const googleOAuthResponseEmailUnverified = {
     ...googleOAuthResponseValid,
-    // eslint-disable-next-line @typescript-eslint/camelcase
-    userInfo: { ...googleOAuthResponseValid.userInfo, verified_email: null },
+    userInfo: { ...googleOAuthResponseValid.userInfo, email_verified: false },
   } as const;
 
   export const discordOAuthTokenValid: DiscordOAuth.TokenSet = {

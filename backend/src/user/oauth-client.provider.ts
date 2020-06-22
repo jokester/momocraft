@@ -15,14 +15,14 @@ interface OAuthExternalIdentity<T extends OpenIdClient.TokenSet, U extends OpenI
 export namespace GoogleOAuth {
   export const DiToken = Symbol('GoogleOAuthClient');
 
-  export interface GoogleOAuthClient extends OpenIdClient.Client {
+  export interface Client extends OpenIdClient.Client {
     _phantomField?: typeof DiToken;
   }
 
   const Issuer = OpenIdClient.Issuer.discover('https://accounts.google.com');
 
   Issuer.then((issuer) => {
-    logger('google oauth discovered', issuer.metadata);
+    if (0) logger('google oauth discovered', issuer.metadata);
   });
 
   export interface TokenSet extends OpenIdClient.TokenSet {}
@@ -38,7 +38,7 @@ export namespace GoogleOAuth {
   }
   export interface Authed extends OAuthExternalIdentity<TokenSet, UserInfo> {}
 
-  export const Provider: FactoryProvider<Promise<GoogleOAuthClient>> = {
+  export const Provider: FactoryProvider<Promise<Client>> = {
     provide: DiToken,
     scope: Scope.DEFAULT,
     inject: [ConfigService],

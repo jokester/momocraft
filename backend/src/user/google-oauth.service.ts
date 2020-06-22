@@ -14,7 +14,7 @@ const logger = getDebugLogger(__filename);
 @Injectable({ scope: Scope.DEFAULT })
 export class GoogleOAuthService {
   constructor(
-    @Inject(GoogleOAuth.DiToken) private readonly client: GoogleOAuth.GoogleOAuthClient,
+    @Inject(GoogleOAuth.DiToken) private readonly client: GoogleOAuth.Client,
     private readonly userService: UserService,
   ) {}
 
