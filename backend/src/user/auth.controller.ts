@@ -33,7 +33,7 @@ export class AuthController {
   async doGoogleOAuth(@Body() payload: OAuthRequestDto) {
     if (payload && payload.code && payload.redirectUrl) {
       const authedUser = getRightOrThrow(
-        await this.googleOAuthService.auth(payload),
+        await this.googleOAuthService.attemptAuth(payload),
         (l) => new BadRequestException('auth failed', l),
       );
 
@@ -49,7 +49,7 @@ export class AuthController {
   @ApiCreatedResponse({ type: AuthedSessionDto })
   async doDiscordOAuth(@Body() payload: OAuthRequestDto): Promise<AuthedSessionDto> {
     const authedUser = getRightOrThrow(
-      await this.discordOauthService.attemptAuth(payload.code, payload.redirectUrl),
+      await this.discordOauthService.attemptAuth(payload),
       (l) => new BadRequestException('oauth fail', l),
     );
 

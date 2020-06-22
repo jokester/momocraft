@@ -1,9 +1,11 @@
 import { Inject, Injectable, Scope } from '@nestjs/common';
+
+import { getDebugLogger } from '../util/get-debug-logger';
 import { DiscordOAuth } from './oauth-client.provider';
 import { Either, isLeft, left, right } from 'fp-ts/lib/Either';
-import { getDebugLogger } from '../util/get-debug-logger';
-import { ErrorCodeEnum } from '../const/error-code';
+import { OAuthRequestDto } from '../model/auth.dto';
 import { UserService } from './user.service';
+import { ErrorCodeEnum } from '../const/error-code';
 import { UserAccount } from '../db/entities/user-account';
 import { OAuthProvider } from '../const/oauth-conf';
 
@@ -16,12 +18,12 @@ export class DiscordOAuthService {
     private readonly userService: UserService,
   ) {}
 
-  async attemptAuth(code: string, redirectUrl: string): Promise<Either<ErrorCodeEnum, UserAccount>> {
-    const discordIdentity = await this.fetchAuthedUser(code, redirectUrl);
+  async attemptAuth(param: OAuthRequestDto): Promise<Either<ErrorCodeEnum, UserAccount>> {
+    const externalIdentity = await this.fetchIdentity(param);
 
-    if (isLeft(discordIdentity)) return discordIdentity;
+    if (isLeft(externalIdentity)) return externalIdentity;
 
-    const { tokenSet, userInfo } = discordIdentity.right;
+    const { tokenSet, userInfo } = externalIdentity.right;
 
     if (!(userInfo?.email && userInfo?.verified)) {
       return left(ErrorCodeEnum.oAuthEmailNotVerified);
@@ -31,10 +33,10 @@ export class DiscordOAuthService {
     return this.userService.findOrCreateWithOAuth(OAuthProvider.discord, externalId, tokenSet, userInfo);
   }
 
-  private async fetchAuthedUser(
-    code: string,
-    redirectUrl: string,
-  ): Promise<Either<ErrorCodeEnum, DiscordOAuth.Authed>> {
+  private async fetchIdentity({
+    redirectUrl,
+    code,
+  }: OAuthRequestDto): Promise<Either<ErrorCodeEnum, DiscordOAuth.Authed>> {
     try {
       const tokenSet = await this.client.oauthCallback(redirectUrl, { code });
       logger('DiscordOauthService#attemptAuth tokenSet', tokenSet);

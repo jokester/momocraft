@@ -1,8 +1,8 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable, Scope } from '@nestjs/common';
 import { getDebugLogger } from '../util/get-debug-logger';
 import { Either, isLeft, left, right } from 'fp-ts/lib/Either';
 import { TypeORMConnection } from '../db/typeorm-connection.provider';
-import { Connection, DeepPartial } from 'typeorm';
+import { Connection } from 'typeorm';
 import { OAuthAccount } from '../db/entities/oauth-account';
 import { UserAccount } from '../db/entities/user-account';
 import { EntropyService } from '../deps/entropy.service';
@@ -22,7 +22,7 @@ interface JwtTokenPayload {
   userId: string;
 }
 
-@Injectable()
+@Injectable({ scope: Scope.DEFAULT })
 export class UserService {
   constructor(
     @Inject(TypeORMConnection) private conn: Connection,
@@ -129,7 +129,7 @@ export class UserService {
     provider: OAuthProvider,
     externalLowercaseEmailId: string,
     tokenSet: TokenSet,
-    userInfo: object,
+    userInfo: UserinfoResponse,
   ): Promise<Either<ErrorCodeEnum, UserAccount>> {
     const oAuthAccountRepo = this.conn.getRepository(OAuthAccount);
 
