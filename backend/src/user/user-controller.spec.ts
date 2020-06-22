@@ -8,6 +8,7 @@ import { getRightOrThrow, getSomeOrThrow } from '../util/fpts-getter';
 import request from 'supertest';
 import { AuthSuccessRes } from '../auth/auth.controller';
 import { UserProfileDto } from '../model/user-profile.dto';
+import { absent } from '../util/absent';
 
 describe(UserController, () => {
   const testee = buildTesteeAppBundle();
@@ -80,6 +81,29 @@ describe(UserController, () => {
 
     it('return 404 for nonexist user', async () => {
       await request(app.getHttpServer()).get('/user/__s').expect(404);
+    });
+  });
+
+  describe.skip('PUT /user/@me', () => {
+    it('PUT /user/self updated resolved user', async () => {
+      const userAccount1 = getSomeOrThrow(await userService.findUser({ userId: '' }), () => absent('user by shortId'));
+
+      const jwtToken = await userService.createJwtTokenForUser(userAccount1);
+
+      const { body } = await request(app.getHttpServer())
+        .put('/user/self')
+        .set('Authorization', `Bearer ${jwtToken}`)
+        .send({ nickName: 'samuel mf jackson', avatarUrl: 'https://corp.com/a.gif' })
+        .expect(200);
+
+      expect(body).toMatchSnapshot('updated user');
+
+      const { body: body2 } = await request(app.getHttpServer())
+        .get('/user/self')
+        .set('Authorization', `Bearer ${jwtToken}`)
+        .expect(200);
+
+      expect(body2).toEqual(body);
     });
   });
 });
