@@ -17,5 +17,6 @@
     "coverage",
     "test",
     "dist",
+    "jest.config.js"
   ]
 }

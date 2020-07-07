@@ -40,11 +40,13 @@ describe(AuthController, () => {
         jest
           // @ts-ignore
           .spyOn(discordOAuthClient, 'oauthCallback')
+          // @ts-ignore
           .mockResolvedValue(MockData.discordOAuthTokenValid);
 
         jest
           // @ts-ignore
           .spyOn(discordOAuthClient, 'userinfo')
+          // @ts-ignore
           .mockResolvedValue(MockData.discordOAuthUserInfoValid);
       });
 
@@ -86,11 +88,13 @@ describe(AuthController, () => {
         jest
           // @ts-ignore
           .spyOn(discordOAuthClient, 'oauthCallback')
+          // @ts-ignore
           .mockResolvedValue(MockData.discordOAuthTokenValid);
 
         jest
           // @ts-ignore
           .spyOn(discordOAuthClient, 'userinfo')
+          // @ts-ignore
           .mockRejectedValue({});
       });
 
@@ -109,11 +113,13 @@ describe(AuthController, () => {
         jest
           // @ts-ignore
           .spyOn(googleOAuthClient, 'oauthCallback')
+          // @ts-ignore
           .mockResolvedValue(MockData.googleOAuthResponseValid.tokenSet);
 
         jest
           // @ts-ignore
           .spyOn(googleOAuthClient, 'userinfo')
+          // @ts-ignore
           .mockResolvedValue(MockData.googleOAuthResponseValid.userInfo);
       });
 
@@ -145,10 +151,12 @@ describe(AuthController, () => {
         jest
           // @ts-ignore
           .spyOn(googleOAuthClient, 'oauthCallback')
+          // @ts-ignore
           .mockResolvedValue(MockData.googleOAuthResponseValid.tokenSet);
         jest
           // @ts-ignore
           .spyOn(googleOAuthClient, 'userinfo')
+          // @ts-ignore
           .mockResolvedValue(MockData.googleOAuthResponseEmailUnverified.userInfo);
       });
 
