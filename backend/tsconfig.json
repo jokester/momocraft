@@ -8,19 +8,14 @@
     "sourceMap": true,
     "outDir": "./dist",
     "rootDir": "./src",
+    "baseUrl": "./",
     "incremental": true
   },
   "exclude": [
     "node_modules",
     "scripts",
     "coverage",
-    "build",
-    "__test__",
-    "bin",
     "test",
     "dist",
-    "src/ts-commonutil",
-    "submodules",
-    "jest.config.js"
   ]
 }

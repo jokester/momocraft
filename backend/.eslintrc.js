@@ -1,11 +1,14 @@
 module.exports =  {
   parser:  '@typescript-eslint/parser',
-  plugins: [ '@typescript-eslint' ],
+  plugins: [ '@typescript-eslint/eslint-plugin' ],
   extends:  [
     // "eslint:recommended", // not enabling: it reports many TS idioms as error
     'plugin:@typescript-eslint/eslint-recommended',
     'plugin:@typescript-eslint/recommended',
     // "plugin:@typescript-eslint/recommended-requiring-type-checking", // cant find for unknonw reason
+    'plugin:import/errors',
+    'plugin:import/warnings',
+    'plugin:import/typescript',
     'plugin:prettier/recommended',
     'prettier/@typescript-eslint',
   ],
@@ -19,7 +22,7 @@ module.exports =  {
   },
   rules:  {
     // Place to specify ESLint rules. Can be used to overwrite rules specified from the extended configs
-    // e.g. "@typescript-eslint/explicit-function-return-type": "off",
+    "@typescript-eslint/explicit-function-return-type": 0,
     "@typescript-eslint/no-var-requires": 2,
     "@typescript-eslint/no-unused-vars": 0,
     "@typescript-eslint/explicit-member-accessibility": 0,
