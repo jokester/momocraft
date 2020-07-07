@@ -1,4 +1,1 @@
-/build
-vendor
-/momo-devdb
-/submodules
+.gitignore

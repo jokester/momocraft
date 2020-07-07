@@ -11,7 +11,6 @@ interface OAuthExternalIdentity<T extends OpenIdClient.TokenSet, U extends OpenI
   userInfo: U;
 }
 
-/* eslint-disable @typescript-eslint/camelcase */
 export namespace GoogleOAuth {
   export const DiToken = Symbol('GoogleOAuthClient');
 

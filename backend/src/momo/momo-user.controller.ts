@@ -135,7 +135,10 @@ export class MomoUserController {
    * @returns {Promise<UserProfileDto>}
    */
   @Put('self')
-  async putSelfMeta(@AuthedUser() authedUser: UserAccount, @Body() params: {}): Promise<UserProfileDto> {
+  async putSelfMeta(
+    @AuthedUser() authedUser: UserAccount,
+    @Body() params: Record<string, unknown>,
+  ): Promise<UserProfileDto> {
     logger('UserController#putSelfMeta', authedUser, params);
 
     const updated = await this.userService.updateUserMeta(authedUser, params);
