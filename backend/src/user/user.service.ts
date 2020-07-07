@@ -2,7 +2,7 @@ import { Inject, Injectable, Scope } from '@nestjs/common';
 import { getDebugLogger } from '../util/get-debug-logger';
 import { Either, isLeft, left, right } from 'fp-ts/lib/Either';
 import { TypeORMConnection } from '../db/typeorm-connection.provider';
-import { Connection } from 'typeorm';
+import { Connection, DeepPartial } from 'typeorm';
 import { OAuthAccount } from '../db/entities/oauth-account';
 import { UserAccount } from '../db/entities/user-account';
 import { EntropyService } from '../deps/entropy.service';
@@ -116,12 +116,12 @@ export class UserService {
 
   async updateUserMeta(
     condition: Partial<Pick<UserAccount, 'userId' | 'internalUserId' | 'emailId'>>,
-    meta: object,
+    meta: Record<string, unknown>,
   ): Promise<UserAccount> {
     const user =
       (await this.conn.getRepository(UserAccount).findOne(condition)) || absent('updateInternalMeta: user not found');
     user.setInternalMeta(meta);
-    await this.conn.getRepository(UserAccount).save(user);
+    await this.conn.getRepository(UserAccount).save(user as DeepPartial<UserAccount>);
     return user;
   }
 
