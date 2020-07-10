@@ -29,3 +29,15 @@ jobs:
 
     - name: Lint
       run: yarn lint
+
+    - name: Test
+      run: yarn test --ci
+
+    - name: Create Prod Build
+      run: yarn analyze
+
+    - name: Archive Bundle Analyze Report
+      uses: actions/upload-artifact@v2
+      with:
+        name: webpack-bundle-analyzer-report
+        path: .next/**/report.html
