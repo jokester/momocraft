@@ -6,9 +6,9 @@ import { CollectionServiceImpl } from './collection-service';
 import { Toaster } from '@blueprintjs/core';
 import { FriendServiceImpl } from './friend-service';
 import { bindApi } from '../api/bind-api';
-import '../i18n/i18next-factory';
-import { useLifeCycle } from '../components/generic-hooks/use-life-cycle';
 import { createI18nInstance } from '../i18n/i18next-factory';
+import { useLifeCycle } from '../components/generic-hooks/use-life-cycle';
+
 import { I18NextReactProvider } from 'i18next-react';
 import { LanguageSelectionResponder } from '../components/i18n/language-selection-responder';
 import { LangCode } from '../const/languages';

@@ -7,7 +7,6 @@ import { OAuthProvider } from '../../const-shared/oauth-conf';
 
 export function buildOAuthEndpoints() {
   return {
-    /* eslint-disable @typescript-eslint/camelcase */
     discord: `${OAuthAuthorizationUrl.discord}?${qs.encode({
       client_id: buildEnv.OAUTH_DISCORD_CLIENT_ID,
       response_type: 'code',
@@ -23,7 +22,6 @@ export function buildOAuthEndpoints() {
       redirect_uri:
         (inBrowser ? location.origin : 'http://localhost:3000') + TypedRoutes.oauth.callback(OAuthProvider.google),
     })}`,
-    /* eslint-enable @typescript-eslint/camelcase */
   } as const;
 }
 

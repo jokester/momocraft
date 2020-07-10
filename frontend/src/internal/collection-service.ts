@@ -5,6 +5,7 @@ import { map } from 'fp-ts/lib/Either';
 import { ApiProvider } from '../api/bind-api';
 import { ItemCollectionDto, UserCollectionListDto } from '../api-generated/models';
 import { launderResponse } from '../api/launder-api-response';
+import { ObjLike } from '../util/types';
 
 const mappers = {
   unResObject: map((resBody: UserCollectionListDto) => resBody.collections),
@@ -49,7 +50,7 @@ export class CollectionServiceImpl {
       )
       .then(mappers.unResObject);
   }
-  observeCollections(itemName: string): Observable<{}> {
+  observeCollections(itemName: string): Observable<ObjLike> {
     throw 'todo';
   }
 }
