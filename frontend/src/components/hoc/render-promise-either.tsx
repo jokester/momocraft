@@ -1,8 +1,9 @@
 import React, { useCallback } from 'react';
 import { Either, fold } from 'fp-ts/lib/Either';
 import { RenderPromise } from '@jokester/ts-commonutil/react/hoc/render-promise';
+import { ObjLike } from '../../util/types';
 
-interface RenderPromiseEitherProps<L, R> extends React.PropsWithChildren<{}> {
+interface RenderPromiseEitherProps<L, R> extends React.PropsWithChildren<ObjLike> {
   promise: Promise<Either<L, R>>;
   onPending?(): React.ReactElement;
   onReject?(e: unknown): React.ReactElement;
