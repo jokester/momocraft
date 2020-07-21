@@ -15,7 +15,9 @@
     "typecheck": "tsc --noEmit",
     "typecheck:watch": "tsc --watch --noEmit",
     "lint": "    eslint '**/*.@(ts|js|tsx|jsx)'",
-    "lint:fix": "eslint '**/*.@(ts|js|tsx|jsx)' --fix"
+    "lint:fix": "eslint '**/*.@(ts|js|tsx|jsx)' --fix",
+    "storybook": "start-storybook -p 6006",
+    "build-storybook": "build-storybook"
   },
   "dependencies": {
     "@blueprintjs/core": "^3.29.0",
@@ -45,6 +47,10 @@
     "@babel/plugin-proposal-class-properties": "^7.10.4",
     "@babel/plugin-proposal-decorators": "^7.10.4",
     "@openapitools/openapi-generator-cli": "^1.0.15-4.3.1",
+    "@storybook/addon-actions": "^5.3.19",
+    "@storybook/addon-links": "^5.3.19",
+    "@storybook/addons": "^5.3.19",
+    "@storybook/react": "^5.3.19",
     "@types/accept-language-parser": "^1.5.1",
     "@types/classnames": "^2.2.10",
     "@types/cookie": "^0.4.0",
@@ -60,6 +66,7 @@
     "@zeit/next-bundle-analyzer": "^0.1.2",
     "@zeit/next-source-maps": "^0.0.3",
     "autoprefixer": "^9.8.4",
+    "babel-loader": "^8.1.0",
     "babel-plugin-const-enum": "^1.0.1",
     "eslint": "7.4.0",
     "eslint-config-prettier": "^6.11.0",
@@ -74,6 +81,7 @@
     "prettier": "^2.0.5",
     "sass": "^1.26.10",
     "ts-jest": "^26",
+    "ts-loader": "^8.0.1",
     "typescript": "^3.9"
   },
   "engines": {
