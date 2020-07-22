@@ -7,8 +7,8 @@
     "moduleResolution": "node",
     "noEmit": true,
     "resolveJsonModule": true,
-    "skipLibCheck": true,
     "target": "esnext",
+    "skipLibCheck": true,
     "typeRoots": [
       "typings",
       "node_modules/@types"

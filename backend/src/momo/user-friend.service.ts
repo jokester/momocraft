@@ -12,7 +12,7 @@ export class UserFriendService {
   constructor(@Inject(TypeORMConnection) private conn: Connection) {}
 
   async listFriend(ofUser: UserAccount): Promise<UserFriendRequest[]> {
-    return await this.conn.getRepository(UserFriendRequest).find({ fromUser: ofUser });
+    return await this.conn.getRepository(UserFriendRequest).find({ where: { fromUser: ofUser } });
   }
 
   async listMutualFriends(one: UserAccount): Promise<UserAccount[]> {

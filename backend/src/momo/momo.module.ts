@@ -1,10 +1,10 @@
 import { MiddlewareConsumer, Module, NestModule, RequestMethod } from '@nestjs/common';
 import { DatabaseModule } from '../db/database.module';
-import { UserModule } from '../user/user.module';
 import { MomoUserController } from './momo-user.controller';
 import { UserJwtAuthMiddleware } from '../user/user-jwt-auth.middleware';
 import { UserCollectionService } from './user-collection.service';
 import { UserFriendService } from './user-friend.service';
+import { UserModule } from '../user/user.module';
 
 @Module({
   imports: [DatabaseModule, UserModule],

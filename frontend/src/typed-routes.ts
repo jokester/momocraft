@@ -33,8 +33,11 @@ export const TypedRoutes = {
 /**
  * extract route (in URL path) param if there is one
  */
-export type TypedRouteParam<RouteNode> = RouteNode extends (param: infer Param) => string ? Param & ParsedUrlQuery : {};
+export type TypedRouteParam<RouteNode> = RouteNode extends (param: infer Param) => string
+  ? Param & ParsedUrlQuery
+  : never;
 
 export const OAuthAuthorizationUrl = {
   discord: 'https://discord.com/api/oauth2/authorize',
+  google: 'https://accounts.google.com/o/oauth2/v2/auth',
 } as const;

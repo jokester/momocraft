@@ -1,25 +1,17 @@
-import { createConnection } from 'typeorm';
-import { UserAccount } from '../db/entities/user-account';
-import { OAuthAccount } from '../db/entities/oauth-account';
 import { EntropyService } from '../deps/entropy.service';
 import { DeepReadonly } from '@jokester/ts-commonutil/cjs/type/freeze';
-import { GoogleOAuthResponse } from '../user/google-oauth.service';
 import { JwtService } from '@nestjs/jwt';
 import { EmailAuthRequestDto, OAuthRequestDto } from '../model/auth.dto';
-import { DiscordOAuth } from '../user/oauth-client.provider';
+import { DiscordOAuth, GoogleOAuth } from '../auth/oauth-client.provider';
+import { getTestConn } from './test-db';
 
 export namespace TestDeps {
-  export const testConnection = createConnection({
-    type: 'postgres',
-    url: process.env['TEST_DB_URL'] || 'postgresql://pguser:secret@127.0.0.1:54432/momo_test',
-    logger: 'debug',
-    entities: [UserAccount, OAuthAccount],
-  });
+  export const testConnection = getTestConn();
 
   export async function resetTestDB(): Promise<void> {
     const conn = await testConnection;
     await conn.transaction(async (em) => await em.query(`DROP SCHEMA public CASCADE; CREATE SCHEMA public;`));
-    await conn.synchronize(true);
+    await conn.runMigrations({ transaction: 'all' });
   }
 
   export const mockedEntropy = new EntropyService();
@@ -28,30 +20,31 @@ export namespace TestDeps {
 }
 
 export namespace MockData {
-  export const authPayload = { email: 'a@b.com', password: '1234567' } as EmailAuthRequestDto;
+  export const authPayload = { email: 'a@B.com', password: '1234567' } as EmailAuthRequestDto;
 
   export const oauthRequest = { code: '123', redirectUrl: '456' } as OAuthRequestDto;
 
-  export const googleOAuthResponseValid = {
-    credentials: {
-      tokens: {
-        // eslint-disable-next-line @typescript-eslint/camelcase
-        id_token: 'iiid-token',
+  export const googleOAuthResponseValid: DeepReadonly<GoogleOAuth.Authed> = {
+    tokenSet: {
+      expired(): boolean {
+        return false;
+      },
+      claims(): never {
+        throw 'wont be called';
       },
       res: null,
     },
     userInfo: {
+      sub: 0 as never,
       email: 'hey@me.com',
-      // eslint-disable-next-line @typescript-eslint/camelcase
-      verified_email: true,
+      email_verified: true,
       picture: 'https://example.com/a.png',
     },
-  } as DeepReadonly<GoogleOAuthResponse>;
+  };
 
   export const googleOAuthResponseEmailUnverified = {
     ...googleOAuthResponseValid,
-    // eslint-disable-next-line @typescript-eslint/camelcase
-    userInfo: { ...googleOAuthResponseValid.userInfo, verified_email: null },
+    userInfo: { ...googleOAuthResponseValid.userInfo, email_verified: false },
   } as const;
 
   export const discordOAuthTokenValid: DiscordOAuth.TokenSet = {

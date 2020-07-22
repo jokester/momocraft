@@ -32,9 +32,6 @@ import {
   FriendUserDto,
   FriendUserDtoFromJSON,
   FriendUserDtoToJSON,
-  OAuthGoogleRequestDto,
-  OAuthGoogleRequestDtoFromJSON,
-  OAuthGoogleRequestDtoToJSON,
   OAuthRequestDto,
   OAuthRequestDtoFromJSON,
   OAuthRequestDtoToJSON,
@@ -62,7 +59,7 @@ export interface AuthControllerDoEmailSignUpRequest {
 }
 
 export interface AuthControllerDoGoogleOAuthRequest {
-  oAuthGoogleRequestDto: OAuthGoogleRequestDto;
+  oAuthRequestDto: OAuthRequestDto;
 }
 
 export interface MomoUserControllerGetCollectionsRequest {
@@ -85,6 +82,10 @@ export interface MomoUserControllerPutCollectionsRequest {
 export interface MomoUserControllerSaveUserFriendRequestRequest {
   userId: string;
   userFriendRequestDto: UserFriendRequestDto;
+}
+
+export interface UserControllerGetUserProfileRequest {
+  userId: string;
 }
 
 /**
@@ -206,10 +207,10 @@ export class DefaultApi extends runtime.BaseAPI {
   async authControllerDoGoogleOAuthRaw(
     requestParameters: AuthControllerDoGoogleOAuthRequest,
   ): Promise<runtime.ApiResponse<AuthedSessionDto>> {
-    if (requestParameters.oAuthGoogleRequestDto === null || requestParameters.oAuthGoogleRequestDto === undefined) {
+    if (requestParameters.oAuthRequestDto === null || requestParameters.oAuthRequestDto === undefined) {
       throw new runtime.RequiredError(
-        'oAuthGoogleRequestDto',
-        'Required parameter requestParameters.oAuthGoogleRequestDto was null or undefined when calling authControllerDoGoogleOAuth.',
+        'oAuthRequestDto',
+        'Required parameter requestParameters.oAuthRequestDto was null or undefined when calling authControllerDoGoogleOAuth.',
       );
     }
 
@@ -224,7 +225,7 @@ export class DefaultApi extends runtime.BaseAPI {
       method: 'POST',
       headers: headerParameters,
       query: queryParameters,
-      body: OAuthGoogleRequestDtoToJSON(requestParameters.oAuthGoogleRequestDto),
+      body: OAuthRequestDtoToJSON(requestParameters.oAuthRequestDto),
     });
 
     return new runtime.JSONApiResponse(response, (jsonValue) => AuthedSessionDtoFromJSON(jsonValue));
@@ -514,6 +515,63 @@ export class DefaultApi extends runtime.BaseAPI {
     requestParameters: MomoUserControllerSaveUserFriendRequestRequest,
   ): Promise<FriendUserDto> {
     const response = await this.momoUserControllerSaveUserFriendRequestRaw(requestParameters);
+    return await response.value();
+  }
+
+  /**
+   */
+  async userControllerGetOwnProfileRaw(): Promise<runtime.ApiResponse<UserProfileDto>> {
+    const queryParameters: runtime.HTTPQuery = {};
+
+    const headerParameters: runtime.HTTPHeaders = {};
+
+    const response = await this.request({
+      path: `/user/@me`,
+      method: 'GET',
+      headers: headerParameters,
+      query: queryParameters,
+    });
+
+    return new runtime.JSONApiResponse(response, (jsonValue) => UserProfileDtoFromJSON(jsonValue));
+  }
+
+  /**
+   */
+  async userControllerGetOwnProfile(): Promise<UserProfileDto> {
+    const response = await this.userControllerGetOwnProfileRaw();
+    return await response.value();
+  }
+
+  /**
+   */
+  async userControllerGetUserProfileRaw(
+    requestParameters: UserControllerGetUserProfileRequest,
+  ): Promise<runtime.ApiResponse<UserProfileDto>> {
+    if (requestParameters.userId === null || requestParameters.userId === undefined) {
+      throw new runtime.RequiredError(
+        'userId',
+        'Required parameter requestParameters.userId was null or undefined when calling userControllerGetUserProfile.',
+      );
+    }
+
+    const queryParameters: runtime.HTTPQuery = {};
+
+    const headerParameters: runtime.HTTPHeaders = {};
+
+    const response = await this.request({
+      path: `/user/{userId}`.replace(`{${'userId'}}`, encodeURIComponent(String(requestParameters.userId))),
+      method: 'GET',
+      headers: headerParameters,
+      query: queryParameters,
+    });
+
+    return new runtime.JSONApiResponse(response, (jsonValue) => UserProfileDtoFromJSON(jsonValue));
+  }
+
+  /**
+   */
+  async userControllerGetUserProfile(requestParameters: UserControllerGetUserProfileRequest): Promise<UserProfileDto> {
+    const response = await this.userControllerGetUserProfileRaw(requestParameters);
     return await response.value();
   }
 }

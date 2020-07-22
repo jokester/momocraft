@@ -5,11 +5,6 @@ export class AuthedSessionDto {
   user!: UserProfileDto;
 }
 
-export class OAuthGoogleRequestDto {
-  code!: string;
-  redirectUrl!: string;
-}
-
 export class OAuthRequestDto {
   code!: string;
   redirectUrl!: string;

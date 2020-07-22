@@ -1,6 +1,10 @@
+name: Build backend docker image
+
 on:
   push:
-    branches: [never-build]
+    branches: [master]
+    paths:
+    - backend/**
 
 jobs:
   build_docker_images:

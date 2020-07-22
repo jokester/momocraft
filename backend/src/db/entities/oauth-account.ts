@@ -1,5 +1,5 @@
 import { Column, CreateDateColumn, Entity, Index, PrimaryGeneratedColumn, Unique, UpdateDateColumn } from 'typeorm';
-import { DiscordOAuth } from '../../user/oauth-client.provider';
+import { DiscordOAuth, GoogleOAuth } from '../../auth/oauth-client.provider';
 import { OAuthProvider } from '../../const/oauth-conf';
 
 @Entity()
@@ -40,12 +40,12 @@ export class OAuthAccount {
     return this.provider === OAuthProvider.discord;
   }
 
-  isGoogle(): this is CastedOAuthAccount<never, never> {
-    return this.provider === OAuthProvider.googleOAuth2;
+  isGoogle(): this is CastedOAuthAccount<GoogleOAuth.TokenSet, GoogleOAuth.UserInfo> {
+    return this.provider === OAuthProvider.google;
   }
 }
 
 interface CastedOAuthAccount<Cred, UserInfo> {
-  credientials: Cred;
+  credentials: Cred;
   userInfo: UserInfo;
 }

@@ -2,26 +2,42 @@ import { FactoryProvider, Scope } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import * as OpenIdClient from 'openid-client';
 import { absent } from '../util/absent';
+import { getDebugLogger } from '../util/get-debug-logger';
 
-interface OAuthExternalIdentity<T extends OpenIdClient.TokenSet, U> {
+const logger = getDebugLogger(__filename);
+
+interface OAuthExternalIdentity<T extends OpenIdClient.TokenSet, U extends OpenIdClient.UserinfoResponse> {
   tokenSet: T;
   userInfo: U;
 }
 
-/* eslint-disable @typescript-eslint/camelcase */
-/**
- * TODO: use this after works
- */
-namespace GoogleOAuth {
+export namespace GoogleOAuth {
   export const DiToken = Symbol('GoogleOAuthClient');
 
-  interface GoogleOAuthClient extends OpenIdClient.Client {
+  export interface Client extends OpenIdClient.Client {
     _phantomField?: typeof DiToken;
   }
 
   const Issuer = OpenIdClient.Issuer.discover('https://accounts.google.com');
 
-  export const Provider: FactoryProvider<Promise<GoogleOAuthClient>> = {
+  Issuer.then((issuer) => {
+    if (0) logger('google oauth discovered', issuer.metadata);
+  });
+
+  export interface TokenSet extends OpenIdClient.TokenSet {}
+  export interface UserInfo extends OpenIdClient.UserinfoResponse {
+    sub: never;
+    name?: string;
+    given_name?: string;
+    family_name?: string;
+    picture?: string;
+    email?: string;
+    email_verified?: boolean;
+    locale?: string;
+  }
+  export interface Authed extends OAuthExternalIdentity<TokenSet, UserInfo> {}
+
+  export const Provider: FactoryProvider<Promise<Client>> = {
     provide: DiToken,
     scope: Scope.DEFAULT,
     inject: [ConfigService],

@@ -1,5 +1,5 @@
 import { Either, flatten, map } from 'fp-ts/lib/Either';
-import { ErrorCodeEnum } from '../const-shared/error-code';
+import { ErrorCodeEnum } from '../../const-shared/error-code';
 
 export type ApiResponse<T> = Promise<ApiResponseSync<T>>;
 export type ApiResponseSync<T> = Either<ApiError, T>;

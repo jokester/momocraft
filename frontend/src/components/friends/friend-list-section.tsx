@@ -1,13 +1,13 @@
 import React, { ChangeEvent, useState } from 'react';
 import { useAuthState } from '../hooks/use-auth-state';
 import { useSingletons } from '../../internal/app-context';
-import { useVersionedMemo } from '@jokester/ts-commonutil/react/hook/use-versioned-memo';
-import { useConcurrencyControl } from '@jokester/ts-commonutil/react/hook/use-concurrency-control';
+import { useVersionedMemo } from '@jokester/ts-commonutil/lib/react/hook/use-versioned-memo';
+import { useConcurrencyControl } from '@jokester/ts-commonutil/lib/react/hook/use-concurrency-control';
 import { Button, FormGroup, InputGroup, Label } from '@blueprintjs/core';
 import { fold } from 'fp-ts/lib/Either';
 import { RenderPromiseEither } from '../hoc/render-promise-either';
-import { FriendListDto, FriendUserDto } from '../../api-generated/models';
-import { ApiError } from '../../api/api-convention';
+import { FriendListDto, FriendUserDto } from '../../services/api-generated/models';
+import { ApiError } from '../../services/api/api-convention';
 
 export const FriendListSection: React.FC = () => {
   const authedUser = useAuthState();
@@ -55,12 +55,12 @@ export const FriendListSection: React.FC = () => {
 
               fold(
                 (l: ApiError) => {
-                  singletons.toaster.current.show({ intent: 'warning', message: `添加好友失败: ${l}` });
+                  singletons.toast({ status: 'warning', title: `添加好友失败: ${l}` });
                 },
 
                 (r: FriendUserDto) => {
                   refreshFriendList();
-                  singletons.toaster.current.show({ intent: 'success', message: `添加好友成功` });
+                  singletons.toast({ status: 'success', title: `添加好友成功` });
                 },
               )(added);
             })

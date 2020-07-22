@@ -1,6 +1,5 @@
-/* eslint @typescript-eslint/camelcase: 0 */
 import React, { useEffect } from 'react';
-import Router from 'next/router';
+import { Router } from 'next/router';
 import { buildEnv } from '../const/build-env';
 
 declare function gtag(...args: any[]): void;

@@ -2,25 +2,21 @@
   "extends": "./tsconfig.base.json",
   "compilerOptions": {
     "module": "commonjs",
-    "declaration": true,
-    "removeComments": true,
+    "declaration": false,
+    "removeComments": false,
     "target": "es2017",
     "sourceMap": true,
     "outDir": "./dist",
     "rootDir": "./src",
+    "baseUrl": "./",
     "incremental": true
   },
   "exclude": [
     "node_modules",
     "scripts",
     "coverage",
-    "build",
-    "__test__",
-    "bin",
     "test",
     "dist",
-    "src/ts-commonutil",
-    "submodules",
     "jest.config.js"
   ]
 }

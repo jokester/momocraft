@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import nanoid from 'nanoid';
+import { nanoid } from 'nanoid';
 import * as bcrypt from 'bcrypt';
 import { randomString } from '@jokester/ts-commonutil/cjs/text/random-string';
 

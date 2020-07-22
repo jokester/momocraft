@@ -1,6 +1,6 @@
 import { Configuration, DefaultApi } from '../api-generated';
-import { buildEnv, inBrowser } from '../const/build-env';
-import { Never } from '@jokester/ts-commonutil/concurrency/timing';
+import { buildEnv, inBrowser } from '../../const/build-env';
+import { Never } from '@jokester/ts-commonutil/lib/concurrency/timing';
 
 export interface ApiProvider {
   (headers?: Record<string, string>): DefaultApi;

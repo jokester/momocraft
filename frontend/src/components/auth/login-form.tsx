@@ -1,11 +1,11 @@
 import React, { ChangeEvent, useCallback, useState } from 'react';
 import { useSingletons } from '../../internal/app-context';
-import { ApiResponseSync } from '../../api/api-convention';
-import { UserProfileDto } from '../../api-generated/models';
+import { ApiResponseSync } from '../../services/api/api-convention';
+import { UserProfileDto } from '../../services/api-generated/models';
 import { isLeft } from 'fp-ts/lib/Either';
 import { CenterH } from '../layout/layout';
 import { Button, FormGroup, InputGroup, Label } from '@blueprintjs/core';
-import { DiscordLoginButton } from './oauth-login-button';
+import { DiscordLoginButton, GoogleLoginButton } from './oauth-login-button';
 
 export const FormWarning: React.FC = () => {
   return (
@@ -19,15 +19,15 @@ export const FormWarning: React.FC = () => {
 };
 
 export const LoginOrSignupForm: React.FC<{ pendingAuth: boolean }> = ({ pendingAuth }) => {
-  const { auth, toaster } = useSingletons();
+  const { auth, toast, toastHelper } = useSingletons();
   const [email, setEmail] = useState('');
   const [password, setPass] = useState('');
 
   const onAuthResult = useCallback((res: ApiResponseSync<UserProfileDto>) => {
     if (isLeft(res)) {
-      toaster.current.show({ intent: 'warning', message: `登录失败: ${res.left}` });
+      toastHelper.handleApiError(res.left);
     } else {
-      toaster.current.show({ intent: 'success', message: '登录成功' });
+      toast({ status: 'success', title: '登录成功' });
     }
     return res;
   }, []);
@@ -86,6 +86,9 @@ export const LoginOrSignupForm: React.FC<{ pendingAuth: boolean }> = ({ pendingA
       </CenterH>
       <CenterH>
         <DiscordLoginButton />
+      </CenterH>
+      <CenterH>
+        <GoogleLoginButton />
       </CenterH>
     </div>
   );

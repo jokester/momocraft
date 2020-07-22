@@ -21,7 +21,7 @@ export class UserAccount {
   readonly passwordHash!: string;
 
   @Column({ type: 'jsonb', default: {} })
-  readonly internalMeta: Readonly<object> = {};
+  readonly internalMeta: Readonly<Record<string, unknown>> = {};
 
   @CreateDateColumn()
   readonly createdAt!: Date;
