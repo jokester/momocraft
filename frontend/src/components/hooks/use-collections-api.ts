@@ -1,13 +1,13 @@
 import { useSingletons } from '../../internal/app-context';
 import { useMemo } from 'react';
 import { CollectionState } from '../../const-shared/collection';
-import { Maps } from '@jokester/ts-commonutil/collection/maps';
+import { Maps } from '@jokester/ts-commonutil/lib/collection/maps';
 import { fold, map, right } from 'fp-ts/lib/Either';
-import { useConcurrencyControl } from '@jokester/ts-commonutil/react/hook/use-concurrency-control';
-import { useDependingState } from '@jokester/ts-commonutil/react/hook/use-depending-state';
+import { useConcurrencyControl } from '@jokester/ts-commonutil/lib/react/hook/use-concurrency-control';
+import { useDependingState } from '@jokester/ts-commonutil/lib/react/hook/use-depending-state';
 import { itemsDatabaseV3, ItemsDatabaseV3 } from '../../items-db/dynamic-load-db';
-import { ItemCollectionDto } from '../../api-generated/models';
-import { ApiError } from '../../api/api-convention';
+import { ItemCollectionDto } from '../../services/api-generated/models';
+import { ApiError } from '../../services/api/api-convention';
 
 const builder = {
   buildCollectionMap: (itemsDb: ItemsDatabaseV3, userId: null | string, f: ItemCollectionDto[]) => {

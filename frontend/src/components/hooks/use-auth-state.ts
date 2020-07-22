@@ -1,8 +1,8 @@
 import { useSingletons } from '../../internal/app-context';
 import { useMemo } from 'react';
 import { useObserved } from '../generic-hooks/use-observed';
-import { ApiResponseSync } from '../../api/api-convention';
-import { UserProfileDto } from '../../api-generated/models';
+import { ApiResponseSync } from '../../services/api/api-convention';
+import { UserProfileDto } from '../../services/api-generated/models';
 import { map } from 'rxjs/operators';
 import { either } from 'fp-ts';
 import { Observable } from 'rxjs';
