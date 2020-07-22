@@ -525,10 +525,10 @@
     "@types/yargs" "^15.0.0"
     chalk "^4.0.0"
 
-"@jokester/ts-commonutil@^0.2.1":
-  version "0.2.1"
-  resolved "https://registry.yarnpkg.com/@jokester/ts-commonutil/-/ts-commonutil-0.2.1.tgz#7b97182aeed20b197b0a89030a8a19ca9688a135"
-  integrity sha512-DMcJ/BaNY73sWIhHf+0idyvdr1wj5WPlVdU0QH2QqlZA2vFhcPprJO2/0lT1YilzSmVUJCmWgh66CQTNatg4lA==
+"@jokester/ts-commonutil@0.2.2":
+  version "0.2.2"
+  resolved "https://registry.yarnpkg.com/@jokester/ts-commonutil/-/ts-commonutil-0.2.2.tgz#fc6a14adb485f9fc6e93fe2245fab5034115109b"
+  integrity sha512-rfgbKpF7PefIaLUzegaL2BXky3YbJussPFPiaCZ8t82F6WngI7UQemEvE4zNHaH6Xjnz/EJWjIaWVmVULi2tXA==
 
 "@nestjs/cli@^7.4.1":
   version "7.4.1"
@@ -651,6 +651,11 @@
     chalk "^2.4.1"
     consola "^2.3.0"
     node-fetch "^2.3.0"
+
+"@openapitools/openapi-generator-cli@^1.0.15-4.3.1":
+  version "1.0.15-4.3.1"
+  resolved "https://registry.yarnpkg.com/@openapitools/openapi-generator-cli/-/openapi-generator-cli-1.0.15-4.3.1.tgz#25ef943eba3c82e82379b30f858bb05ed97dae0b"
+  integrity sha512-U+sanspDmeBElVNjYHQ4U7BbSEJUQzjNKmiTzXpcEw/r93sgxmzS2Sew5t+Zj6kyN1YTvjhRjJikNcW9/bmTKA==
 
 "@panva/asn1.js@^1.0.0":
   version "1.0.0"
@@ -787,6 +792,11 @@
     "@types/express-serve-static-core" "*"
     "@types/qs" "*"
     "@types/serve-static" "*"
+
+"@types/faker@^4.1.12":
+  version "4.1.12"
+  resolved "https://registry.yarnpkg.com/@types/faker/-/faker-4.1.12.tgz#065d37343677df1aa757c622650bd14666c42602"
+  integrity sha512-0MEyzJrLLs1WaOCx9ULK6FzdCSj2EuxdSP9kvuxxdBEGujZYUOZ4vkPXdgu3dhyg/pOdn7VCatelYX7k0YShlA==
 
 "@types/got@^9.6.9":
   version "9.6.11"
@@ -3184,6 +3194,11 @@ extsprintf@^1.2.0:
   version "1.4.0"
   resolved "https://registry.yarnpkg.com/extsprintf/-/extsprintf-1.4.0.tgz#e2689f8f356fad62cca65a3a91c5df5f9551692f"
   integrity sha1-4mifjzVvrWLMplo6kcXfX5VRaS8=
+
+faker@^4.1.0:
+  version "4.1.0"
+  resolved "https://registry.yarnpkg.com/faker/-/faker-4.1.0.tgz#1e45bbbecc6774b3c195fad2835109c6d748cc3f"
+  integrity sha1-HkW7vsxndLPBlfrSg1EJxtdIzD8=
 
 fast-deep-equal@^3.1.1:
   version "3.1.3"

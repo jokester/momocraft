@@ -95,7 +95,7 @@ export class UserService {
     const passwordMatched = await this.entropy.bcryptValidate(sanitizedPass.right, user.value.passwordHash);
 
     if (passwordMatched) return right(user.value);
-    return left(ErrorCodeEnum.passwordUnmatch);
+    return left(ErrorCodeEnum.passwordMismatch);
   }
 
   async resolveUser(userAccount: UserAccount): Promise<UserProfileDto> {
