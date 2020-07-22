@@ -19,15 +19,15 @@ export const FormWarning: React.FC = () => {
 };
 
 export const LoginOrSignupForm: React.FC<{ pendingAuth: boolean }> = ({ pendingAuth }) => {
-  const { auth, toaster } = useSingletons();
+  const { auth, toast, toastHelper } = useSingletons();
   const [email, setEmail] = useState('');
   const [password, setPass] = useState('');
 
   const onAuthResult = useCallback((res: ApiResponseSync<UserProfileDto>) => {
     if (isLeft(res)) {
-      toaster.current.show({ intent: 'warning', message: `登录失败: ${res.left}` });
+      toastHelper.handleApiError(res.left);
     } else {
-      toaster.current.show({ intent: 'success', message: '登录成功' });
+      toast({ status: 'success', title: '登录成功' });
     }
     return res;
   }, []);
