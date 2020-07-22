@@ -4,7 +4,7 @@ RUN adduser --shell /bin/bash worker \
     && mkdir -pv /app                \
     && chown -v worker:worker /app
 
-USER void-app
+USER worker
 COPY --chown=worker:worker . /app/
 WORKDIR /app/
 RUN yarn && yarn build && yarn --production && rm -rf ~/.cache
