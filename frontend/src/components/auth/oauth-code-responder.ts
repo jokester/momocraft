@@ -1,8 +1,7 @@
 import { useEffect } from 'react';
 import { OAuthProvider } from '../../const-shared/oauth-conf';
 import { fold } from 'fp-ts/lib/Either';
-import { ApiError, ApiResponseSync } from '../../services/api/api-convention';
-import { Messages } from '../../i18n/messages';
+import { ApiResponseSync } from '../../services/api/api-convention';
 import { UserProfileDto } from '../../services/api-generated/models';
 import { useI18n } from 'i18next-react';
 import { useMounted } from '@jokester/ts-commonutil/lib/react/hook/use-mounted';
@@ -17,17 +16,12 @@ export function useOAuthCodeCallback(provider: OAuthProvider, code?: string) {
   const i18n = useI18n();
   const router = useRouter();
   const mounted = useMounted();
-  const { auth, toaster } = useSingletons();
+  const { auth, toastHelper, toast } = useSingletons();
 
   const onAuthResult = (authResult: ApiResponseSync<UserProfileDto>) => {
-    fold(
-      (l: ApiError) => {
-        toaster.current?.show({ intent: 'warning', message: Messages.apiError(i18n, l) });
-      },
-      (r: UserProfileDto) => {
-        toaster.current?.show({ intent: 'success', message: i18n.t('auth.Success') });
-      },
-    )(authResult);
+    fold(toastHelper.handleApiError, (r: UserProfileDto) => {
+      toast({ status: 'success', title: i18n.t('auth.Success') });
+    })(authResult);
     if (mounted.current) router.replace(TypedRoutes.account);
   };
 

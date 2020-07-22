@@ -64,11 +64,11 @@ export function useCollectionApi(itemId: string, initialMap: null | CollectionSt
 
           fold(
             (l: ApiError) => {
-              singletons.toaster.current.show({ intent: 'warning', message: `保存失败: ${l}` });
+              singletons.toast({ status: 'warning', title: `保存失败: ${l}` });
             },
             (r: ItemCollectionDto[]) => {
               mounted.current && setLocalState(newState);
-              singletons.toaster.current.show({ intent: 'success', message: `保存成功`, timeout: 1e3 }, 'saved');
+              singletons.toast({ status: 'success', title: `保存成功`, duration: 1e3 });
             },
           )(x);
         });

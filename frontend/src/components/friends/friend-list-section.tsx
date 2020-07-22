@@ -55,12 +55,12 @@ export const FriendListSection: React.FC = () => {
 
               fold(
                 (l: ApiError) => {
-                  singletons.toaster.current.show({ intent: 'warning', message: `添加好友失败: ${l}` });
+                  singletons.toast({ status: 'warning', title: `添加好友失败: ${l}` });
                 },
 
                 (r: FriendUserDto) => {
                   refreshFriendList();
-                  singletons.toaster.current.show({ intent: 'success', message: `添加好友成功` });
+                  singletons.toast({ status: 'success', title: `添加好友成功` });
                 },
               )(added);
             })
