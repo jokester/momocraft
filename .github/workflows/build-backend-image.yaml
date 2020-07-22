@@ -1,3 +1,5 @@
+name: Build backend docker image
+
 on:
   push:
     branches: [master]
