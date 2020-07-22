@@ -1,5 +1,5 @@
 import React from 'react';
-import { UserProfileDto } from '../../api-generated/models';
+import { UserProfileDto } from '../../services/api-generated/models';
 import { useSingletons } from '../../internal/app-context';
 import gravatarUrl from 'gravatar-url';
 import { Button } from '@blueprintjs/core';

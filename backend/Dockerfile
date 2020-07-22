@@ -1,26 +1,11 @@
-FROM node:12.16-alpine3.11 as builder
+FROM node:12.18-buster-slim
 
-RUN                                             \
-    apk add --update --no-cache python make g++ \
-    && adduser --shell /bin/bash -D appuser     \
-    && mkdir -pv /app                           \
-    && chown -v appuser:appuser /app
+RUN adduser --shell /bin/bash worker \
+    && mkdir -pv /app                \
+    && chown -v worker:worker /app
 
-USER appuser
-COPY . /app/
-WORKDIR /app
+USER void-app
+COPY --chown=worker:worker . /app/
+WORKDIR /app/
 RUN yarn && yarn build && yarn --production && rm -rf ~/.cache
-
-# -----
-
-FROM node:12.16-alpine3.11 as app
-RUN                                         \
-    true                                    \
-    && adduser --shell /bin/bash -D appuser \
-    && mkdir -pv /app                       \
-    && chown -v appuser:appuser /app
-
-USER appuser
-COPY --from=builder /app /app
-WORKDIR /app
 CMD yarn start

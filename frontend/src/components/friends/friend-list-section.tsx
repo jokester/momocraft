@@ -1,13 +1,13 @@
 import React, { ChangeEvent, useState } from 'react';
 import { useAuthState } from '../hooks/use-auth-state';
 import { useSingletons } from '../../internal/app-context';
-import { useVersionedMemo } from '@jokester/ts-commonutil/react/hook/use-versioned-memo';
-import { useConcurrencyControl } from '@jokester/ts-commonutil/react/hook/use-concurrency-control';
+import { useVersionedMemo } from '@jokester/ts-commonutil/lib/react/hook/use-versioned-memo';
+import { useConcurrencyControl } from '@jokester/ts-commonutil/lib/react/hook/use-concurrency-control';
 import { Button, FormGroup, InputGroup, Label } from '@blueprintjs/core';
 import { fold } from 'fp-ts/lib/Either';
 import { RenderPromiseEither } from '../hoc/render-promise-either';
-import { FriendListDto, FriendUserDto } from '../../api-generated/models';
-import { ApiError } from '../../api/api-convention';
+import { FriendListDto, FriendUserDto } from '../../services/api-generated/models';
+import { ApiError } from '../../services/api/api-convention';
 
 export const FriendListSection: React.FC = () => {
   const authedUser = useAuthState();

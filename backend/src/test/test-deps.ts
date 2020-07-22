@@ -1,24 +1,17 @@
-import { createConnection } from 'typeorm';
-import { UserAccount } from '../db/entities/user-account';
-import { OAuthAccount } from '../db/entities/oauth-account';
 import { EntropyService } from '../deps/entropy.service';
 import { DeepReadonly } from '@jokester/ts-commonutil/cjs/type/freeze';
 import { JwtService } from '@nestjs/jwt';
 import { EmailAuthRequestDto, OAuthRequestDto } from '../model/auth.dto';
 import { DiscordOAuth, GoogleOAuth } from '../auth/oauth-client.provider';
+import { getTestConn } from './test-db';
 
 export namespace TestDeps {
-  export const testConnection = createConnection({
-    type: 'postgres',
-    url: process.env['TEST_DB_URL'] || 'postgresql://pguser:secret@127.0.0.1:54432/momo_test',
-    logger: 'debug',
-    entities: [UserAccount, OAuthAccount],
-  });
+  export const testConnection = getTestConn();
 
   export async function resetTestDB(): Promise<void> {
     const conn = await testConnection;
     await conn.transaction(async (em) => await em.query(`DROP SCHEMA public CASCADE; CREATE SCHEMA public;`));
-    await conn.synchronize(true);
+    await conn.runMigrations({ transaction: 'all' });
   }
 
   export const mockedEntropy = new EntropyService();

@@ -5,7 +5,7 @@ import { AuthServiceImpl } from './auth-service';
 import { CollectionServiceImpl } from './collection-service';
 import { Toaster } from '@blueprintjs/core';
 import { FriendServiceImpl } from './friend-service';
-import { bindApi } from '../api/bind-api';
+import { bindApi } from '../services/api/bind-api';
 import { createI18nInstance } from '../i18n/i18next-factory';
 import { useLifeCycle } from '../components/generic-hooks/use-life-cycle';
 

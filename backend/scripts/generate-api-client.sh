@@ -4,7 +4,7 @@ set -o pipefail
 
 cd $(dirname "$0")/..
 
-GENERATED_ROOT="src/api-generated"
+GENERATED_ROOT="../frontend/src/services/api-generated"
 
 rm -rf $GENERATED_ROOT && mkdir -pv $GENERATED_ROOT
 

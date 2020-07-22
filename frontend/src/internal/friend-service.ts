@@ -1,11 +1,11 @@
 import { AuthServiceImpl } from './auth-service';
-import { ApiConvention, ApiResponse } from '../api/api-convention';
+import { ApiConvention, ApiResponse } from '../services/api/api-convention';
 import { map } from 'fp-ts/lib/Either';
 import { createLogger } from '../util/debug-logger';
 import { CollectionServiceImpl } from './collection-service';
 import { MapsExtra } from '../util/MapsExtra';
-import { ApiProvider } from '../api/bind-api';
-import { launderResponse } from '../api/launder-api-response';
+import { ApiProvider } from '../services/api/bind-api';
+import { launderResponse } from '../services/api/launder-api-response';
 import {
   FriendCollectionsDto,
   FriendUserDto,
@@ -13,7 +13,7 @@ import {
   UserFriendCollectionDto,
   UserFriendRequestDto,
   FriendListDto,
-} from '../api-generated/models';
+} from '../services/api-generated/models';
 import { CollectionState } from '../const-shared/collection';
 
 const logger = createLogger(__filename, true);

@@ -1,11 +1,11 @@
 import { useEffect } from 'react';
 import { OAuthProvider } from '../../const-shared/oauth-conf';
 import { fold } from 'fp-ts/lib/Either';
-import { ApiError, ApiResponseSync } from '../../api/api-convention';
+import { ApiError, ApiResponseSync } from '../../services/api/api-convention';
 import { Messages } from '../../i18n/messages';
-import { UserProfileDto } from '../../api-generated/models';
+import { UserProfileDto } from '../../services/api-generated/models';
 import { useI18n } from 'i18next-react';
-import { useMounted } from '@jokester/ts-commonutil/react/hook/use-mounted';
+import { useMounted } from '@jokester/ts-commonutil/lib/react/hook/use-mounted';
 import { useSingletons } from '../../internal/app-context';
 import { useRouter } from 'next/router';
 import { TypedRoutes } from '../../typed-routes';

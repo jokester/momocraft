@@ -1,8 +1,8 @@
-import { Maps } from '@jokester/ts-commonutil/collection/maps';
+import { Maps } from '@jokester/ts-commonutil/lib/collection/maps';
 import { ItemsV3Json } from './json-schema';
 import { createLogger } from '../util/debug-logger';
 import { inServer } from '../const/build-env';
-import { Never } from '@jokester/ts-commonutil/concurrency/timing';
+import { Never } from '@jokester/ts-commonutil/lib/concurrency/timing';
 
 const logger = createLogger(__filename);
 

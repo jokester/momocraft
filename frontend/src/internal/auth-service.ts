@@ -1,4 +1,4 @@
-import { ApiError, ApiResponse, ApiResponseSync } from '../api/api-convention';
+import { ApiError, ApiResponse, ApiResponseSync } from '../services/api/api-convention';
 import { Either, isLeft, isRight, left, map as mapEither, right } from 'fp-ts/lib/Either';
 import { BehaviorSubject, ConnectableObservable, from, Observable, ReplaySubject } from 'rxjs';
 
@@ -7,9 +7,14 @@ import { ErrorCodeEnum } from '../const-shared/error-code';
 import { toTypedLocalStorage } from '../util/typed-local-storage';
 import { createLogger } from '../util/debug-logger';
 import { isDevBuild } from '../const/build-env';
-import { ApiProvider } from '../api/bind-api';
-import { launderResponse } from '../api/launder-api-response';
-import { AuthedSessionDto, EmailAuthRequestDto, OAuthRequestDto, UserProfileDto } from '../api-generated/models';
+import { ApiProvider } from '../services/api/bind-api';
+import { launderResponse } from '../services/api/launder-api-response';
+import {
+  AuthedSessionDto,
+  EmailAuthRequestDto,
+  OAuthRequestDto,
+  UserProfileDto,
+} from '../services/api-generated/models';
 import { createDebugObserver } from '../util/rx/debug-observer';
 
 const logger = createLogger(__filename);

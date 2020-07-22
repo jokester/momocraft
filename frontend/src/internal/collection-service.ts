@@ -1,10 +1,10 @@
-import { ApiResponse } from '../api/api-convention';
+import { ApiResponse } from '../services/api/api-convention';
 import { Observable } from 'rxjs';
 import { AuthServiceImpl } from './auth-service';
 import { map } from 'fp-ts/lib/Either';
-import { ApiProvider } from '../api/bind-api';
-import { ItemCollectionDto, UserCollectionListDto } from '../api-generated/models';
-import { launderResponse } from '../api/launder-api-response';
+import { ApiProvider } from '../services/api/bind-api';
+import { ItemCollectionDto, UserCollectionListDto } from '../services/api-generated/models';
+import { launderResponse } from '../services/api/launder-api-response';
 import { ObjLike } from '../util/types';
 
 const mappers = {

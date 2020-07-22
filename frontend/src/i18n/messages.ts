@@ -1,4 +1,4 @@
-import { ApiError } from '../api/api-convention';
+import { ApiError } from '../services/api/api-convention';
 import { i18n } from 'i18next';
 
 export const Messages = {

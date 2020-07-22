@@ -1,7 +1,7 @@
 import React, { ChangeEvent, useCallback, useState } from 'react';
 import { useSingletons } from '../../internal/app-context';
-import { ApiResponseSync } from '../../api/api-convention';
-import { UserProfileDto } from '../../api-generated/models';
+import { ApiResponseSync } from '../../services/api/api-convention';
+import { UserProfileDto } from '../../services/api-generated/models';
 import { isLeft } from 'fp-ts/lib/Either';
 import { CenterH } from '../layout/layout';
 import { Button, FormGroup, InputGroup, Label } from '@blueprintjs/core';

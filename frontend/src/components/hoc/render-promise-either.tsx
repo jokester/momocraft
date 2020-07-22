@@ -1,6 +1,6 @@
 import React, { useCallback } from 'react';
 import { Either, fold } from 'fp-ts/lib/Either';
-import { RenderPromise } from '@jokester/ts-commonutil/react/hoc/render-promise';
+import { RenderPromise } from '@jokester/ts-commonutil/lib/react/hoc/render-promise';
 import { ObjLike } from '../../util/types';
 
 interface RenderPromiseEitherProps<L, R> extends React.PropsWithChildren<ObjLike> {
