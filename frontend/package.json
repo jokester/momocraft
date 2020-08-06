@@ -53,6 +53,7 @@
     "@babel/plugin-proposal-decorators": "^7.10.4",
     "@storybook/addon-actions": "^5.3.19",
     "@storybook/addon-links": "^5.3.19",
+    "@storybook/addon-viewport": "^5.3.19",
     "@storybook/addons": "^5.3.19",
     "@storybook/react": "^5.3.19",
     "@types/accept-language-parser": "^1.5.1",
@@ -84,6 +85,7 @@
     "next-transpile-modules": "^3.3.0",
     "prettier": "^2.0.5",
     "sass": "^1.26.10",
+    "storybook-addon-responsive-views": "^2.3.0",
     "ts-jest": "^26",
     "ts-loader": "^8.0.1",
     "typescript": "^3.9"
