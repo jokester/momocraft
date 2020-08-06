@@ -1,6 +1,11 @@
 module.exports = {
   stories: ['../src/**/*.stories.tsx'],
-  addons: ['@storybook/addon-actions', '@storybook/addon-links'],
+  addons: [
+    '@storybook/addon-actions',
+    '@storybook/addon-links',
+    '@storybook/addon-viewport',
+    'storybook-addon-responsive-views',
+  ],
   webpackFinal: async (config) => {
     config.module.rules = config.module.rules
       .filter((existingRule) => !existingRule.test.test('some.css'))
