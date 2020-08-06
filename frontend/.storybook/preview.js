@@ -3,8 +3,6 @@ import { addDecorator } from '@storybook/react';
 import { INITIAL_VIEWPORTS } from '@storybook/addon-viewport';
 import { withResponsiveViews } from 'storybook-addon-responsive-views';
 import React, { Fragment } from 'react';
-import { ThemeProvider } from '@chakra-ui/core';
-import { ourTheme } from '../src/style/chakra-theme';
 import { StoriesWrapper } from '../src/stories/stories-wrapper';
 
 addParameters({
