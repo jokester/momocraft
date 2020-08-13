@@ -4,6 +4,7 @@ module.exports = {
     '@storybook/addon-actions',
     '@storybook/addon-links',
     '@storybook/addon-viewport',
+    // '@storybook/addon-docs',
     'storybook-addon-responsive-views',
   ],
   webpackFinal: async (config) => {
@@ -11,27 +12,16 @@ module.exports = {
       .filter((existingRule) => !existingRule.test.test('some.css'))
       .concat([
         {
-          test: /\.(ts|tsx)$/,
-          use: [
-            {
-              loader: require.resolve('ts-loader'),
-              options: {
-                compilerOptions: {
-                  noEmit: false,
-                  target: 'es6',
-                  module: 'commonjs',
-                  jsx: 'react',
-                },
-              },
-            },
-            // Optional
-            // { loader: require.resolve('react-docgen-typescript-loader'), },
-          ],
-        },
-        {
           test: /\.s?css$/,
           use: [
             'style-loader',
+            {
+              loader: require.resolve('css-loader'),
+              options: {
+                importLoaders: 1,
+                modules: true,
+              },
+            },
             {
               loader: 'postcss-loader',
               options: {
@@ -47,7 +37,6 @@ module.exports = {
           ],
         },
       ]);
-    config.resolve.extensions.push('.ts', '.tsx');
     return config;
   },
 };
