@@ -1,0 +1,11 @@
+.transitionThemed {
+  transition: color;
+
+  &.variantG {
+    @apply bg-green-900;
+  }
+
+  &.variantP {
+    @apply bg-ac-pink-900;
+  }
+}
