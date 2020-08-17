@@ -12,7 +12,7 @@ module.exports = {
       .filter((existingRule) => !existingRule.test.test('some.css'))
       .concat([
         {
-          test: /\.s?css$/,
+          test: /\.module\.s?css$/,
           use: [
             'style-loader',
             {

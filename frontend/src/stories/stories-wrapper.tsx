@@ -1,4 +1,4 @@
-import '../app.scss';
+// import '../app.scss';
 import { ThemeProvider } from '@chakra-ui/core';
 import React from 'react';
 import { ourTheme } from '../style/chakra-theme';

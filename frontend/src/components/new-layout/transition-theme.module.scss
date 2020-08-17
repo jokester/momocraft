@@ -1,11 +1,10 @@
 .transitionThemed {
-  transition: color;
+  transition: 0.5s background-color;
 
   &.variantG {
-    @apply bg-green-900;
+    @apply bg-green-900 h-32;
   }
 
   &.variantP {
-    @apply bg-ac-pink-900;
   }
 }
