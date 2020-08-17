@@ -9,7 +9,7 @@ const FormWithTestInput: React.FC = () => {
   const [name, onNameChange] = useTextInput('initial');
 
   return (
-    <form>
+    <form className="p-2">
       <label htmlFor="name">name:</label>
       <input name="name" value={name} onInput={onNameChange} />{' '}
     </form>

@@ -7,7 +7,7 @@
     "prebuild": "rimraf dist tsconfig.build.tsbuildinfo",
     "build": "nest build",
     "start": "node dist/main.js",
-    "dev": "DEBUG=momocraft:*,typeorm:* NODE_ENV=development nest start --watch",
+    "dev": "yarn prebuild && DEBUG=momocraft:*,typeorm:* NODE_ENV=development nest start --watch",
     "start:debug": "nest start --debug --watch",
     "test": "DEBUG=momocraft:*,typeorm:* jest --runInBand --detectOpenHandles --forceExit",
     "test:watch": "jest --runInBand --watch",

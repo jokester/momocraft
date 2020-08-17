@@ -1,12 +1,13 @@
 import React, { useRef } from 'react';
-import { Header } from './header';
+import { Header as HeaderOld } from './header';
 import { Footer } from './footer';
 import classNames from 'classnames';
+import { Header } from '../new-layout/header';
 
 export const Layout: React.FC = (props) => {
   return (
     <div className="h-screen flex flex-col">
-      <Header here={'HERE'} />
+      <Header />
       <div className="flex-grow z-0 overflow-y-scroll">
         <MainContent>{props.children}</MainContent>
       </div>
