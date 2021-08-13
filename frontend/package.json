@@ -38,7 +38,7 @@
     "i18next-react": "^0.2.2",
     "js-cookie": "^2.2.1",
     "lodash-es": "^4.17.15",
-    "next": "^9.4.4",
+    "next": "^11.1.0",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
     "react-intersection-observer": "^8.26.2",
