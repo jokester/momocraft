@@ -6,7 +6,6 @@
     "module": "esnext",
     "moduleResolution": "node",
     "noEmit": true,
-    "resolveJsonModule": true,
     "target": "esnext",
     "skipLibCheck": true,
     "typeRoots": [
@@ -17,7 +16,8 @@
       "dom",
       "dom.iterable",
       "esnext"
-    ]
+    ],
+    "incremental": true
   },
   "exclude": [
     "node_modules",
