@@ -1,0 +1,13 @@
+{
+  "name": "items-acnhapi",
+  "version": "0.0.1",
+  "description": "",
+  "main": "index.js",
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@jokester/ts-commonutil": "^0.2.1",
+    "json-ts": "^1.6.4",
+    "tslib": "^2.0.0"
+  }
+}
