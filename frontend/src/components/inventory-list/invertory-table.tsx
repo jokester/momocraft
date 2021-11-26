@@ -16,10 +16,10 @@ export const InventoryDb: React.FC = () => {
 
   logger('InventoryDb', itemsDb, currentSheetId);
 
-  const items = useMemo(() => (itemsDb.fulfilled && itemsDb.value?.sheets?.[currentSheetId]?.items) || [], [
-    itemsDb,
-    currentSheetId,
-  ]);
+  const items = useMemo(
+    () => (itemsDb.fulfilled && itemsDb.value?.sheets?.[currentSheetId]?.items) || [],
+    [itemsDb, currentSheetId],
+  );
 
   const authed = useAuthState();
 

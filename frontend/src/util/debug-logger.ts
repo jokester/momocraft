@@ -10,19 +10,18 @@ const pathSegments = __dirname.split(/[/\\]/);
  * @param {boolean} stripCodeExt
  * @returns {(srcFile: string, appendee?: string) => string}
  */
-const getDebugNamespace = (rootDir: string, prefix: string, stripCodeExt = true) => (
-  srcFile: string,
-  appendee?: string,
-) => {
-  const namespace = srcFile.startsWith(rootDir)
-    ? srcFile.slice(rootDir.length, srcFile.length).replace(/^\//, '').replace(/\//g, ':')
-    : srcFile.replace(/^\//, '').replace(/\//g, ':');
+const getDebugNamespace =
+  (rootDir: string, prefix: string, stripCodeExt = true) =>
+  (srcFile: string, appendee?: string) => {
+    const namespace = srcFile.startsWith(rootDir)
+      ? srcFile.slice(rootDir.length, srcFile.length).replace(/^\//, '').replace(/\//g, ':')
+      : srcFile.replace(/^\//, '').replace(/\//g, ':');
 
-  const striped = stripCodeExt ? namespace.replace(/\.(ts|js)x?$/i, '') : namespace;
+    const striped = stripCodeExt ? namespace.replace(/\.(ts|js)x?$/i, '') : namespace;
 
-  const suffixed = appendee ? `${striped}:${appendee}` : striped;
-  return prefix ? `${prefix}:` + suffixed : suffixed;
-};
+    const suffixed = appendee ? `${striped}:${appendee}` : striped;
+    return prefix ? `${prefix}:` + suffixed : suffixed;
+  };
 
 const ns = getDebugNamespace(pathSegments.slice(0, pathSegments.length - 2).join('/'), 'momocraft');
 

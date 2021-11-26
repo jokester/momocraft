@@ -2,7 +2,7 @@ import * as ApiRuntime from '../api-generated/runtime';
 import { ApiResponse } from './api-convention';
 import { left, right } from 'fp-ts/lib/Either';
 import { ErrorCodeEnum, isErrorCodeEnum } from '../../const-shared/error-code';
-import { ApiErrorDto } from '../api-generated/models';
+import { ApiErrorDto } from '../api-generated';
 
 export async function launderResponse<T>(
   resP: ApiRuntime.ApiResponse<T> | PromiseLike<ApiRuntime.ApiResponse<T>>,
@@ -28,10 +28,5 @@ export async function launderResponse<T>(
       }
     }
     return left(ErrorCodeEnum.internalError);
-  } finally {
-    // for possible error in catch {}
-    if (!gotWholeResponse) {
-      return left(ErrorCodeEnum.httpFail);
-    }
   }
 }

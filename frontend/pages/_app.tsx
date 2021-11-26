@@ -6,7 +6,8 @@ import { createLogger } from '../src/util/debug-logger';
 import { CommonPageProps } from '../src/next-types';
 import { pickLanguageForReq } from '../src/ssr/middleware/cookie-lang';
 import { LangCode } from '../src/const/languages';
-import { ThemeProvider, useToast } from '@chakra-ui/core';
+import { ThemeProvider } from '@chakra-ui/react';
+import { ourTheme } from '../src/style/chakra-theme';
 
 const logger = createLogger(__filename);
 
@@ -35,7 +36,7 @@ export default class extends App<CommonPageProps> {
 
     return (
       <React.StrictMode>
-        <ThemeProvider>
+        <ThemeProvider theme={ourTheme}>
           <RealApp lang={(this.props.pageProps as CommonPageProps).lang}>
             <Component {...this.props} />
           </RealApp>

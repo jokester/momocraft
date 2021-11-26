@@ -1,11 +1,10 @@
 import React from 'react';
 import Link from 'next/link';
 import { TypedRoutes } from '../../typed-routes';
-import { FontAwesomeIcon } from '../icon/fontawesome-icon';
 import { useRouter } from 'next/router';
 import classNames from 'classnames';
 import { LanguagePicker } from '../i18n/language-picker';
-import { Button } from '@blueprintjs/core';
+import { Button } from '@chakra-ui/react';
 
 const SectionLink: React.FC<{ text: string | React.ReactElement; linkTo: string }> = (props) => {
   const here = useRouter().pathname;
@@ -15,7 +14,7 @@ const SectionLink: React.FC<{ text: string | React.ReactElement; linkTo: string 
   });
   return (
     <Link href={props.linkTo}>
-      <button className={buttonClass}>{props.text}</button>
+      <Button color="ac-pink.100">{props.text}</Button>
     </Link>
   );
 };
@@ -26,7 +25,7 @@ export const Header: React.FC<{ here: string }> = (props) => (
     <SectionLink text="收藏" linkTo={TypedRoutes.collections} />
     <SectionLink text="好友" linkTo={TypedRoutes.friends} />
     <Link href={TypedRoutes.account}>
-      <Button icon="user" />
+      <Button color="ac-pink.100">me</Button>
     </Link>
     <LanguagePicker />
   </div>

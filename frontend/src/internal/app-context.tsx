@@ -11,7 +11,7 @@ import { useLifeCycle } from '../components/generic-hooks/use-life-cycle';
 import { I18NextReactProvider } from 'i18next-react';
 import { LanguageSelectionResponder } from '../components/i18n/language-selection-responder';
 import { LangCode } from '../const/languages';
-import { useToast } from '@chakra-ui/core';
+import { useToast } from '@chakra-ui/react';
 import useConstant from 'use-constant';
 import { ApiError } from '../services/api/api-convention';
 import { deriveErrorMessage } from '../i18n/error-message';
