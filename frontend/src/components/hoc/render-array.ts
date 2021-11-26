@@ -5,5 +5,5 @@ interface RenderArrayProps<T> {
   children(item: T, index: number): React.ReactElement;
 }
 export function RenderArray<T>(props: PropsWithChildren<RenderArrayProps<T>>): React.ReactElement {
-  return (props.items.map(props.children) as any) as React.ReactElement;
+  return props.items.map(props.children) as any as React.ReactElement;
 }

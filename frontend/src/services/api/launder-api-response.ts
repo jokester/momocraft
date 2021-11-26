@@ -28,10 +28,5 @@ export async function launderResponse<T>(
       }
     }
     return left(ErrorCodeEnum.internalError);
-  } finally {
-    // for possible error in catch {}
-    if (!gotWholeResponse) {
-      return left(ErrorCodeEnum.httpFail);
-    }
   }
 }

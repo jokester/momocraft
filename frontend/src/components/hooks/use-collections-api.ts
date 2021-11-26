@@ -47,10 +47,10 @@ export type CollectionStateMap = ReturnType<typeof builder.buildCollectionMap>;
 export function useCollectionApi(itemId: string, initialMap: null | CollectionStateMap) {
   const singletons = useSingletons();
 
-  const serverState = useMemo(() => initialMap?.collectionsMap?.get(itemId)?.state || CollectionState.none, [
-    itemId,
-    initialMap,
-  ]);
+  const serverState = useMemo(
+    () => initialMap?.collectionsMap?.get(itemId)?.state || CollectionState.none,
+    [itemId, initialMap],
+  );
 
   const [localState, setLocalState] = useDependingState<null | CollectionState>(() => null, [serverState]);
 
