@@ -5,7 +5,7 @@ import { ObjLike } from './util/types';
 
 export interface CommonPageProps {
   /**
-   * injected by _app.tsx (all pages should use that)
+   * injected by _app.tsx
    */
   lang: LangCode;
 }

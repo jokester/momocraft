@@ -4,7 +4,7 @@ import { TypedRoutes } from '../../typed-routes';
 import { useRouter } from 'next/router';
 import classNames from 'classnames';
 import { LanguagePicker } from '../i18n/language-picker';
-import { Button } from '@chakra-ui/core';
+import { Button } from '@chakra-ui/react';
 
 const SectionLink: React.FC<{ text: string | React.ReactElement; linkTo: string }> = (props) => {
   const here = useRouter().pathname;

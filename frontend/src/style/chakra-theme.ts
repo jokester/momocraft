@@ -1,10 +1,9 @@
 import { acThemeColors } from './colors';
-import defaultTheme from '@chakra-ui/core/dist/theme';
 
-export const ourTheme = {
-  ...defaultTheme,
+import { extendTheme } from '@chakra-ui/react';
+
+export const ourTheme = extendTheme({
   colors: {
-    ...defaultTheme.colors,
     ...acThemeColors,
   },
-};
+});
