@@ -4,6 +4,7 @@ import { GoogleAnalyticsTag } from '../src/tracking/tracking-tags';
 import { createLogger } from '../src/util/debug-logger';
 import { pickLanguageForReq } from '../src/ssr/middleware/cookie-lang';
 import { LangCode } from '../src/const/languages';
+import { GlobalMetaTags } from '../src/components/layout/meta-tags';
 
 const logger = createLogger(__filename);
 
@@ -28,7 +29,7 @@ export default class CustomDocument extends Document<OurDocumentProps> {
     return (
       <html lang={this.props.lang}>
         <Head>
-          <meta charSet="utf-8" />
+          <GlobalMetaTags />
           <GoogleAnalyticsTag />
 
           <link

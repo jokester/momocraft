@@ -11,7 +11,7 @@ interface RenderPromiseEitherProps<L, R> extends React.PropsWithChildren<ObjLike
   children(value: R): null | React.ReactElement;
 }
 
-const renderNull = () => (null as any) as React.ReactElement;
+const renderNull = () => null as any as React.ReactElement;
 
 export function RenderPromiseEither<L, R>(props: RenderPromiseEitherProps<L, R>) {
   const render = useCallback(

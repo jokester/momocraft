@@ -5,10 +5,10 @@ import { useItemsDB } from '../hooks/use-items-db';
 export const InventoryShow: React.FC<{ encodedItemId: string }> = ({ encodedItemId }) => {
   const itemsDb = useItemsDB();
 
-  const item = useMemo(() => (itemsDb.fulfilled && itemsDb.value.itemsMap.get(encodedItemId)) || null, [
-    itemsDb,
-    encodedItemId,
-  ]);
+  const item = useMemo(
+    () => (itemsDb.fulfilled && itemsDb.value.itemsMap.get(encodedItemId)) || null,
+    [itemsDb, encodedItemId],
+  );
 
   if (itemsDb.rejected) return <div>ERROR</div>;
   if (itemsDb.pending) return <div>LOADING</div>;
